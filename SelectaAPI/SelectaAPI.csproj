@@ -7,20 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\tbMensagemModel.cs" />
     <Compile Remove="Models\tbNotificacaoModel.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Models\tbMensagemModel.cs" />
     <None Include="Models\tbNotificacaoModel.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="MySql.Data" Version="9.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="System.Text.Json" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Database\" />
+    <Folder Include="DTOs\" />
   </ItemGroup>
 
 </Project>
