@@ -2,7 +2,7 @@
 
 namespace SelectaAPI.Controllers
 {
-    public class ClientController : Controller
+    public class EntregadorController : Controller
     {
         public IActionResult Index()
         {
