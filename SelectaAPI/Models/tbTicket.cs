@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbFuncionarioModel
+    public class tbTicket
     {
     }
 }

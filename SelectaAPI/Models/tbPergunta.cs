@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbEntrega_FinalModel
+    public class tbPergunta
     {
     }
 }

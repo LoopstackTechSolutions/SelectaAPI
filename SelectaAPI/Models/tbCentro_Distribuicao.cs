@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbCartaoModel
+    public class tbCentro_Distribuicao
     {
     }
 }
