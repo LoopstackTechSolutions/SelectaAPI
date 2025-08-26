@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SelectaAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("selectaAPI/[controller]")]
     [ApiController]
     public class HomeController : ControllerBase
     {
