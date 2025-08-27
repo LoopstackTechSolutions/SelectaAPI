@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbCategoria_Produto
+    public class tbTicketModel
     {
     }
 }

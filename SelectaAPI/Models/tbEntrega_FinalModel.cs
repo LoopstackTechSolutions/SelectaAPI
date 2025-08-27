@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbHistorico
+    public class tbEntrega_FinalModel
     {
     }
 }

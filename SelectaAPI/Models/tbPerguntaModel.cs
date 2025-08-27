@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbCentro_Distribuicao
+    public class tbPerguntaModel
     {
     }
 }

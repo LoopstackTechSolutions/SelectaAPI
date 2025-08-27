@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbPromocao
+    public class tbEntregadorModel
     {
     }
 }

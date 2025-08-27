@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbCarrinho
+    public class tbNotificacaoModel
     {
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbImagem_Produto
+    public class tbMensagemModel
     {
     }
 }

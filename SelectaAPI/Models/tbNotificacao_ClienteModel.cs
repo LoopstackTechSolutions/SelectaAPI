@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbFuncionario
+    public class tbNotificacao_ClienteModel
     {
     }
 }

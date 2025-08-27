@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbEmpresa_Parceira
+    public class tbLista_DesejoModel
     {
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace SelectaAPI.Models
 {
-    public class tbEndereco
+    public class tbClienteModel
     {
     }
 }
