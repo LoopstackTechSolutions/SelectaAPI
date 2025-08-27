@@ -19,7 +19,7 @@ namespace SelectaAPI.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] string name)
         {
-            var search = await _context.produtos.Where(p => EF.Functions.Like(p.Nome, "%name%")).ToListAsync();
+            var search = await _context.produtos.Where(p => EF.Functions.Like(p.Nome, $"%{name}%")).ToListAsync();
             return Ok(search);
         }
     }
