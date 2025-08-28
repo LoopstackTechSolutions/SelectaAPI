@@ -1,46 +1,53 @@
-version: '3.9'
-
 services:
   db:
-    image: mysql:8.0
+    image: cavequii/selecta-db:latest
     container_name: selecta-db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: selectadb
       MYSQL_USER: selecta
       MYSQL_PASSWORD: selecta123
+      MYSQL_DATABASE: dbSelecta
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "selecta", "-pselecta123"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: cavequii/selecta-api:latest
     container_name: selecta-api
     restart: always
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
+      SERVER: db
+      DATABASE: dbSelecta
+      USER: selecta
+      PASSWORD: selecta123
       ASPNETCORE_URLS: "http://+:7065"
-      ConnectionStrings__DefaultConnection: "server=db;port=3306;database=selectadb;user=selecta;password=selecta123;"
     ports:
       - "7065:7065"
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: selecta-frontend
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: selecta-phpmyadmin
     restart: always
     depends_on:
-      - api
-    ports:
-      - "5173:5173"
+      db:
+        condition: service_healthy
     environment:
-      VITE_API_URL: "http://localhost:7065"
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: selecta
+      PMA_PASSWORD: selecta123
+    ports:
+      - "8080:80"
 
 volumes:
   db_data:

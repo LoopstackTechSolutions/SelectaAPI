@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.IsisMtt.X509;
 using SelectaAPI.Database;
+using SelectaAPI.Models;
 
 namespace SelectaAPI.Controllers
 {
@@ -16,6 +17,37 @@ namespace SelectaAPI.Controllers
         {
             _context = context;
         }
+
+        // método que fiz pra testar, pode apagar se quiser -Vini
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                var produtos = await _context.produtos
+                    .Select(p => new
+                    {
+                        p.IdProduto,
+                        p.Nome,
+                        Quantidade = p.Quantidade ?? 0,
+                        p.PrecoUnitario,
+                        p.Condicao,
+                        Peso = p.Peso ?? 0,
+                        p.Status,
+                        IdVendedor = p.IdVendedor ?? 0
+                    })
+                    .ToListAsync();
+
+                return Ok(produtos);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex); // Logs the exception in your container
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
 
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] string name)

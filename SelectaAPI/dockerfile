@@ -1,18 +1,37 @@
+# --------------------
+# Build stage
+# --------------------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /App
 
-# Copy everything
-COPY . ./
-# Restore as distinct layers
+# Copy csproj and restore dependencies
+COPY *.csproj ./
 RUN dotnet restore
-# Build and publish a release
-RUN dotnet publish -o out
 
-# Build runtime image
+# Copy everything else and publish
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+# --------------------
+# Runtime stage
+# --------------------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /App
+
+# Install MySQL client for wait-for-db.sh
+RUN apt-get update && \
+    apt-get install -y default-mysql-client && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy published app
 COPY --from=build /App/out .
 
-EXPOSE 7065
+# Copy wait-for-db.sh and make it executable
+COPY wait-for-db.sh .
+RUN chmod +x wait-for-db.sh
 
-ENTRYPOINT ["dotnet", "SelectaAPI.ddl"]
+EXPOSE 7065
+ENV ASPNETCORE_URLS=http://+:7065
+
+# Use wait-for-db.sh to wait for the database before starting the API
+ENTRYPOINT ["dotnet", "SelectaAPI.dll"]
