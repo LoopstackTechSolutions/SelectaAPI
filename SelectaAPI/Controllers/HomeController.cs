@@ -60,6 +60,17 @@ namespace SelectaAPI.Controllers
         public async Task<IActionResult> Highlights()
         {
             var productsPromotion = await _context.promocoes.Include(pp => pp.Produto).
+                Select( pp => new{
+                    pp.Status,
+                    pp.ValidaAte,
+                    pp.Desconto,
+                    Nome = pp.Produto.Nome,
+                    PrecoUnitario = pp.Produto.PrecoUnitario,
+                    Condicao = pp.Produto.Condicao,
+                    Peso = pp.Produto.Peso,
+                    StatusProduto = pp.Produto.Status,
+                    Quantidade = pp.Produto.Quantidade
+                }).
                 Where(pp => pp.Status == "ativa").
                 OrderBy(pp => pp.Desconto).ToListAsync();
             return Ok(productsPromotion);

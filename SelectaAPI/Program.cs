@@ -1,6 +1,8 @@
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
 
+Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 // Use environment variables for MySQL connection
