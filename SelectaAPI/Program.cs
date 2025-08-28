@@ -1,17 +1,9 @@
-using DotNetEnv;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-// Add services to the container.
-
-Env.Load();
-
-
+// Use environment variables for MySQL connection
 string connectionString =
     $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
     $"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
@@ -21,17 +13,16 @@ string connectionString =
 Console.WriteLine("Server: " + Environment.GetEnvironmentVariable("SERVER"));
 Console.WriteLine("Database: " + Environment.GetEnvironmentVariable("DATABASE"));
 
+// Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString,ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -39,9 +30,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
