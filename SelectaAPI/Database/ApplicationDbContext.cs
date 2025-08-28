@@ -11,5 +11,6 @@ namespace SelectaAPI.Database
         }
 
         public DbSet<tbProdutoModel> produtos { get; set; }
+        public DbSet<tbPromocaoModel> promocoes { get; set; }
     }
 }

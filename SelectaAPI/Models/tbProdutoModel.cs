@@ -14,5 +14,6 @@ namespace SelectaAPI.Models
         public int Peso { get; set; }
         public string Status { get; set; }
         public int IdVendedor { get; set; }
+       // public tbVendedorModel Vendedor { get; set; }
     }
 }
