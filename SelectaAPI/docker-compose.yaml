@@ -1,7 +1,6 @@
 services:
   db:
-    build:
-      context: ./Database
+    image: cavequii/selecta-db:latest
     container_name: selecta-db
     restart: always
     environment:
