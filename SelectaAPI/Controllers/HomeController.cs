@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Mysqlx;
 using Org.BouncyCastle.Asn1.IsisMtt.X509;
 using SelectaAPI.Database;
 using SelectaAPI.Models;
+using System.Linq;
 
 namespace SelectaAPI.Controllers
 {
@@ -46,9 +48,6 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-
-
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] string name)
         {
@@ -59,22 +58,130 @@ namespace SelectaAPI.Controllers
         [HttpGet("highlights")]
         public async Task<IActionResult> Highlights()
         {
-            var productsPromotion = await _context.promocoes.Include(pp => pp.Produto).
-                Select( pp => new{
-                    pp.Status,
-                    pp.ValidaAte,
-                    pp.Desconto,
-                    Nome = pp.Produto.Nome,
-                    PrecoUnitario = pp.Produto.PrecoUnitario,
-                    Condicao = pp.Produto.Condicao,
-                    Peso = pp.Produto.Peso,
-                    StatusProduto = pp.Produto.Status,
-                    Quantidade = pp.Produto.Quantidade
-                }).
-                Where(pp => pp.Status == "ativa").
-                OrderBy(pp => pp.Desconto).ToListAsync();
-            return Ok(productsPromotion);
+            try
+            {
+                var productsPromotion = await _context.promocoes.Include(pp => pp.Produto).
+                    Select(pp => new
+                    {
+                        pp.Status,
+                        pp.ValidaAte,
+                        pp.Desconto,
+                        pp.Produto.Nome,
+                        pp.Produto.PrecoUnitario,
+                        pp.Produto.Condicao,
+                        pp.Produto.Peso,
+                        productStatus = pp.Produto.Status,
+                        pp.Produto.Quantidade
+                    }).
+                    Where(pp => pp.Status == "ativa").
+                    OrderBy(pp => pp.Desconto).ToListAsync();
+                StatusCode(200, "Sucesso na requisição");
+                return Ok(productsPromotion);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro no servidor");
+            }
+        }
+        [HttpGet("wish-list")]
+        public async Task<IActionResult> WishList([FromQuery] int id)
+        {
+            try
+            {
+                var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
+                if (clientUsing == null)
+                {
+                    StatusCode(400, "Usuario não informado corretamente");
+                    return BadRequest("Usuario não encontrado");
+                }
+                else
+                {
+                    var clientList = await _context.listasDesejo.Where(l => l.IdCliente == id).
+                     Include(l => l.Produto).
+                     Select(l => new
+                     {
+                         l.Produto.Nome,
+                         l.Produto.PrecoUnitario,
+                         l.Produto.Condicao,
+                         l.Produto.Status,
+                         l.Produto.Peso
+                     }).
+                     ToListAsync();
+                    StatusCode(200, "lista de desejo sendo retornada");
+                    return Ok(clientList);
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusCode(500, "erro no servidor");
+                return BadRequest();
+            }
+        }
+        [HttpGet("for-you")]
+        public async Task<IActionResult> ForYou([FromQuery] int id)
+        {
+            try
+            {
+                var purchasedOrderIds = await _context.pedidos
+            .Where(p => p.IdComprador == id)
+            .Select(p => p.IdPedido)
+            .ToListAsync();
+
+                if (!purchasedOrderIds.Any())
+                    return Ok(new List<object>()); 
+
+                var purchasedProductIds = await _context.produtosPedidos
+                    .Where(pp => purchasedOrderIds.Contains(pp.IdPedido))
+                    .Select(pp => pp.IdProduto)
+                    .Distinct()
+                    .ToListAsync();
+
+                if (!purchasedProductIds.Any())
+                    return Ok(new List<object>());
+
+                var purchasedCategoryIds = await _context.categoriasProdutos
+                    .Where(cp => purchasedProductIds.Contains(cp.IdProduto))
+                    .Select(cp => cp.IdCategoria)
+                    .Distinct()
+                    .ToListAsync();
+
+                if (!purchasedCategoryIds.Any())
+                    return Ok(new List<object>());
+
+                var recommendedProducts = await _context.categoriasProdutos
+                    .Where(cp => purchasedCategoryIds.Contains(cp.IdCategoria)
+                                 && !purchasedProductIds.Contains(cp.IdProduto))
+                    .Select(cp => cp.IdProduto)
+                    .Distinct()
+                    .Take(20) 
+                    .ToListAsync();
+
+                var recommendationList = await _context.produtos
+                    .Where(p => recommendedProducts.Contains(p.IdProduto))
+                    .Select(p => new
+                    {
+                        p.Nome,
+                        p.PrecoUnitario,
+                        p.Peso,
+                        p.Condicao,
+                        p.Quantidade
+                    })
+                    .ToListAsync();
+
+                return Ok(recommendationList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpGet("notifications")]
+        public async Task<IActionResult> Notifications()
+        {
+
         }
 
     }
+
 }
+
