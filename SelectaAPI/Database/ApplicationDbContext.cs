@@ -23,5 +23,7 @@ namespace SelectaAPI.Database
         public DbSet<tbPedidoModel> pedidos { get; set; }
         public DbSet<tbProduto_PedidoModel> produtosPedidos { get; set; }
         public DbSet<tbCategoria_ProdutoModel> categoriasProdutos { get; set; }
+        public DbSet<tbNotificacaoModel> notificacoes {  get; set; }
+        public DbSet<tbNotificacao_ClienteModel> notificacoesClientes { get; set; }
     }
 }

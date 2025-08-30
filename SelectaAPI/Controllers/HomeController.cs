@@ -122,35 +122,42 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                var purchasedOrderIds = await _context.pedidos
-            .Where(p => p.IdComprador == id)
-            .Select(p => p.IdPedido)
-            .ToListAsync();
+                var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
+                if (clientUsing == null)
+                {
+                    StatusCode(400, "Usuario não informado corretamente");
+                    return BadRequest("Usuario não encontrado");
+                }
 
-                if (!purchasedOrderIds.Any())
-                    return Ok(new List<object>()); 
+                var purchased = await _context.pedidos
+                 .Where(p => p.IdComprador == id)
+                    .Select(p => p.IdPedido)
+                    .ToListAsync();
 
-                var purchasedProductIds = await _context.produtosPedidos
-                    .Where(pp => purchasedOrderIds.Contains(pp.IdPedido))
+                if (!purchased.Any())
+                    return Ok(new List<object>());
+
+                var purchasedProduct = await _context.produtosPedidos
+                    .Where(pp => purchased.Contains(pp.IdPedido))
                     .Select(pp => pp.IdProduto)
                     .Distinct()
                     .ToListAsync();
 
-                if (!purchasedProductIds.Any())
+                if (!purchasedProduct.Any())
                     return Ok(new List<object>());
 
-                var purchasedCategoryIds = await _context.categoriasProdutos
-                    .Where(cp => purchasedProductIds.Contains(cp.IdProduto))
+                var purchasedCategory = await _context.categoriasProdutos
+                    .Where(cp => purchasedProduct.Contains(cp.IdProduto))
                     .Select(cp => cp.IdCategoria)
                     .Distinct()
                     .ToListAsync();
 
-                if (!purchasedCategoryIds.Any())
+                if (!purchasedCategory.Any())
                     return Ok(new List<object>());
 
                 var recommendedProducts = await _context.categoriasProdutos
-                    .Where(cp => purchasedCategoryIds.Contains(cp.IdCategoria)
-                                 && !purchasedProductIds.Contains(cp.IdProduto))
+                    .Where(cp => purchasedCategory.Contains(cp.IdCategoria)
+                                 && !purchasedProduct.Contains(cp.IdProduto))
                     .Select(cp => cp.IdProduto)
                     .Distinct()
                     .Take(20) 
@@ -176,10 +183,32 @@ namespace SelectaAPI.Controllers
             }
         }
         [HttpGet("notifications")]
-        public async Task<IActionResult> Notifications()
+        public async Task<IActionResult> Notifications([FromQuery] int id)
         {
-
+            try
+            {
+                var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
+                if (clientUsing == null)
+                {
+                    StatusCode(400, "Usuario não informado corretamente");
+                    return BadRequest("Usuario não encontrado");
+                }
+                var notifications = await _context.notificacoesClientes.Where(nc => nc.IdCliente == id)
+                    .Select(nc => new
+                    {
+                        nc.DataCriacao,
+                        nc.Notificacao.Mensagem,
+                        nc.IsLida,
+                    }).ToListAsync();
+                StatusCode(200, "Notificação sendo mostrada");
+                return Ok(notifications);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
+
 
     }
 
