@@ -302,7 +302,7 @@ create table if not exists tbImagemProduto
 (
 IdImagem int primary key auto_increment,
 IdProduto int not null,
-Imagem blob,
+S3Key varchar(512) not null unique,
 IsPrincipal bit not null, -- 0 = não é principal / 1 = é principal
 foreign key (IdProduto) references tbProduto (IdProduto)
 );
@@ -485,6 +485,9 @@ insert into tbProduto (idvendedor, nome, quantidade, condicao, precounitario, pe
 (7, 'Balões e Decoração', 20, 0, 100.00, 1, 'ativo'), -- 88 Decoração de Festas
 (7, 'Fantasia Infantil', 15, 0, 150.00, 1, 'ativo'), -- 89 Fantasias
 (7, 'Enfeites de Natal', 10, 0, 80.00, 1, 'ativo'); -- 90 Decoração Sazonal
+
+insert into tbImagemProduto (IdProduto, S3Key, IsPrincipal) values 
+(16, 's24.png', 1);
 
 insert into tbCategoria_Produto (IdCategoria, IdProduto) values
 (73, 1),(72, 1),
