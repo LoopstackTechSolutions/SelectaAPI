@@ -20,7 +20,6 @@ namespace SelectaAPI.Controllers
             _context = context;
         }
 
-        // método que fiz pra testar, pode apagar se quiser -Vini
         [HttpGet("all")]
         public async Task<IActionResult> GetAll()
         {
@@ -44,7 +43,7 @@ namespace SelectaAPI.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex); // Logs the exception in your container
+                Console.WriteLine(ex);
                 return StatusCode(500, ex.Message);
             }
         }
@@ -160,7 +159,7 @@ namespace SelectaAPI.Controllers
                                  && !purchasedProduct.Contains(cp.IdProduto))
                     .Select(cp => cp.IdProduto)
                     .Distinct()
-                    .Take(20) 
+                    .Take(20)
                     .ToListAsync();
 
                 var recommendationList = await _context.produtos
@@ -208,8 +207,39 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpGet("best-sellers")]
+        public async Task<IActionResult> BestSellers()
+        {
+            try
+            {
+                var bestSellers = await _context.produtosPedidos.GroupBy(pp => pp.IdProduto)
+                   .Select(bs => new
+                   {
+                       IdProduto = bs.Key,
+                       quantitySold = bs.Sum(pp => pp.Quantidade)
+                   })
+                   .OrderByDescending(bs => bs.quantitySold)
+                   .Join(_context.produtos,
+                        bs => bs.IdProduto,
+                         p => p.IdProduto,
+                        (bs, p) => new
+                   {
+                    p.Nome,
+                    p.Peso,
+                    p.Condicao,
+                    p.PrecoUnitario,
+                    bs.quantitySold
+                   })
+             .ToListAsync();
 
+                return Ok(bestSellers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
 
+        }
     }
 
 }
