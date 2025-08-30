@@ -229,7 +229,8 @@ namespace SelectaAPI.Controllers
                     p.Condicao,
                     p.PrecoUnitario,
                     bs.quantitySold
-                   })
+                   }).
+              Take(20)
              .ToListAsync();
 
                 return Ok(bestSellers);
