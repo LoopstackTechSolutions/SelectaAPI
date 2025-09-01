@@ -1,6 +1,8 @@
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
+using Refit;
 using SelectaAPI.Database;
+using SelectaAPI.Integracao.Refit;
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,11 @@ Console.WriteLine("Database: " + Environment.GetEnvironmentVariable("DATABASE"))
 // Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddRefitClient<IViaCepIntegracaoRefit>().ConfigureHttpClient(c =>
+{
+    c.BaseAddress = new Uri("https://viacep.com.br/");
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
