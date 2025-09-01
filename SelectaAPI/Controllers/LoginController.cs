@@ -44,8 +44,8 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
             }
-        [HttpPost("office-login")]
-        public async Task<IActionResult> OfficeLogin(string email, string password)
+        [HttpPost("employee-login")]
+        public async Task<IActionResult> EmployeeLogin(string email, string password)
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
