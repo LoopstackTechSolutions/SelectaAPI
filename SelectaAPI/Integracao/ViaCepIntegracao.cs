@@ -1,7 +1,7 @@
 ﻿using SelectaAPI.DTOs;
 using SelectaAPI.Integracao.Interfaces;
 using SelectaAPI.Integracao.Refit;
-
+/*
 namespace SelectaAPI.Integracao
 {
     public class ViaCepIntegracao : IViaCepIntegracao
@@ -12,6 +12,7 @@ namespace SelectaAPI.Integracao
         {
             _viaCepIntegracaoRefit = viaCepIntegracao;
         }
+        
         public Task<AddAdressWithAPI> GetDataViaCep(string cep)
         {
             var responseData = await _viaCepIntegracaoRefit.GetData(cep);
@@ -21,7 +22,7 @@ namespace SelectaAPI.Integracao
                 return responseData.Content();
             }
 
-
         }
     }
-}
+} 
+*/

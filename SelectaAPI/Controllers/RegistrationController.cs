@@ -97,12 +97,13 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, $"erro no servidor {ex.Message}");
             }
         }
-
+        /*
         [HttpPost("address-register")]
         public async Task<IActionResult> AddressRegister()
         {
 
         }
+        */
 
         }
     }

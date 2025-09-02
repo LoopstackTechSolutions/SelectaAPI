@@ -59,27 +59,29 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                var productsPromotion = await _context.promocoes.Include(pp => pp.Produto).
-                    Select(pp => new
-                    {
-                        pp.Status,
-                        pp.ValidaAte,
-                        pp.Desconto,
-                        pp.Produto.Nome,
-                        pp.Produto.PrecoUnitario,
-                        pp.Produto.Condicao,
-                        pp.Produto.Peso,
-                        productStatus = pp.Produto.Status,
-                        pp.Produto.Quantidade
-                    }).
-                    Where(pp => pp.Status == "ativa").
-                    OrderBy(pp => pp.Desconto).ToListAsync();
-                StatusCode(200, "Sucesso na requisição");
+                var productsPromotion = await _context.promocoes
+             .Include(pp => pp.Produto)
+             .Select(pp => new
+             {
+                 IdProduto = pp.Produto.IdProduto,
+                 Nome = pp.Produto.Nome,
+                 PrecoUnitario = pp.Produto.PrecoUnitario,
+                 Condicao = pp.Produto.Condicao,
+                 Peso = pp.Produto.Peso ?? 0,
+                 Quantidade = pp.Produto.Quantidade ?? 0,
+                 Status = pp.Produto.Status,
+
+                 ValidaAte = pp.ValidaAte,
+                 Desconto = pp.Desconto
+             })
+             .OrderBy(pp => pp.Desconto)
+             .ToListAsync();
+
                 return Ok(productsPromotion);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "Erro no servidor");
+                return StatusCode(500, ex.Message);
             }
         }
         [HttpGet("wish-list")]
@@ -99,6 +101,8 @@ namespace SelectaAPI.Controllers
                      Include(l => l.Produto).
                      Select(l => new
                      {
+                         l.Produto.IdProduto,
+                         l.Produto.Quantidade,
                          l.Produto.Nome,
                          l.Produto.PrecoUnitario,
                          l.Produto.Condicao,
@@ -166,6 +170,7 @@ namespace SelectaAPI.Controllers
                     .Where(p => recommendedProducts.Contains(p.IdProduto))
                     .Select(p => new
                     {
+                        p.IdProduto,
                         p.Nome,
                         p.PrecoUnitario,
                         p.Peso,
@@ -224,6 +229,7 @@ namespace SelectaAPI.Controllers
                          p => p.IdProduto,
                         (bs, p) => new
                    {
+                    p.IdProduto,
                     p.Nome,
                     p.Peso,
                     p.Condicao,
