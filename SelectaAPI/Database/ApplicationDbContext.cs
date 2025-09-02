@@ -26,5 +26,8 @@ namespace SelectaAPI.Database
         public DbSet<tbNotificacaoModel> notificacoes {  get; set; }
         public DbSet<tbNotificacao_ClienteModel> notificacoesClientes { get; set; }
         public DbSet<tbFuncionarioModel> funcionarios { get; set; }
+        public DbSet<tbCategoriaModel> categorias { get; set; }
+        public DbSet<tbCategoria_Cliente> categoriaClientes { get; set; }
+        public DbSet<tbCategoria_ProdutoModel> categoriaProdutos { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace SelectaAPI.Models
     public class tbCategoriaModel
     {
         [Key]
-        public int IdCategoria {  get; set; }
+        public int IdCategoria { get; set; }
         public string Nome { get; set; }
     }
 }

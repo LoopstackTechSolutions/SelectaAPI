@@ -26,7 +26,6 @@ namespace SelectaAPI.Controllers
             if (addClientDTO == null)
                 return BadRequest("Os dados do cliente não foram enviados.");
 
-            // validação de campos obrigatórios
             if (string.IsNullOrWhiteSpace(addClientDTO.Nome) ||
                 string.IsNullOrWhiteSpace(addClientDTO.Email) ||
                 string.IsNullOrWhiteSpace(addClientDTO.Senha))
@@ -72,7 +71,7 @@ namespace SelectaAPI.Controllers
                 return StatusCode(400, "Necessário preencher todas as informações");
             }
 
-            if (!addEmployeeDTO.Cpf.All(char.IsDigit) || addEmployeeDTO.Cpf.Length < 11) return StatusCode(400, "CPF inválido");
+            if (!addEmployeeDTO.Cpf.All(char.IsDigit) || addEmployeeDTO.Cpf.Length < 11 || addEmployeeDTO.Cpf.Length > 11) return StatusCode(400, "CPF inválido");
 
             var entityEmployee = new tbFuncionarioModel()
             {
@@ -92,6 +91,10 @@ namespace SelectaAPI.Controllers
                 await _context.SaveChangesAsync();
                 return StatusCode(200, "sucesso ao cadastrar funcionário");
             }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"erro no servidor {ex.Message}");
@@ -106,9 +109,44 @@ namespace SelectaAPI.Controllers
         */
 
         [HttpPost("category-client-register")]
-        public async Task<IActionResult> CategoryClientRegister()
+        public async Task<IActionResult> CategoryClientRegister(AddCategory_ClientDTO addCategoryClient)
         {
-            
+            try
+            {
+                var cliente = await _context.clientes.FindAsync(addCategoryClient.IdCliente);
+                if (cliente == null)
+                    return NotFound("Cliente não encontrado.");
+
+                var categoria = await _context.categorias.FindAsync(addCategoryClient.IdCategoria);
+                if (categoria == null)
+                    return NotFound("Categoria não encontrada.");
+
+                var exists = await _context.categoriaClientes
+                    .AnyAsync(cc => cc.IdCliente == addCategoryClient.IdCliente && cc.IdCategoria == addCategoryClient.IdCategoria);
+
+                if (exists)
+                    return BadRequest("Essa categoria já foi vinculada ao cliente.");
+
+                var categoriaCliente = new tbCategoria_Cliente
+                {
+                    IdCategoria = addCategoryClient.IdCategoria,
+                    IdCliente = addCategoryClient.IdCliente
+                };
+
+                _context.categoriaClientes.Add(categoriaCliente);
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    Message = "Categoria vinculada ao cliente com sucesso!",
+                    categoriaCliente.IdCategoria,
+                    categoriaCliente.IdCliente
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         }
