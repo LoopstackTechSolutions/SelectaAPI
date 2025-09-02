@@ -3,6 +3,7 @@ services:
     image: cavequii/selecta-db:latest
     container_name: selecta-db
     restart: always
+    pull_policy: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: selecta
@@ -22,6 +23,7 @@ services:
     image: cavequii/selecta-api:latest
     container_name: selecta-api
     restart: always
+    pull_policy: always
     depends_on:
       db:
         condition: service_healthy
@@ -38,6 +40,7 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     container_name: selecta-phpmyadmin
     restart: always
+    pull_policy: always
     depends_on:
       db:
         condition: service_healthy

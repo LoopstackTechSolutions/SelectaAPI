@@ -1,3 +1,7 @@
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+SET character_set_connection = utf8mb4;
+
 SET FOREIGN_KEY_CHECKS=0;
 
 create table if not exists tbCategoria
@@ -34,6 +38,15 @@ Nome varchar(50) not null,
 Email varchar(50) not null,
 Senha varchar(50) not null,
 Saldo decimal(10,2) default 0
+);
+
+create table if not exists tbCategoria_Cliente
+(
+IdCategoria int not null,
+IdCliente int not null,
+foreign key (IdCategoria) references tbCategoria (IdCategoria),
+foreign key (IdCliente) references tbCliente (IdCliente),
+primary key (IdCliente, IdCategoria)
 );
 
 create table if not exists tbCartao
@@ -127,7 +140,7 @@ foreign key (IdCliente) references tbCliente(IdCliente)
 
 create table if not exists tbLista_Desejo
 (
-IdProduto int primary key,
+IdProduto int not null,
 IdCliente int not null,
 foreign key (IdProduto) references tbProduto(IdProduto),
 foreign key (IdCliente) references tbCliente(IdCliente)
@@ -289,7 +302,7 @@ create table if not exists tbImagemProduto
 (
 IdImagem int primary key auto_increment,
 IdProduto int not null,
-Imagem blob,
+S3Key varchar(512) not null unique,
 IsPrincipal bit not null, -- 0 = não é principal / 1 = é principal
 foreign key (IdProduto) references tbProduto (IdProduto)
 );
@@ -336,7 +349,13 @@ INSERT INTO tbCliente (nome, email, senha) values
 ("Lucas Tobias", "tobiastobiastobias@uol.com.br", "12345678"),
 ("Márcia Cruz", "marcinhaxd@gmail.com", "12345678"),
 ("Calçados Sérgio", "calcados.sergio@calcadossergio.com.br", "12345678"),
-("Kabum", "kabum@kabum.org.br", "12345678");
+("Kabum", "kabum@kabum.org.br", "12345678"),
+("Loja Vende Tudo", "contato@vendetudo.org.br", "12345678");
+
+insert into tbCategoria_Cliente (IdCategoria, IdCliente) values
+(72, 1),(73, 1),(1, 1),(4, 1),(5, 1),(9, 1),(10, 1),(11, 1),(3, 1),(7, 1),
+(1, 2),(2, 2),(4, 2),(5, 2),(23, 2),(39, 2),(42, 2),(44, 2),(85, 2),(13, 2),
+(14, 3),(8, 3),(9, 3),(10, 3),(11, 3),(12, 3),(1, 3),(4, 3),(3, 3),(7, 3);
 
 insert into tbEndereco (cep, idcliente, logradouro) values
 (05313020, 1, "Rua Othão, 145 – Vila Leopoldina, São Paulo"),
@@ -357,7 +376,8 @@ insert into tbVendedor (idvendedor, taxafrete) values
 (2, 10),
 (4, null),
 (5, null),
-(6, null);
+(6, null),
+(7, null);
 
 insert into tbProduto (idvendedor, nome, quantidade, condicao, precounitario, peso, `status`) values
 (2, "Livro Harry Potter e a Pedra Filosofal", 1, 1, 25.00, 396, "ativo"),
@@ -374,7 +394,100 @@ insert into tbProduto (idvendedor, nome, quantidade, condicao, precounitario, pe
 (6, 'Placa de Vídeo NVIDIA RTX 4070', NULL, 0, 5699.00, 1200, 'disponível'),
 (6, 'SSD Samsung 1TB NVMe', NULL, 0, 599.90, 60, 'disponível'),
 (6, 'Teclado Mecânico Redragon', NULL, 0, 349.90, 950, 'disponível'),
-(6, 'Fone de Ouvido Bluetooth JBL', NULL, 0, 299.90, 200, 'disponível');
+(6, 'Fone de Ouvido Bluetooth JBL', NULL, 0, 299.90, 200, 'disponível'),
+(7, 'Smartphone Samsung Galaxy', 10, 0, 2500.00, 0.3, 'ativo'), -- 1 Eletrônicos e Tecnologias
+(7, 'iPhone 14', 15, 0, 5000.00, 0.2, 'ativo'), -- 2 Celulares
+(7, 'Capinha para Celular', 50, 0, 49.90, 0.1, 'ativo'), -- 3 Acessórios para Celulares
+(7, 'Notebook Dell Inspiron', 8, 0, 4500.00, 2.5, 'ativo'), -- 4 Computadores
+(7, 'Notebook Asus VivoBook', 12, 0, 4000.00, 2.3, 'ativo'), -- 5 Notebooks
+(7, 'iPad Pro', 7, 0, 5500.00, 0.5, 'ativo'), -- 6 Tablets
+(7, 'Smart TV 55"', 5, 0, 3000.00, 10, 'ativo'), -- 7 TVs e Áudio
+(7, 'Geladeira Frost Free', 3, 0, 2500.00, 50, 'ativo'), -- 8 Eletrodomésticos
+(7, 'Camisa Polo Masculina', 30, 0, 120.00, 0.3, 'ativo'), -- 9 Moda e Vestuário
+(7, 'Vestido Feminino', 20, 0, 150.00, 0.4, 'ativo'), -- 10 Roupas Femininas
+(7, 'Camisa Masculina', 25, 0, 100.00, 0.3, 'ativo'), -- 11 Roupas Masculinas
+(7, 'Body Infantil', 40, 0, 80.00, 0.2, 'ativo'), -- 12 Roupas Infantis
+(7, 'Tênis Nike Air', 15, 0, 350.00, 0.5, 'ativo'), -- 13 Tênis
+(7, 'Chinelo Havaianas', 50, 0, 45.00, 0.2, 'ativo'), -- 14 Sandálias e Chinelos
+(7, 'Mochila Escolar', 20, 0, 120.00, 0.7, 'ativo'), -- 15 Bolsas e Mochilas
+(7, 'Relógio de Pulso', 30, 0, 250.00, 0.2, 'ativo'), -- 16 Relógios
+(7, 'Colar de Prata', 15, 0, 180.00, 0.1, 'ativo'), -- 17 Joias e Bijuterias
+(7, 'Sofá 3 Lugares', 3, 0, 2000.00, 30, 'ativo'), -- 18 Casa, Móveis e Jardim
+(7, 'Quadro Decorativo', 10, 0, 150.00, 1, 'ativo'), -- 19 Decoração
+(7, 'Luminária de Mesa', 12, 0, 120.00, 1.5, 'ativo'), -- 20 Iluminação
+(7, 'Rack para Sala', 5, 0, 800.00, 15, 'ativo'), -- 21 Móveis para Sala
+(7, 'Cama Casal', 4, 0, 1200.00, 25, 'ativo'), -- 22 Móveis para Quarto
+(7, 'Conjunto de Panelas', 10, 0, 350.00, 5, 'ativo'), -- 23 Cozinha e Utensílios
+(7, 'Jogo de Cama Queen', 8, 0, 300.00, 3, 'ativo'), -- 24 Cama, Mesa e Banho
+(7, 'Kit Jardinagem', 15, 0, 200.00, 2, 'ativo'), -- 25 Jardim e Ferramentas
+(7, 'Kit de Maquiagem', 20, 0, 150.00, 0.5, 'ativo'), -- 26 Beleza e Cuidados Pessoais
+(7, 'Batom Matte', 50, 0, 35.00, 0.1, 'ativo'), -- 27 Maquiagem
+(7, 'Perfume Importado', 25, 0, 300.00, 0.3, 'ativo'), -- 28 Perfumes
+(7, 'Shampoo Profissional', 30, 0, 50.00, 0.5, 'ativo'), -- 29 Cabelos
+(7, 'Creme Hidratante', 40, 0, 60.00, 0.3, 'ativo'), -- 30 Cuidados com a Pele
+(7, 'Kit Barbearia', 20, 0, 150.00, 1, 'ativo'), -- 31 Barbearia e Cuidados Masculinos
+(7, 'Cesta de Alimentos', 15, 0, 200.00, 5, 'ativo'), -- 32 Alimentos e Bebidas
+(7, 'Frutas Frescas', 50, 0, 100.00, 10, 'ativo'), -- 33 Frutas e Verduras
+(7, 'Bandeja de Frios', 25, 0, 180.00, 3, 'ativo'), -- 34 Carnes e Frios
+(7, 'Suco Natural', 40, 0, 15.00, 1, 'ativo'), -- 35 Bebidas Não Alcoólicas
+(7, 'Vinho Tinto', 20, 0, 120.00, 1.5, 'ativo'), -- 36 Vinhos
+(7, 'Cerveja Artesanal', 30, 0, 20.00, 0.5, 'ativo'), -- 37 Cervejas
+(7, 'Chocolates Sortidos', 50, 0, 80.00, 2, 'ativo'), -- 38 Snacks e Doces
+(7, 'Bola de Futebol', 15, 0, 120.00, 0.6, 'ativo'), -- 39 Esportes e Fitness
+(7, 'Bicicleta MTB', 5, 0, 2500.00, 15, 'ativo'), -- 40 Bicicletas
+(7, 'Camisa de Time', 20, 0, 150.00, 0.3, 'ativo'), -- 41 Futebol
+(7, 'Tênis de Corrida', 25, 0, 300.00, 0.5, 'ativo'), -- 42 Corrida
+(7, 'Óculos de Natação', 30, 0, 60.00, 0.2, 'ativo'), -- 43 Natação
+(7, 'Halteres Ajustáveis', 10, 0, 400.00, 5, 'ativo'), -- 44 Academia e Musculação
+(7, 'Tapete de Yoga', 20, 0, 150.00, 1, 'ativo'), -- 45 Yoga e Pilates
+(7, 'Carrinho de Bebê', 8, 0, 1200.00, 12, 'ativo'), -- 46 Bebês, Crianças e Maternidade
+(7, 'Carrinho Infantil', 15, 0, 500.00, 5, 'ativo'), -- 47 Carrinhos de Bebê
+(7, 'Brinquedo Educativo', 30, 0, 80.00, 0.7, 'ativo'), -- 48 Brinquedos
+(7, 'Fraldas Descartáveis', 40, 0, 120.00, 2, 'ativo'), -- 49 Fraldas e Higiene
+(7, 'Macacão para Bebê', 20, 0, 100.00, 0.5, 'ativo'), -- 50 Roupas para Bebê
+(7, 'Suplementos Vitamínicos', 30, 0, 200.00, 1, 'ativo'), -- 51 Saúde e Bem-Estar
+(7, 'Vitaminas em Cápsulas', 40, 0, 150.00, 0.5, 'ativo'), -- 52 Vitaminas e Suplementos
+(7, 'Kit Primeiros Socorros', 15, 0, 100.00, 1, 'ativo'), -- 53 Primeiros Socorros
+(7, 'Equipamento Médico', 5, 0, 2000.00, 10, 'ativo'), -- 54 Equipamentos Médicos
+(7, 'Óleo de Motor', 20, 0, 100.00, 1, 'ativo'), -- 55 Automotivo e Industrial
+(7, 'Peça de Carro', 10, 0, 250.00, 2, 'ativo'), -- 56 Peças para Carros
+(7, 'Acessório Automotivo', 15, 0, 80.00, 0.5, 'ativo'), -- 57 Acessórios para Carros
+(7, 'Capacete de Moto', 8, 0, 300.00, 1, 'ativo'), -- 58 Motos
+(7, 'Pneu Aro 17', 12, 0, 400.00, 10, 'ativo'), -- 59 Pneus e Rodas
+(7, 'Ração para Cães', 30, 0, 120.00, 5, 'ativo'), -- 60 Animais de Estimação
+(7, 'Petisco para Gatos', 40, 0, 50.00, 1, 'ativo'), -- 61 Rações
+(7, 'Cama para Cachorro', 15, 0, 200.00, 3, 'ativo'), -- 62 Petiscos
+(7, 'Brinquedo para Pet', 30, 0, 80.00, 0.5, 'ativo'), -- 63 Camas e Arranhadores
+(7, 'Aquário 30L', 5, 0, 300.00, 5, 'ativo'), -- 64 Brinquedos para Pets
+(7, 'Kit Peixes Tropicais', 10, 0, 150.00, 2, 'ativo'), -- 65 Aquarismo
+(7, 'Furadeira Elétrica', 10, 0, 400.00, 5, 'ativo'), -- 66 Ferramentas e Construção
+(7, 'Parafusadeira', 15, 0, 250.00, 3, 'ativo'), -- 67 Ferramentas Elétricas
+(7, 'Martelo Manual', 20, 0, 50.00, 1, 'ativo'), -- 68 Ferramentas Manuais
+(7, 'Cimento 50kg', 30, 0, 40.00, 50, 'ativo'), -- 69 Materiais de Construção
+(7, 'Tinta Acrílica', 25, 0, 100.00, 15, 'ativo'), -- 70 Tintas
+(7, 'Luvas de Segurança', 20, 0, 30.00, 0.5, 'ativo'), -- 71 Segurança do Trabalho
+(7, 'Kit de Lazer', 15, 0, 300.00, 5, 'ativo'), -- 72 Lazer, Hobbies e Entretenimento
+(7, 'Livro de Romance', 30, 0, 50.00, 0.5, 'ativo'), -- 73 Livros
+(7, 'Console PlayStation 5', 5, 0, 4500.00, 5, 'ativo'), -- 74 Videogames
+(7, 'Jogo de Tabuleiro', 20, 0, 150.00, 1, 'ativo'), -- 75 Jogos de Tabuleiro
+(7, 'Violão Acústico', 10, 0, 600.00, 3, 'ativo'), -- 76 Instrumentos Musicais
+(7, 'Kit de Artesanato', 15, 0, 200.00, 2, 'ativo'), -- 77 Artesanato
+(7, 'Caderno Universitário', 30, 0, 20.00, 0.5, 'ativo'), -- 78 Papelaria, Escritório e Escola
+(7, 'Lápis de Cor', 50, 0, 15.00, 0.2, 'ativo'), -- 79 Materiais Escolares
+(7, 'Cartucho de Impressora', 20, 0, 250.00, 0.5, 'ativo'), -- 80 Impressoras e Suprimentos
+(7, 'Cadeira de Escritório', 5, 0, 450.00, 15, 'ativo'), -- 81 Móveis de Escritório
+(7, 'Mala de Viagem', 15, 0, 300.00, 5, 'ativo'), -- 82 Viagem e Bagagem
+(7, 'Mala Executiva', 10, 0, 400.00, 6, 'ativo'), -- 83 Malas
+(7, 'Mochila de Viagem', 20, 0, 250.00, 2, 'ativo'), -- 84 Mochilas de Viagem
+(7, 'Kit de Acessórios de Viagem', 15, 0, 150.00, 1, 'ativo'), -- 85 Acessórios de Viagem
+(7, 'Decoração para Eventos', 10, 0, 200.00, 2, 'ativo'), -- 86 Eventos e Festas
+(7, 'Artigos para Casamento', 8, 0, 300.00, 3, 'ativo'), -- 87 Artigos para Casamento
+(7, 'Balões e Decoração', 20, 0, 100.00, 1, 'ativo'), -- 88 Decoração de Festas
+(7, 'Fantasia Infantil', 15, 0, 150.00, 1, 'ativo'), -- 89 Fantasias
+(7, 'Enfeites de Natal', 10, 0, 80.00, 1, 'ativo'); -- 90 Decoração Sazonal
+
+insert into tbImagemProduto (IdProduto, S3Key, IsPrincipal) values 
+(16, 's24.png', 1);
 
 insert into tbCategoria_Produto (IdCategoria, IdProduto) values
 (73, 1),(72, 1),
@@ -391,7 +504,95 @@ insert into tbCategoria_Produto (IdCategoria, IdProduto) values
 (4, 12),(1, 12),(5, 12),
 (4, 13),(1, 13),
 (4, 14),(1, 14),
-(7, 15),(3, 15);
+(7, 15),(3, 15),
+(1, 16), (2, 16), (3, 16),
+(1, 17), (2, 17), (3, 17),
+(2, 18), (3, 18),
+(4, 19), (5, 19),
+(4, 20), (5, 20),
+(1, 21), (6, 21),
+(1, 22), (7, 22),
+(1, 23), (8, 23),
+(9, 24), (11, 24),
+(9, 25), (10, 25),
+(9, 26), (11, 26),
+(9, 27), (12, 27),
+(9, 28), (13, 28),
+(13, 29), (14, 29),
+(9, 30), (15, 30),
+(16, 31), (17, 31),
+(16, 32), (17, 32),
+(18, 33), (19, 33),
+(18, 34), (19, 34),
+(18, 36), (21, 36),
+(18, 37), (22, 37),
+(18, 38), (23, 38),
+(18, 39), (24, 39),
+(18, 40), (25, 40),
+(26, 41), (27, 41),
+(26, 42), (27, 42),
+(26, 43), (28, 43),
+(26, 44), (29, 44),
+(26, 45), (30, 45),
+(26, 46), (31, 46),
+(32, 47), (33, 47),
+(32, 48), (33, 48),
+(32, 49), (34, 49),
+(32, 50), (35, 50),
+(32, 51), (36, 51),
+(32, 52), (37, 52),
+(32, 53), (38, 53),
+(39, 54), (42, 54),
+(39, 55), (40, 55),
+(39, 56), (41, 56),
+(39, 57), (42, 57),
+(42, 58), (43, 58),
+(44, 59), (45, 59),
+(44, 60), (45, 60),
+(46, 61), (47, 61),
+(46, 62), (47, 62),
+(46, 63), (48, 63),
+(46, 65), (50, 65),
+(51, 66), (52, 66),
+(51, 67), (52, 67),
+(51, 68), (53, 68),
+(51, 69), (54, 69),
+(55, 70), (56, 70),
+(55, 71), (56, 71),
+(55, 72), (57, 72),
+(55, 73), (58, 73),
+(55, 74), (59, 74),
+(60, 75), (61, 75),
+(60, 76), (61, 76),
+(60, 77), (62, 77),
+(60, 78), (63, 78),
+(60, 79), (64, 79),
+(60, 80), (65, 80),
+(66, 81), (67, 81),
+(66, 82), (67, 82),
+(66, 83), (68, 83),
+(66, 84), (69, 84),
+(66, 85), (70, 85),
+(66, 86), (71, 86),
+(72, 87), (73, 87),
+(72, 88), (73, 88),
+(72, 89), (74, 89),
+(72, 90), (75, 90),
+(72, 91), (76, 91),
+(72, 92), (77, 92),
+(78, 93), (79, 93),
+(78, 94), (79, 94),
+(78, 95), (80, 95),
+(78, 96), (81, 96),
+(82, 97), (83, 97),
+(82, 98), (83, 98),
+(82, 99), (84, 99),
+(82, 100), (85, 100),
+(86, 101), (87, 101),
+(86, 102), (87, 102),
+(86, 103), (88, 103),
+(86, 104), (89, 104),
+(86, 105), (90, 105);
 
 insert into tbCartao (IdCliente, NumeroCartao, Bandeira, Modalidade, DataValidade, NomeTitular) values
 (1, '4111111111111111', 'Visa', 0, '2027-05-01', 'GILMAR JÚNIOR'),
@@ -418,7 +619,10 @@ insert into tbEmpresa_Parceira (idempresa, cnpj) values
 (6, 05570714000159);
 
 insert into tbLista_Desejo (idcliente, idproduto) values 
-(1, 1);
+(1, 1),
+(2, 34),(2, 12),(2, 76),(2, 100),
+(3, 10),(3, 29),(3, 53),(3, 54),(3, 55),(3, 101),
+(4, 34),(4, 88),(4, 40);
 
 insert into tbCarrinho (idcliente, idproduto, quantidade) values
 (1, 1, 1),
@@ -432,12 +636,23 @@ update tbPergunta set resposta = "2018" where idpergunta = 1;
 
 insert into tbPedido (idcomprador, idenderecoentrega) values 
 (1, 2),
-(3, 5);
+(3, 5),
+(1, 2),
+(2, 4),
+(3, 5),
+(4, 6);
 
 insert into tbProduto_Pedido (idpedido, idproduto, quantidade, tipoentrega, valor, frete) values
 (1, 1, 1, 0, 25, 10),
-(2, 3, 1, 1, 39.99, 5),
-(2, 9, 2, 1, 79.90, 5);
+(2, 3, 1, 1, 39.99, 5),(2, 9, 2, 1, 79.90, 5),
+(3, 16, 1, 1, 200, 5),(3, 67, 1, 1, 200, 5),(3, 100, 1, 1, 200, 5),(3, 32, 1, 1, 200, 5),
+(4, 16, 1, 1, 200, 5),(4, 67, 1, 1, 200, 5),(4, 100, 1, 1, 200, 5),
+(5, 16, 1, 1, 200, 5),(5, 67, 1, 1, 200, 5),
+(6, 16, 1, 1, 200, 5);
+
+update tbProduto set quantidade = (quantidade - 1), `status` = "inativo" where IdProduto = 1;
+update tbProduto set quantidade = (quantidade - 1) where IdProduto = 3;
+update tbProduto set quantidade = (quantidade - 2) where IdProduto = 9;
 
 update tbPedido set total = 25, frete = 10 where idpedido = 1;
 update tbPedido set total = 119.89, frete = 6 where idpedido = 2;
@@ -545,7 +760,17 @@ insert into tbProduto_Cd (idcd, idproduto, quantidade) values
 
 insert into tbLista_Desejo (idcliente, idproduto) values (4, 13);
 
-insert into tbPromocao (idproduto, desconto, validaate) values (13, 20, null);
+insert into tbPromocao (idproduto, desconto, validaate) values 
+(13, 20, null),
+(56, 15, null),
+(42, 20, null),
+(90, 12, null),
+(80, 20, null),
+(34, 10, null),
+(23, 20, null),
+(78, 20, null),
+(101, 25, null),
+(110, 20, null);
 
 insert into tbNotificacao_Cliente (idnotificacao, idcliente, idcontexto) values (2, 4, 13);
 
