@@ -2,6 +2,8 @@ using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Refit;
 using SelectaAPI.Database;
+using SelectaAPI.Integracao;
+using SelectaAPI.Integracao.Interfaces;
 using SelectaAPI.Integracao.Refit;
 
 Env.Load();
@@ -20,6 +22,7 @@ Console.WriteLine("Database: " + Environment.GetEnvironmentVariable("DATABASE"))
 // Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>();
 
 builder.Services.AddRefitClient<IViaCepIntegracaoRefit>().ConfigureHttpClient(c =>
 {

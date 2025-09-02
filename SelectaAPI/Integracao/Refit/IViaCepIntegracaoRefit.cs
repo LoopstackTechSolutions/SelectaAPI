@@ -5,7 +5,7 @@ namespace SelectaAPI.Integracao.Refit
 {
     public interface IViaCepIntegracaoRefit
     {
-        [Get("ws/{cep}/json/")]
+        [Get("/ws/{cep}/json/")]
         Task<ApiResponse<AddAdressWithAPI>> GetData(string cep);
     }
 }

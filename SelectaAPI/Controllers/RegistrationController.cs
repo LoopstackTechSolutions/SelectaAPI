@@ -107,6 +107,7 @@ namespace SelectaAPI.Controllers
 
         }
         */
+        
 
         [HttpPost("category-client-register")]
         public async Task<IActionResult> CategoryClientRegister(AddCategory_ClientDTO addCategoryClient)
