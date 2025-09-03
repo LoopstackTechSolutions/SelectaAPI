@@ -522,7 +522,7 @@ FodyWeavers.xsd
 *.msp
 
 #secret
-.env
+.env 
 
 # JetBrains Rider
 
