@@ -521,6 +521,9 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
+#secret
+.env
+
 # JetBrains Rider
 
 ### VisualStudio Patch ###
