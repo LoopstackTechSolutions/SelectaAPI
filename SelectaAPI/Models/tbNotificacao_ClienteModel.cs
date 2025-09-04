@@ -11,8 +11,8 @@ namespace SelectaAPI.Models
         public int IdNotificacao { get; set; }
         public int IdCliente { get; set; }
         public int IdContexto { get; set; }
-        public DateTime DataCriacao { get; set; } = DateTime.Now;
-        public bool IsLida { get; set; } = false;
+        public DateTime? DataCriacao { get; set; } = DateTime.Now;
+        public bool? IsLida { get; set; } = false;
         [ForeignKey("IdNotificacao")]
         public tbNotificacaoModel Notificacao { get; set; }
         [ForeignKey("IdCliente")]
