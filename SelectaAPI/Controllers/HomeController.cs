@@ -5,6 +5,7 @@ using Mysqlx;
 using Org.BouncyCastle.Asn1.IsisMtt.X509;
 using SelectaAPI.Database;
 using SelectaAPI.Models;
+using SelectaAPI.Services;
 using System.Linq;
 
 namespace SelectaAPI.Controllers
@@ -13,11 +14,11 @@ namespace SelectaAPI.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly HomeService _homeService;
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(HomeService homeService)
         {
-            _context = context;
+            _homeService = homeService;
         }
 
         [HttpGet("all")]
@@ -25,33 +26,26 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                var produtos = await _context.produtos
-                    .Select(p => new
-                    {
-                        p.IdProduto,
-                        p.Nome,
-                        Quantidade = p.Quantidade ?? 0,
-                        p.PrecoUnitario,
-                        p.Condicao,
-                        Peso = p.Peso ?? 0,
-                        p.Status,
-                        IdVendedor = p.IdVendedor ?? 0
-                    })
-                    .ToListAsync();
-
-                return Ok(produtos);
+                var products = await _homeService.GetAll();
+                return Ok(products);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                return StatusCode(500, ex.Message);
+                return StatusCode(500,$" erro no servidor{ex.Message}" );
             }
         }
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] string name)
+        public async Task<IActionResult> Search([FromQuery]string name)
         {
-            var search = await _context.produtos.Where(p => EF.Functions.Like(p.Nome, $"%{name}%")).ToListAsync();
-            return Ok(search);
+            try
+            {
+                var search = await _homeService.Search(name);
+                return Ok(search);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $" erro no servidor{ex.Message}");
+            }
         }
 
         [HttpGet("highlights")]

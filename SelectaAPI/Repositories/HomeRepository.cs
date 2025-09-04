@@ -122,28 +122,46 @@ namespace SelectaAPI.Repository
 
         public async Task<IEnumerable<tbProdutoModel>> BestSellers()
         {
-                var bestSellers = await _context.produtosPedidos.GroupBy(pp => pp.IdProduto)
-                   .Select(bs => new
-                   {
-                       IdProduto = bs.Key,
-                       quantitySold = bs.Sum(pp => pp.Quantidade)
-                   })
-                   .OrderByDescending(bs => bs.quantitySold)
-                   .Join(_context.produtos,
-                        bs => bs.IdProduto,
-                         p => p.IdProduto,
-                        (bs, p) => new tbProdutoModel
-                        {
-                            IdProduto = p.IdProduto,
-                           Nome = p.Nome,
-                          Peso = p.Peso,
-                          Condicao = p.Condicao,
-                          PrecoUnitario =  p.PrecoUnitario,
-                           Quantidade = bs.quantitySold
-                        }).
-              Take(20)
-             .ToListAsync();
+            var bestSellers = await _context.produtosPedidos.GroupBy(pp => pp.IdProduto)
+               .Select(bs => new
+               {
+                   IdProduto = bs.Key,
+                   quantitySold = bs.Sum(pp => pp.Quantidade)
+               })
+               .OrderByDescending(bs => bs.quantitySold)
+               .Join(_context.produtos,
+                    bs => bs.IdProduto,
+                     p => p.IdProduto,
+                    (bs, p) => new tbProdutoModel
+                    {
+                        IdProduto = p.IdProduto,
+                        Nome = p.Nome,
+                        Peso = p.Peso,
+                        Condicao = p.Condicao,
+                        PrecoUnitario = p.PrecoUnitario,
+                        Quantidade = bs.quantitySold
+                    }).
+          Take(20)
+         .ToListAsync();
             return bestSellers;
+        }
+        public async Task<IEnumerable<tbProdutoModel>> GetAll()
+        {
+            var produtos = await _context.produtos
+                .Select(p => new tbProdutoModel
+                {
+                    IdProduto = p.IdProduto,
+                    Nome = p.Nome,
+                    Quantidade = p.Quantidade ?? 0,
+                    PrecoUnitario = p.PrecoUnitario,
+                    Condicao = p.Condicao,
+                    Peso = p.Peso ?? 0,
+                    Status = p.Status,
+                    IdVendedor = p.IdVendedor ?? 0
+                })
+                .ToListAsync();
+
+            return produtos;
         }
     }
 }
