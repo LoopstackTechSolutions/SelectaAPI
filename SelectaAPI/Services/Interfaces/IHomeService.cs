@@ -11,5 +11,6 @@ namespace SelectaAPI.Services.Interfaces
         Task<IEnumerable<ProductsWithPromotionDTO>> Highlights();
         Task<IEnumerable<NotificationForClientDTO>> Notifications(int id);
         Task<IEnumerable<tbProdutoModel>> BestSellers();
+        Task<IEnumerable<tbProdutoModel>> GetAll();
     }
 }

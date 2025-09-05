@@ -10,11 +10,6 @@ namespace SelectaAPI.Database
         {
 
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<tbCategoria_ProdutoModel>()
-                  .HasKey(m => new { m.IdCategoria, m.IdProduto });
-        }
 
         public DbSet<tbProdutoModel> produtos { get; set; }
         public DbSet<tbPromocaoModel> promocoes { get; set; }

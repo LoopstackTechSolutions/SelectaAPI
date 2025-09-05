@@ -5,25 +5,26 @@ using SelectaAPI.Models;
 using SelectaAPI.DTOs;
 using Microsoft.EntityFrameworkCore;
 using MySqlX.XDevAPI;
+using SelectaAPI.Repository.Interfaces;
+using SelectaAPI.Services.Interfaces;
 
 
 namespace SelectaAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("selectaAPI/[controller]")]
     [ApiController]
     public class RegistrationController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-
-        public RegistrationController(ApplicationDbContext context)
+        private readonly IRegistrationService _registrationService;
+        public RegistrationController(IRegistrationService registrationService)
         {
-            _context = context;
+            _registrationService = registrationService;
         }
 
         [HttpPost("client-register")]
         public async Task<IActionResult> ClientRegister(AddClientDTO addClientDTO)
         {
-            if (addClientDTO == null)
+            if (!ModelState.IsValid)
                 return BadRequest("Os dados do cliente não foram enviados.");
 
             if (string.IsNullOrWhiteSpace(addClientDTO.Nome) ||
@@ -33,25 +34,15 @@ namespace SelectaAPI.Controllers
                 return BadRequest("Preencha todos os campos obrigatórios: Nome, Email e Senha.");
             }
 
-            var entityClient = new tbClienteModel()
-            {
-                Nome = addClientDTO.Nome.Trim(),
-                Email = addClientDTO.Email.Trim(),
-                Senha = addClientDTO.Senha.Trim()
-            };
-
             try
             {
-                var verification = await _context.clientes
-                    .FirstOrDefaultAsync(c => c.Email == entityClient.Email);
-
-                if (verification != null)
-                    return BadRequest("Este e-mail já está cadastrado.");
-
-                await _context.clientes.AddAsync(entityClient);
-                await _context.SaveChangesAsync();
-
+                var clientRegister = await _registrationService.ClientRegister(addClientDTO);
                 return Ok("Cliente cadastrado com sucesso!");
+            }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
             }
             catch (Exception ex)
             {
@@ -68,29 +59,17 @@ namespace SelectaAPI.Controllers
                 || string.IsNullOrEmpty(addEmployeeDTO.NivelAcesso)
                 )
             {
-                return StatusCode(400, "Necessário preencher todas as informações");
+                return BadRequest("Necessário preencher todas as informações");
             }
 
-            if (!addEmployeeDTO.Cpf.All(char.IsDigit) || addEmployeeDTO.Cpf.Length < 11 || addEmployeeDTO.Cpf.Length > 11) return StatusCode(400, "CPF inválido");
-
-            var entityEmployee = new tbFuncionarioModel()
-            {
-                Nome = addEmployeeDTO.Nome.Trim(),
-                Senha = addEmployeeDTO.Senha.Trim(),
-                Email = addEmployeeDTO.Email.Trim(),
-                Cpf = addEmployeeDTO.Cpf.Trim(),
-                NivelAcesso = addEmployeeDTO.NivelAcesso.Trim()
-            };
+            if (!addEmployeeDTO.Cpf.All(char.IsDigit) || addEmployeeDTO.Cpf.Length < 11 || addEmployeeDTO.Cpf.Length > 11) return BadRequest("CPF inválido");
 
             try
             {
-                var verification = await _context.funcionarios.FirstOrDefaultAsync(f => f.Cpf == entityEmployee.Cpf || f.Email == entityEmployee.Email);
-                if (verification != null) return StatusCode(400, "Cpf ou Email ja cadastrados no sistema");
-
-                await _context.funcionarios.AddAsync(entityEmployee);
-                await _context.SaveChangesAsync();
-                return StatusCode(200, "sucesso ao cadastrar funcionário");
+                var employeeRegister = await _registrationService.EmployeeRegister(addEmployeeDTO);
+                return Ok("sucesso ao cadastrar funcionário");
             }
+
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
@@ -108,42 +87,20 @@ namespace SelectaAPI.Controllers
         }
         */
         
-
         [HttpPost("category-client-register")]
         public async Task<IActionResult> CategoryClientRegister(AddCategory_ClientDTO addCategoryClient)
         {
             try
             {
-                var cliente = await _context.clientes.FindAsync(addCategoryClient.IdCliente);
-                if (cliente == null)
-                    return NotFound("Cliente não encontrado.");
-
-                var categoria = await _context.categorias.FindAsync(addCategoryClient.IdCategoria);
-                if (categoria == null)
-                    return NotFound("Categoria não encontrada.");
-
-                var exists = await _context.categoriaClientes
-                    .AnyAsync(cc => cc.IdCliente == addCategoryClient.IdCliente && cc.IdCategoria == addCategoryClient.IdCategoria);
-
-                if (exists)
-                    return BadRequest("Essa categoria já foi vinculada ao cliente.");
-
-                var categoriaCliente = new tbCategoria_Cliente
-                {
-                    IdCategoria = addCategoryClient.IdCategoria,
-                    IdCliente = addCategoryClient.IdCliente
-                };
-
-                _context.categoriaClientes.Add(categoriaCliente);
-                await _context.SaveChangesAsync();
-
-                return Ok(new
-                {
-                    Message = "Categoria vinculada ao cliente com sucesso!",
-                    categoriaCliente.IdCategoria,
-                    categoriaCliente.IdCliente
-                });
+               var categoryClientRegister = await _registrationService.CategoryClientRegister(addCategoryClient);
+                return Ok("categoria registrada");
             }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);

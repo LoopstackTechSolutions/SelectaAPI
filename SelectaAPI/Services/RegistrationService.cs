@@ -1,7 +1,36 @@
-﻿namespace SelectaAPI.Services
-{
-    public class RegistrationService
-    {
+﻿using Microsoft.EntityFrameworkCore;
+using SelectaAPI.Database;
+using SelectaAPI.DTOs;
+using SelectaAPI.Repository.Interfaces;
+using SelectaAPI.Services.Interfaces;
 
+namespace SelectaAPI.Services
+{
+    public class RegistrationService : IRegistrationService
+    {
+        private readonly IRegistrationRepository _registrationRepository;
+
+        public RegistrationService(IRegistrationRepository registrationRepository)
+        {
+            _registrationRepository = registrationRepository;
+        }
+
+        public async Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryDTO)
+        {
+           var categoryClientRegister = await _registrationRepository.CategoryClientRegister(addCategoryDTO);
+            return categoryClientRegister;
+        }
+
+        public async Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO)
+        {
+            var clientRegister = await _registrationRepository.ClientRegister(addClientDTO);
+            return clientRegister;
+        }
+
+        public async Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
+        {
+            var employeeRegister = await _registrationRepository.EmployeeRegister(addEmployeeDTO);
+            return employeeRegister;
+        }
     }
 }

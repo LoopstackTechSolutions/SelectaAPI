@@ -42,6 +42,10 @@ namespace SelectaAPI.Controllers
                 var search = await _homeService.Search(name);
                 return Ok(search);
             }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $" erro no servidor{ex.Message}");
@@ -56,6 +60,11 @@ namespace SelectaAPI.Controllers
                 var highlights = await _homeService.Highlights();
                 return Ok(highlights);
             }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
             catch (Exception ex)
             {
                 return StatusCode(500, $" erro no servidor{ex.Message}");
@@ -69,6 +78,11 @@ namespace SelectaAPI.Controllers
                 var wishList = await _homeService.WishList(id);
                 return Ok(wishList);
             }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
             catch (Exception ex)
             {
                 return StatusCode(500, $" erro no servidor{ex.Message}");
@@ -82,6 +96,11 @@ namespace SelectaAPI.Controllers
                 var forYou = await _homeService.ForYou(id);
                 return Ok(forYou);
             }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
@@ -95,6 +114,12 @@ namespace SelectaAPI.Controllers
                 var notifications = await _homeService.Notifications(id);
                 return Ok(notifications);
             }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
@@ -108,6 +133,12 @@ namespace SelectaAPI.Controllers
                 var bestSellers  = await _homeService.BestSellers();
                 return Ok(bestSellers);
             }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);

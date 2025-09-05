@@ -15,25 +15,37 @@ namespace SelectaAPI.Repository
         {
             _context = context;
         }
-        public async Task<ClientLoginDTO> ClientLogin([FromQuery] string email, string password)
+        public async Task<ClientLoginDTO> ClientLogin(string email, string password)
         {
-            var verification = await _context.clientes.Select(c => new ClientLoginDTO
-            {
-                Email = email,
-                Senha = password
-            })
-           .FirstOrDefaultAsync(c => c.Email == email && c.Senha == password);
+            Console.WriteLine($"Email recebido: '{email}'");
+            Console.WriteLine($"Senha recebida: '{password}'");
+
+            var verification = await _context.clientes
+                .Where(f => f.Email.ToLower().Trim() == email.ToLower().Trim()
+                         && f.Senha.Trim() == password.Trim())
+                .Select(f => new ClientLoginDTO
+                {
+                    Email = f.Email,
+                    Senha = f.Senha
+                })
+                .FirstOrDefaultAsync();
+
             return verification;
         }
 
-        public async Task<EmployeeLoginDTO> EmployeeLogin([FromQuery] string email, string password)
+
+        public async Task<EmployeeLoginDTO> EmployeeLogin([FromQuery]string email, string password)
         {
-            var verification = await _context.funcionarios.Select(f => new EmployeeLoginDTO
-            {
-                Email = email,
-                Senha = password
-            })
-           .FirstOrDefaultAsync(c => c.Email == email && c.Senha == password);
+            var verification = await _context.funcionarios
+                .Where(f => f.Email.ToLower().Trim() == email.ToLower().Trim()
+                         && f.Senha.Trim() == password.Trim())
+                .Select(f => new EmployeeLoginDTO
+                {
+                    Email = f.Email,
+                    Senha = f.Senha
+                })
+                .FirstOrDefaultAsync();
+
             return verification;
         }
     }

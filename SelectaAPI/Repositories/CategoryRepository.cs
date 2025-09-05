@@ -1,6 +1,27 @@
-﻿namespace SelectaAPI.Repository
+﻿using Microsoft.EntityFrameworkCore;
+using SelectaAPI.Database;
+using SelectaAPI.Models;
+using SelectaAPI.Repository.Interfaces;
+
+namespace SelectaAPI.Repository
 {
-    public class CategoryRepository
+    public class CategoryRepository : ICategoryRepository
     {
+        private readonly ApplicationDbContext _context;
+
+        public CategoryRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<tbCategoriaModel>> GetAllCategories()
+        {
+            var getAll = await _context.categorias.Select(c => new
+            {
+               c.IdCategoria,
+                c.Nome
+            }).ToListAsync();
+            return (IEnumerable<tbCategoriaModel>)getAll;
+        }
     }
 }

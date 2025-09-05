@@ -23,6 +23,8 @@ namespace SelectaAPI.Controllers
         {
             try
             {
+                Console.WriteLine($"Email recebido: '{email}'");
+                Console.WriteLine($"Senha recebida: '{password}'");
                 if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email)) return StatusCode(400, "preencha todos os campos");
 
                 var clientLogin = await _loginService.ClientLogin(email, password);
@@ -30,6 +32,10 @@ namespace SelectaAPI.Controllers
                 if (clientLogin == null) return StatusCode(400, "usuário inválido");
 
                 return Ok(clientLogin);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
             }
             catch (Exception ex)
             {
@@ -39,13 +45,15 @@ namespace SelectaAPI.Controllers
         [HttpPost("employee-login")]
         public async Task<IActionResult> EmployeeLogin([FromQuery]string email, string password)
         {
-            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email)) return StatusCode(400, "preencha todos os campos");
+            Console.WriteLine($"Email recebido: '{email}'");
+            Console.WriteLine($"Senha recebida: '{password}'");
+            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email)) return BadRequest("preencha todos os campos");
 
             var clientLogin = await _loginService.EmployeeLogin(email, password);
 
             if (clientLogin == null) return StatusCode(400, "usuário inválido");
 
-            return Ok(clientLogin);
+            return Ok("Login realizado!");
         }
     }
 }

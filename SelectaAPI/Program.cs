@@ -19,7 +19,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IHomeRepository, HomeRepository>();
+builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
 builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+
 
 string connectionString =
     $"Server={Environment.GetEnvironmentVariable("SERVER")};" +

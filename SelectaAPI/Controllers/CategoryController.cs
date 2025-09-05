@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
+using SelectaAPI.Services.Interfaces;
 
 namespace SelectaAPI.Controllers
 {
@@ -9,24 +10,21 @@ namespace SelectaAPI.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        public CategoryController(ApplicationDbContext context)
+        private readonly ICategoryService _categoryService;
+        public CategoryController(ICategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
+       
         [HttpGet("get-all-categories")]
-        public async Task<IActionResult> GetAllCategory()
+        public async Task<IActionResult> GetAllCategories()
         {
             try
             {
-                var getAll = await _context.categorias.Select(c => new
-                {
-                    c.IdCategoria,
-                    c.Nome
-                }).
-                ToListAsync();
+                var getAll = await _categoryService.GetAllCategories();
                 return Ok(getAll);
             }
+
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
