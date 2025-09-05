@@ -53,65 +53,32 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                var productsPromotion = await _context.promocoes
-             .Include(pp => pp.Produto)
-             .Select(pp => new
-             {
-                 IdProduto = pp.Produto.IdProduto,
-                 Nome = pp.Produto.Nome,
-                 PrecoUnitario = pp.Produto.PrecoUnitario,
-                 Condicao = pp.Produto.Condicao,
-                 Peso = pp.Produto.Peso ?? 0,
-                 Quantidade = pp.Produto.Quantidade ?? 0,
-                 Status = pp.Produto.Status,
-
-                 ValidaAte = pp.ValidaAte,
-                 Desconto = pp.Desconto
-             })
-             .OrderBy(pp => pp.Desconto)
-             .ToListAsync();
-
-                return Ok(productsPromotion);
+                var highlights = await _homeService.Highlights();
+                return Ok(highlights);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, $" erro no servidor{ex.Message}");
             }
         }
         [HttpGet("wish-list")]
-        public async Task<IActionResult> WishList([FromQuery] int id)
+        public async Task<IActionResult> WishList()
         {
             try
             {
-                var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
-                if (clientUsing == null)
-                {
-                    StatusCode(400, "Usuario não informado corretamente");
-                    return BadRequest("Usuario não encontrado");
-                }
-                else
-                {
-                    var clientList = await _context.listasDesejo.Where(l => l.IdCliente == id).
-                     Include(l => l.Produto).
-                     Select(l => new
-                     {
-                         l.Produto.IdProduto,
-                         l.Produto.Quantidade,
-                         l.Produto.Nome,
-                         l.Produto.PrecoUnitario,
-                         l.Produto.Condicao,
-                         l.Produto.Status,
-                         l.Produto.Peso
-                     }).
-                     ToListAsync();
-                    StatusCode(200, "lista de desejo sendo retornada");
-                    return Ok(clientList);
-                }
+                if(!User.Identity.IsAuthenticated) return Unauthorized(new { message = "Cliente não está logado"});
+
+                var clientLog = User.Claims.FirstOrDefault(c => c.Type == "id");
+                if (clientLog == null) return Unauthorized(new { message = "Id do cliente não encontrado." });
+
+                int id = int.Parse(clientLog.Value);
+
+                var wishList = await _homeService.WishList(id);
+                return Ok(wishList);
             }
             catch (Exception ex)
             {
-                StatusCode(500, "erro no servidor");
-                return BadRequest();
+                return StatusCode(500, $" erro no servidor{ex.Message}");
             }
         }
         [HttpGet("for-you")]
@@ -119,61 +86,8 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
-                if (clientUsing == null)
-                {
-                    StatusCode(400, "Usuario não informado corretamente");
-                    return BadRequest("Usuario não encontrado");
-                }
-
-                var purchased = await _context.pedidos
-                 .Where(p => p.IdComprador == id)
-                    .Select(p => p.IdPedido)
-                    .ToListAsync();
-
-                if (!purchased.Any())
-                    return Ok(new List<object>());
-
-                var purchasedProduct = await _context.produtosPedidos
-                    .Where(pp => purchased.Contains(pp.IdPedido))
-                    .Select(pp => pp.IdProduto)
-                    .Distinct()
-                    .ToListAsync();
-
-                if (!purchasedProduct.Any())
-                    return Ok(new List<object>());
-
-                var purchasedCategory = await _context.categoriasProdutos
-                    .Where(cp => purchasedProduct.Contains(cp.IdProduto))
-                    .Select(cp => cp.IdCategoria)
-                    .Distinct()
-                    .ToListAsync();
-
-                if (!purchasedCategory.Any())
-                    return Ok(new List<object>());
-
-                var recommendedProducts = await _context.categoriasProdutos
-                    .Where(cp => purchasedCategory.Contains(cp.IdCategoria)
-                                 && !purchasedProduct.Contains(cp.IdProduto))
-                    .Select(cp => cp.IdProduto)
-                    .Distinct()
-                    .Take(20)
-                    .ToListAsync();
-
-                var recommendationList = await _context.produtos
-                    .Where(p => recommendedProducts.Contains(p.IdProduto))
-                    .Select(p => new
-                    {
-                        p.IdProduto,
-                        p.Nome,
-                        p.PrecoUnitario,
-                        p.Peso,
-                        p.Condicao,
-                        p.Quantidade
-                    })
-                    .ToListAsync();
-
-                return Ok(recommendationList);
+                var forYou = await _homeService.ForYou(id);
+                return Ok(forYou);
             }
             catch (Exception ex)
             {
@@ -185,20 +99,7 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
-                if (clientUsing == null)
-                {
-                    StatusCode(400, "Usuario não informado corretamente");
-                    return BadRequest("Usuario não encontrado");
-                }
-                var notifications = await _context.notificacoesClientes.Where(nc => nc.IdCliente == id)
-                    .Select(nc => new
-                    {
-                        nc.DataCriacao,
-                        nc.Notificacao.Mensagem,
-                        nc.IsLida,
-                    }).ToListAsync();
-                StatusCode(200, "Notificação sendo mostrada");
+                var notifications = await _homeService.Notifications(id);
                 return Ok(notifications);
             }
             catch (Exception ex)
@@ -211,28 +112,7 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                var bestSellers = await _context.produtosPedidos.GroupBy(pp => pp.IdProduto)
-                   .Select(bs => new
-                   {
-                       IdProduto = bs.Key,
-                       quantitySold = bs.Sum(pp => pp.Quantidade)
-                   })
-                   .OrderByDescending(bs => bs.quantitySold)
-                   .Join(_context.produtos,
-                        bs => bs.IdProduto,
-                         p => p.IdProduto,
-                        (bs, p) => new
-                   {
-                    p.IdProduto,
-                    p.Nome,
-                    p.Peso,
-                    p.Condicao,
-                    p.PrecoUnitario,
-                    bs.quantitySold
-                   }).
-              Take(20)
-             .ToListAsync();
-
+                var bestSellers  = await _homeService.BestSellers();
                 return Ok(bestSellers);
             }
             catch (Exception ex)
