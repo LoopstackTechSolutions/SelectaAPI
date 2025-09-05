@@ -1,5 +1,5 @@
-using Amazon.S3;
 using Amazon.Extensions.NETCore.Setup;
+using Amazon.S3;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Refit;
@@ -7,10 +7,19 @@ using SelectaAPI.Database;
 using SelectaAPI.Integracao;
 using SelectaAPI.Integracao.Interfaces;
 using SelectaAPI.Integracao.Refit;
+using SelectaAPI.Repository;
+using SelectaAPI.Repository.Interfaces;
+using SelectaAPI.Services;
+using SelectaAPI.Services.Interfaces;
 
 Env.Load(); // carrega o .env logo no início
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IHomeRepository, HomeRepository>();
+builder.Services.AddScoped<IHomeService, HomeService>();
 
 string connectionString =
     $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
@@ -38,6 +47,8 @@ builder.Services.AddRefitClient<IViaCepIntegracaoRefit>().ConfigureHttpClient(c 
 {
     c.BaseAddress = new Uri("https://viacep.com.br/");
 });
+
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

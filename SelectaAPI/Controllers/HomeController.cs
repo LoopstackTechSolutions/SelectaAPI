@@ -5,7 +5,7 @@ using Mysqlx;
 using Org.BouncyCastle.Asn1.IsisMtt.X509;
 using SelectaAPI.Database;
 using SelectaAPI.Models;
-using SelectaAPI.Services;
+using SelectaAPI.Services.Interfaces;
 using System.Linq;
 
 namespace SelectaAPI.Controllers
@@ -14,9 +14,9 @@ namespace SelectaAPI.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
-        private readonly HomeService _homeService;
+        private readonly IHomeService _homeService;
 
-        public HomeController(HomeService homeService)
+        public HomeController(IHomeService homeService)
         {
             _homeService = homeService;
         }
@@ -62,17 +62,10 @@ namespace SelectaAPI.Controllers
             }
         }
         [HttpGet("wish-list")]
-        public async Task<IActionResult> WishList()
+        public async Task<IActionResult> WishList([FromQuery] int id)
         {
             try
             {
-                if(!User.Identity.IsAuthenticated) return Unauthorized(new { message = "Cliente não está logado"});
-
-                var clientLog = User.Claims.FirstOrDefault(c => c.Type == "id");
-                if (clientLog == null) return Unauthorized(new { message = "Id do cliente não encontrado." });
-
-                int id = int.Parse(clientLog.Value);
-
                 var wishList = await _homeService.WishList(id);
                 return Ok(wishList);
             }

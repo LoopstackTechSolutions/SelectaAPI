@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
+using SelectaAPI.Services.Interfaces;
 using System.Linq;
 
 namespace SelectaAPI.Controllers
@@ -10,66 +11,41 @@ namespace SelectaAPI.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ILoginService _loginService;
 
-        public LoginController(ApplicationDbContext context)
+        public LoginController(ILoginService loginService)
         {
-            _context = context;
+            _loginService = loginService;
         }
 
         [HttpPost("client-login")]
-        public async Task<IActionResult> ClientLogin(string email, string password)
+        public async Task<IActionResult> ClientLogin([FromQuery] string email, string password)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-            {
-                StatusCode(400, "email ou senha vazios");
-                return BadRequest();
-            }
-
             try
             {
-                var verification = await _context.clientes
-               .FirstOrDefaultAsync(c => c.Email == email && c.Senha == password);
+                if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email)) return StatusCode(400, "preencha todos os campos");
 
-                if (verification != null)
-                {
-                    StatusCode(200, "login realizado");
-                    return Ok(verification);
-                }
+                var clientLogin = await _loginService.ClientLogin(email, password);
 
-                return StatusCode(400, "erro ao realizar o login");
+                if (clientLogin == null) return StatusCode(400, "usuário inválido");
+
+                return Ok(clientLogin);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, $" erro no servidor{ex.Message}");
             }
-            }
+        }
         [HttpPost("employee-login")]
-        public async Task<IActionResult> EmployeeLogin(string email, string password)
+        public async Task<IActionResult> EmployeeLogin([FromQuery]string email, string password)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-            {
-                StatusCode(400, "email ou senha vazios");
-                return BadRequest();
-            }
+            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email)) return StatusCode(400, "preencha todos os campos");
 
-            try
-            {
-                var verification = await _context.funcionarios
-               .FirstOrDefaultAsync(c => c.Email == email && c.Senha == password);
+            var clientLogin = await _loginService.EmployeeLogin(email, password);
 
-                if (verification != null)
-                {
-                    StatusCode(200, "login realizado");
-                    return Ok(verification);
-                }
+            if (clientLogin == null) return StatusCode(400, "usuário inválido");
 
-                return StatusCode(400, "erro ao realizar o login");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok(clientLogin);
         }
     }
 }
