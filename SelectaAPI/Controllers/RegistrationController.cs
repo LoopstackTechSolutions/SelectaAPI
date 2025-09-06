@@ -52,7 +52,7 @@ namespace SelectaAPI.Controllers
         [HttpPost("employee-register")]
         public async Task<IActionResult> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
         {
-            if (addEmployeeDTO == null) return StatusCode(400, "preencha os campos");
+            if (addEmployeeDTO == null) return BadRequest("preencha os campos");
 
             if (string.IsNullOrEmpty(addEmployeeDTO.Nome) || string.IsNullOrEmpty(addEmployeeDTO.Email)
                 || string.IsNullOrEmpty(addEmployeeDTO.Cpf) || string.IsNullOrEmpty(addEmployeeDTO.Senha)

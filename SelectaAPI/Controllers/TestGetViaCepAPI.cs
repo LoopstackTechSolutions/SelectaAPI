@@ -6,7 +6,7 @@ using SelectaAPI.Integracao.Interfaces;
 namespace SelectaAPI.Controllers
 {
     [Route("selectaAPI/[controller]")]
-    [ApiController]
+        [ApiController]
     public class TestGetViaCepAPI : ControllerBase
     {
         private readonly IViaCepIntegracao _viaCepIntegracao;

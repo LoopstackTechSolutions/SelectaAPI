@@ -25,13 +25,13 @@ namespace SelectaAPI.Controllers
             {
                 Console.WriteLine($"Email recebido: '{email}'");
                 Console.WriteLine($"Senha recebida: '{password}'");
-                if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email)) return StatusCode(400, "preencha todos os campos");
+                if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email)) return BadRequest("preencha todos os campos");
 
                 var clientLogin = await _loginService.ClientLogin(email, password);
 
-                if (clientLogin == null) return StatusCode(400, "usuário inválido");
+                if (clientLogin == null) return BadRequest("usuário inválido");
 
-                return Ok(clientLogin);
+                return Ok("login realizado");
             }
             catch (DbUpdateException ex)
             {
