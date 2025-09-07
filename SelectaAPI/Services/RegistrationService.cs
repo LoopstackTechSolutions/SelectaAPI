@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Repository.Interfaces;
@@ -28,9 +29,23 @@ namespace SelectaAPI.Services
         }
 
         public async Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
-        {
+        {     
             var employeeRegister = await _registrationRepository.EmployeeRegister(addEmployeeDTO);
             return employeeRegister;
         }
+        // TRECHO TESTE
+        /*
+        public async Task<IEnumerable<GetClientDTO>> GetClient()
+        {
+            var getClient = await _registrationRepository.GetClient();
+            return getClient;
+        }
+        
+        public async Task<IEnumerable<GetEmployeeDTO>> GetEmployee()
+        {
+            var getEmployee = await _registrationRepository.GetEmployee();
+            return getEmployee;
+        }
+        */
     }
 }

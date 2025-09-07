@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MySqlX.XDevAPI;
 using SelectaAPI.Repository.Interfaces;
 using SelectaAPI.Services.Interfaces;
+using Amazon.Runtime.Internal;
 
 
 namespace SelectaAPI.Controllers
@@ -86,13 +87,13 @@ namespace SelectaAPI.Controllers
 
         }
         */
-        
+
         [HttpPost("category-client-register")]
         public async Task<IActionResult> CategoryClientRegister(AddCategory_ClientDTO addCategoryClient)
         {
             try
             {
-               var categoryClientRegister = await _registrationService.CategoryClientRegister(addCategoryClient);
+                var categoryClientRegister = await _registrationService.CategoryClientRegister(addCategoryClient);
                 return Ok("categoria registrada");
             }
 
@@ -106,6 +107,21 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+        // TRECHO TESTE
+        /*
+        [HttpGet("get-client")]
+        public async Task<IActionResult> GetClient()
+        {
+            var getClient = await _registrationService.GetClient();
+            return Ok(getClient);   
         }
+
+        [HttpGet("get-employee")]
+        public async Task<IActionResult> GetEmployee()
+        {
+            var getEmployee = await _registrationService.GetEmployee();
+            return Ok(getEmployee);
+        }
+        */
     }
+}

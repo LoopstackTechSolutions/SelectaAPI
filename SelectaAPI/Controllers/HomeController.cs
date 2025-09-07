@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Mysqlx;
 using Org.BouncyCastle.Asn1.IsisMtt.X509;
 using SelectaAPI.Database;
+using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Services.Interfaces;
 using System.Linq;
@@ -143,6 +144,8 @@ namespace SelectaAPI.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+
+
 
         }
     }

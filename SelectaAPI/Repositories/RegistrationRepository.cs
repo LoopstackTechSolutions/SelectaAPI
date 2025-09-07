@@ -72,6 +72,26 @@ namespace SelectaAPI.Repository
 
                  return addEmployeeDTO;
             }
+
+        /*
+        public async Task<IEnumerable<GetClientDTO>> GetClient()
+        {
+            var getClient = await _context.clientes.Select(c => new GetClientDTO{
+                Email = c.Email 
+            }).ToListAsync();
+            return  getClient;
         }
+
+        public async Task<IEnumerable<GetEmployeeDTO>> GetEmployee()
+        {
+            var getEmployee = await _context.funcionarios.Select(f => new GetEmployeeDTO
+            {
+                Email = f.Email,
+                Cpf = f.Cpf,
+            }).ToListAsync();
+            return (IEnumerable<GetEmployeeDTO>)getEmployee;
+        }
+        */
+    }
     }
 

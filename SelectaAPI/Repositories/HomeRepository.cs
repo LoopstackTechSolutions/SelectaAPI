@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Amazon.Runtime.Internal;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Mysqlx;
 using SelectaAPI.Database;
@@ -115,8 +116,13 @@ namespace SelectaAPI.Repository
                 {
                     DataCriacao = nc.DataCriacao,
                     Mensagem = nc.Notificacao.Mensagem,
-                    isLida = nc.IsLida,
+                    IsLida = nc.IsLida
                 }).ToListAsync();
+
+            foreach (var notification in notifications)
+            {
+                notification.IsLida = true;
+            }
             return notifications;
         }
 
@@ -160,8 +166,7 @@ namespace SelectaAPI.Repository
                     IdVendedor = p.IdVendedor ?? 0
                 })
                 .ToListAsync();
-
-            return produtos;
+                return produtos;
         }
     }
 }

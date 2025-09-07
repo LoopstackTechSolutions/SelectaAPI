@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SelectaAPI.Database;
 using SelectaAPI.Services.Interfaces;
-using System.Linq;
 
 namespace SelectaAPI.Controllers
 {

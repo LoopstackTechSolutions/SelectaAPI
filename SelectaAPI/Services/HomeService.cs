@@ -51,7 +51,8 @@ namespace SelectaAPI.Services
         public async Task<IEnumerable<NotificationForClientDTO>> Notifications([FromQuery] int id)
         {
             if (id == null) throw new Exception("Id inválido");
-            var notifications = await _homeRepository.Notifications(id);    
+            
+            var notifications = await _homeRepository.Notifications(id);
             return notifications;
         }
 
