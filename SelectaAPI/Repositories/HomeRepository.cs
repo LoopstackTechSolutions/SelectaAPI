@@ -1,4 +1,5 @@
 ﻿using Amazon.Runtime.Internal;
+using Amazon.Runtime.Internal.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Mysqlx;
@@ -6,6 +7,7 @@ using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Repository.Interfaces;
+using System.Linq;
 
 namespace SelectaAPI.Repository
 {
@@ -119,12 +121,33 @@ namespace SelectaAPI.Repository
                     IsLida = nc.IsLida
                 }).ToListAsync();
 
-            foreach (var notification in notifications)
+            var notificationReadUpdate = await _context.notificacoesClientes.
+                Where(nc => nc.IdCliente == id && nc.IsLida != true).
+                ToListAsync();
+
+            foreach (var notification in notificationReadUpdate)
             {
                 notification.IsLida = true;
             }
+
+            await _context.SaveChangesAsync();
             return notifications;
         }
+
+        public async Task<IEnumerable<NotificationForClientDTO>> NotificationsUnread([FromQuery] int id)
+        {
+            var notificationsUnread = await _context.notificacoesClientes
+            .Where(nc => nc.IdCliente == id && nc.IsLida == false)
+                 .Select(nc => new NotificationForClientDTO
+                {
+                    DataCriacao = nc.DataCriacao,
+                    Mensagem = nc.Notificacao.Mensagem,
+                    IsLida = nc.IsLida
+                }).ToListAsync();
+           
+            return notificationsUnread;
+        }
+
 
         public async Task<IEnumerable<tbProdutoModel>> BestSellers()
         {

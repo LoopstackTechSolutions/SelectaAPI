@@ -4,16 +4,20 @@ using SelectaAPI.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using ZstdSharp;
 using SelectaAPI.DTOs;
+using SelectaAPI.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace SelectaAPI.Services
 {
     public class HomeService : IHomeService
     {
         private readonly IHomeRepository _homeRepository;
+        private readonly ApplicationDbContext _context;
 
-        public HomeService(IHomeRepository homeInterface)
+        public HomeService(IHomeRepository homeInterface, ApplicationDbContext context)
         {
             _homeRepository = homeInterface;
+            _context = context;
         }
         public async Task<IEnumerable<tbProdutoModel>> Search([FromQuery]string name)
         {
@@ -60,6 +64,19 @@ namespace SelectaAPI.Services
         {
             var bestSeller = await _homeRepository.BestSellers();
             return bestSeller;
+        }
+
+        public async Task<IEnumerable<NotificationForClientDTO>> NotificationsUnread(int id)
+        {
+            var clientExists = await _context.clientes.AnyAsync(c => c.IdCliente == id);
+
+            if (!clientExists) throw new Exception("Cliente não existente");
+
+            var notificationUnread = await _homeRepository.NotificationsUnread(id);
+
+            if (!notificationUnread.Any()) return notificationUnread = null;
+      
+            return notificationUnread;
         }
     }
 }

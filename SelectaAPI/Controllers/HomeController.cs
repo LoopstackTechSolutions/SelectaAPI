@@ -126,6 +126,29 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("notifications-unread")]
+        public async Task<IActionResult> NotificationsUnread([FromQuery] int id)
+        {
+            try
+            {
+                var notifications = await _homeService.NotificationsUnread(id);
+
+                if (notifications == null) return BadRequest("todas as notificações foram lidas");
+                return Ok(notifications);
+            }
+
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         [HttpGet("best-sellers")]
         public async Task<IActionResult> BestSellers()
         {
