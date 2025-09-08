@@ -116,5 +116,14 @@ namespace SelectaAPI.Services
             if (!getProductsInCar.Any()) throw new Exception("Lista vazia");
             return getProductsInCar;
         }
+
+        public async Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClient(int idClient)
+        {
+           var getTypeAccountSalesPerson = await _homeRepository.GetTypeAccountOfClientSalesPerson(idClient);
+            if (getTypeAccountSalesPerson.Any()) return getTypeAccountSalesPerson;
+
+            var getTypeAccountDeliveryPerson = await _homeRepository.GetTypeAccountOfClientDeliveryPerson(idClient); 
+                    return getTypeAccountDeliveryPerson;
+        }
     }
 }

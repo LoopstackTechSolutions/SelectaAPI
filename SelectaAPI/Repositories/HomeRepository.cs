@@ -252,6 +252,38 @@ namespace SelectaAPI.Repository
 
             return getProductsInCar;
         }
+
+        public async Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClientSalesPerson(int idClient)
+        {
+            var getSalesPerson = await _context.vendedores.Where(v => v.IdVendedor == idClient)
+                .Select(v => new TypeAccountOfClientDTO
+                {
+                    IdCliente = idClient,
+                    Nome = v.Cliente.Nome
+                }).ToListAsync();
+            foreach (var salesPerson in getSalesPerson)
+            {
+                salesPerson.isVendedor = true;
+                salesPerson.isEntregador = false;
+            }
+            return getSalesPerson;
+        }
+
+        public async Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClientDeliveryPerson(int idClient)
+        {
+            var getDeliveryPerson = await _context.entregadores.Where(d => d.IdEntregador == idClient)
+                .Select(v => new TypeAccountOfClientDTO
+                {
+                    IdCliente = idClient,
+                    Nome = v.Cliente.Nome
+                }).ToListAsync();
+            foreach (var deliveryPerson in getDeliveryPerson)
+            {
+                deliveryPerson.isVendedor = false;
+                deliveryPerson.isEntregador = true;
+            }
+            return getDeliveryPerson;
+        }
     }
 }
 

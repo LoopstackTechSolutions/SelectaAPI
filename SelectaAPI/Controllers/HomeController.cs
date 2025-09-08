@@ -33,11 +33,11 @@ namespace SelectaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500,$" erro no servidor{ex.Message}" );
+                return StatusCode(500, $" erro no servidor{ex.Message}");
             }
         }
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery]string name)
+        public async Task<IActionResult> Search([FromQuery] string name)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                var bestSellers  = await _homeService.BestSellers();
+                var bestSellers = await _homeService.BestSellers();
                 return Ok(bestSellers);
             }
 
@@ -209,12 +209,12 @@ namespace SelectaAPI.Controllers
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor:{ ex.Message}");
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
             }
         }
 
         [HttpGet("get-products-in-car")]
-        public async Task<IActionResult> GetProductsInCarOfClient([FromQuery]int idClient)
+        public async Task<IActionResult> GetProductsInCarOfClient([FromQuery] int idClient)
         {
             try
             {
@@ -231,6 +231,25 @@ namespace SelectaAPI.Controllers
             {
                 return StatusCode(500, $"erro no servidor:{ex.Message}");
             }
+        }
+
+        [HttpGet("verify-type-account")]
+        public async Task<IActionResult> GetTypeAccountOfClient([FromQuery] int idClient)
+        {
+            try
+            {
+                var getTypeAccountOfClient = await _homeService.GetTypeAccountOfClient(idClient);
+                return Ok(getTypeAccountOfClient);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }   
         }
     }
 
