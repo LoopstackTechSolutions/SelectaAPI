@@ -12,6 +12,7 @@ namespace SelectaAPI.Repository.Interfaces
         Task<IEnumerable<NotificationForClientDTO>> Notifications(int id);
         Task<IEnumerable<NotificationForClientDTO>> NotificationsUnread(int id);
         Task<IEnumerable<tbProdutoModel>> BestSellers();
+        Task<IEnumerable<tbProdutoModel>> GetProductByID(int id);
         Task<IEnumerable<tbProdutoModel>> GetAll();
     }
 }

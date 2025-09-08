@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Mysqlx;
@@ -167,9 +168,28 @@ namespace SelectaAPI.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
 
+        [HttpGet("get-products-id")]
+        public async Task<IActionResult> GetProductById([FromQuery] int id)
+        {
+            try
+            {
+                var getProductById = await _homeService.GetProductByID(id);
 
+                if (getProductById == null) return BadRequest("id do produto nulo");
 
+                return Ok(getProductById);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 

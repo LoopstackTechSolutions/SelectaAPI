@@ -77,6 +77,23 @@ namespace SelectaAPI.Services
             if (!notificationUnread.Any()) return notificationUnread = null;
       
             return notificationUnread;
+        
+        
+        }
+
+        public async Task<IEnumerable<tbProdutoModel>> GetProductByID(int id)
+        {
+            var productExists = await _context.produtos.AnyAsync(p => p.IdProduto == id);
+
+            if (!productExists) throw new Exception("id do produto inexistente");
+
+            var getProductById = await _homeRepository.GetProductByID(id);
+
+            if (getProductById == null) throw new Exception("id do produto nulo");
+
+            if (!getProductById.Any()) return getProductById = null;
+
+            return getProductById;
         }
     }
 }

@@ -139,15 +139,14 @@ namespace SelectaAPI.Repository
             var notificationsUnread = await _context.notificacoesClientes
             .Where(nc => nc.IdCliente == id && nc.IsLida == false)
                  .Select(nc => new NotificationForClientDTO
-                {
-                    DataCriacao = nc.DataCriacao,
-                    Mensagem = nc.Notificacao.Mensagem,
-                    IsLida = nc.IsLida
-                }).ToListAsync();
-           
+                 {
+                     DataCriacao = nc.DataCriacao,
+                     Mensagem = nc.Notificacao.Mensagem,
+                     IsLida = nc.IsLida
+                 }).ToListAsync();
+
             return notificationsUnread;
         }
-
 
         public async Task<IEnumerable<tbProdutoModel>> BestSellers()
         {
@@ -190,6 +189,25 @@ namespace SelectaAPI.Repository
                 })
                 .ToListAsync();
                 return produtos;
+        }
+
+        public async Task<IEnumerable<tbProdutoModel>> GetProductByID(int id)
+        {
+            var getProductById = await _context.produtos.Where(p => p.IdProduto == id).
+                Select(p => new tbProdutoModel
+                {
+                    IdProduto = p.IdProduto,
+                    Nome = p.Nome,
+                    Quantidade = p.Quantidade ?? 0,
+                    PrecoUnitario = p.PrecoUnitario,
+                    Condicao = p.Condicao,
+                    Peso = p.Peso ?? 0,
+                    Status = p.Status,
+                    IdVendedor = p.IdVendedor ?? 0
+
+                }).ToListAsync();
+
+            return getProductById;
         }
     }
 }
