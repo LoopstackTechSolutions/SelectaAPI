@@ -191,6 +191,27 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("add-products-wishList")]
+        public async Task<IActionResult> AddProductInWishList([FromQuery] int id, int idCliente)
+        {
+            try
+            {
+                var addProductInWishList = await _homeService.AddProductInWishList(id, idCliente);
+                if (addProductInWishList == null) return BadRequest("preencha todos os campos");
+                return Ok(addProductInWishList);
+            }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 
 }

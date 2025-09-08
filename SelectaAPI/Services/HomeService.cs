@@ -6,6 +6,7 @@ using ZstdSharp;
 using SelectaAPI.DTOs;
 using SelectaAPI.Database;
 using Microsoft.EntityFrameworkCore;
+using Amazon.Runtime.Internal.Util;
 
 namespace SelectaAPI.Services
 {
@@ -94,6 +95,19 @@ namespace SelectaAPI.Services
             if (!getProductById.Any()) return getProductById = null;
 
             return getProductById;
+        }
+
+        public async Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente)
+        {
+            if (id == null || idCliente == null) throw new Exception("preencha todos os campos");
+            var productExist = await _context.produtos.AnyAsync(p => p.IdProduto == id);
+            if (!productExist) throw new Exception("produto inexistente");
+
+            var clientExist = await _context.clientes.AnyAsync(c => c.IdCliente == idCliente);
+            if (!clientExist) throw new Exception("cliente inexistente");
+
+            var addProductInWishList = await _homeRepository.AddProductInWishList(id, idCliente);
+            return addProductInWishList;
         }
     }
 }

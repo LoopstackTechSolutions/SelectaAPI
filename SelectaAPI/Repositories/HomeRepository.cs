@@ -209,6 +209,32 @@ namespace SelectaAPI.Repository
 
             return getProductById;
         }
+
+        public async Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente)
+        {
+            var addProductInWishList = new tbLista_DesejoModel
+            {
+                IdProduto = id,
+                IdCliente = idCliente
+            };
+
+             _context.listasDesejo.Add(addProductInWishList);
+            await _context.SaveChangesAsync();
+
+            var response = await _context.produtos.Where(l => l.IdProduto == id)
+                .Select(l => new ProductInWishListDTO
+                {
+                    IdProduto = id,
+                    Condicao = l.Condicao,
+                    Nome = l.Nome,
+                    PrecoUnitario = l.PrecoUnitario,
+                    Peso = l.Peso ?? 0,
+                    Status = l.Status,
+                    Quantidade = l.Quantidade
+                }).FirstOrDefaultAsync();
+
+            return response;
+        }
     }
 }
 
