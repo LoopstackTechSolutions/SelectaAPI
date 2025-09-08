@@ -109,5 +109,12 @@ namespace SelectaAPI.Services
             var addProductInWishList = await _homeRepository.AddProductInWishList(id, idCliente);
             return addProductInWishList;
         }
+
+        public async Task<IEnumerable<GetClientCarDTO>> GetProductsInCarOfClient(int idClient)
+        {
+            var getProductsInCar = await _homeRepository.GetProductsInCarOfClient(idClient);
+            if (!getProductsInCar.Any()) throw new Exception("Lista vazia");
+            return getProductsInCar;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using SelectaAPI.Models;
 using SelectaAPI.DTOs;
+using System.Text.Json.Serialization.Metadata;
 
 namespace SelectaAPI.Repository.Interfaces
 {
@@ -14,6 +15,7 @@ namespace SelectaAPI.Repository.Interfaces
         Task<IEnumerable<tbProdutoModel>> BestSellers();
         Task<IEnumerable<tbProdutoModel>> GetProductByID(int id);
         Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente);
+        Task<IEnumerable<GetClientCarDTO>> GetProductsInCarOfClient(int idClient);
         Task<IEnumerable<tbProdutoModel>> GetAll();
     }
 }

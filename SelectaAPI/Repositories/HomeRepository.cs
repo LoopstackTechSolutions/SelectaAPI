@@ -1,5 +1,6 @@
 ﻿using Amazon.Runtime.Internal;
 using Amazon.Runtime.Internal.Auth;
+using Amazon.S3.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Mysqlx;
@@ -234,6 +235,22 @@ namespace SelectaAPI.Repository
                 }).FirstOrDefaultAsync();
 
             return response;
+        }
+
+        public async Task<IEnumerable<GetClientCarDTO>> GetProductsInCarOfClient(int idClient)
+        {
+            var getProductsInCar = await _context.carrinho.Where(c => c.IdCliente == idClient)
+                .Select(c => new GetClientCarDTO
+                {
+                    IdProduto = c.IdProduto,
+                    PrecoUnitario = c.Produto.PrecoUnitario,
+                    Peso = c.Produto.Peso,
+                    Condicao = c.Produto.Condicao,
+                    Nome = c.Produto.Nome,
+                    Quantidade = c.Quantidade
+                }).ToListAsync();
+
+            return getProductsInCar;
         }
     }
 }

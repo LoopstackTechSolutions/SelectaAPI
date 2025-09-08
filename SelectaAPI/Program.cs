@@ -12,6 +12,10 @@ using SelectaAPI.Repository.Interfaces;
 using SelectaAPI.Services;
 using SelectaAPI.Services.Interfaces;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 Env.Load(); // carrega o .env logo no início
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +49,25 @@ builder.Services.AddDefaultAWSOptions(new AWSOptions
         Environment.GetEnvironmentVariable("AWS_REGION") ?? "us-east-2"
     )
 });
+/*
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+*/
 
 // ?? Injeta automaticamente o IAmazonS3 com as credenciais do .env
 builder.Services.AddAWSService<IAmazonS3>();

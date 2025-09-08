@@ -105,7 +105,7 @@ namespace SelectaAPI.Controllers
 
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
             }
         }
         [HttpGet("notifications")]
@@ -124,7 +124,7 @@ namespace SelectaAPI.Controllers
 
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
             }
         }
 
@@ -135,7 +135,7 @@ namespace SelectaAPI.Controllers
             {
                 var notifications = await _homeService.NotificationsUnread(id);
 
-                if (notifications == null) return BadRequest("todas as notificações foram lidas");
+                if (notifications == null) return NotFound("todas as notificações foram lidas");
                 return Ok(notifications);
             }
 
@@ -147,7 +147,7 @@ namespace SelectaAPI.Controllers
 
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
             }
         }
         [HttpGet("best-sellers")]
@@ -166,7 +166,7 @@ namespace SelectaAPI.Controllers
 
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
             }
         }
 
@@ -188,7 +188,7 @@ namespace SelectaAPI.Controllers
 
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
             }
         }
 
@@ -198,7 +198,7 @@ namespace SelectaAPI.Controllers
             try
             {
                 var addProductInWishList = await _homeService.AddProductInWishList(id, idCliente);
-                if (addProductInWishList == null) return BadRequest("preencha todos os campos");
+                if (addProductInWishList == null) return NotFound("preencha todos os campos");
                 return Ok(addProductInWishList);
             }
 
@@ -209,7 +209,27 @@ namespace SelectaAPI.Controllers
 
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, $"erro no servidor:{ ex.Message}");
+            }
+        }
+
+        [HttpGet("get-products-in-car")]
+        public async Task<IActionResult> GetProductsInCarOfClient([FromQuery]int idClient)
+        {
+            try
+            {
+                var getProductsInCar = await _homeService.GetProductsInCarOfClient(idClient);
+                return Ok(getProductsInCar);
+            }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
             }
         }
     }
