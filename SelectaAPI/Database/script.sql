@@ -1,7 +1,6 @@
 SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
 SET character_set_connection = utf8mb4;
-
 SET FOREIGN_KEY_CHECKS=0;
 
 create table if not exists tbCategoria
@@ -55,7 +54,7 @@ IdCartao int primary key auto_increment,
 IdCliente int not null,
 NumeroCartao char(16) not null,
 Bandeira varchar(30) not null,
-Modalidade bit not null,
+Modalidade boolean not null, -- true = credito / false = debito
 DataValidade datetime not null,
 NomeTitular varchar(50) not null,
 foreign key (IdCliente) references tbcliente (idcliente)
@@ -67,7 +66,7 @@ IdEndereco int primary key auto_increment,
 Cep int unique not null,
 IdCliente int,
 Logradouro varchar(100) not null,
-isPrincipal bit default 1,
+isPrincipal boolean default true,
 foreign key (IdCliente) references tbCliente (IdCliente)
 );
 
@@ -76,11 +75,13 @@ create table if not exists tbProduto
 IdProduto int primary key auto_increment,
 IdVendedor int not null,
 Nome varchar(50) not null,
+Descricao varchar(1000),
 Quantidade int,
-Condicao bit not null,  -- 0 = "novo" / 1 = "usado"
+Condicao boolean not null,  -- true = "novo" / false = "usado"
 PrecoUnitario decimal(10,2) not null,
 Peso int not null, -- em gramas
-`Status` varchar(40), -- "ativo"/"inativo"/"suspenso"/"disponível"
+`Status` varchar(40), -- "ativo"/"inativo"/"suspenso"/"disponível",
+Nota decimal(2,1) default 0, 
 foreign key (IdVendedor) references tbCliente (IdCliente)
 );
 
@@ -105,7 +106,8 @@ create table if not exists tbEmpresa_Parceira
 (
 IdEmpresa int primary key,
 Cnpj decimal(16,0) not null,
-Logo blob,
+Nota decimal(3,1) default 0,
+TaxaFrete int,
 foreign key (IdEmpresa) references tbCliente (IdCliente)
 );
 
@@ -133,7 +135,7 @@ IdNotificacao int not null,
 IdCliente int not null,
 IdContexto int not null,
 DataCriacao datetime default current_timestamp,
-IsLida bit default 0,
+IsLida boolean default false,
 foreign key (IdNotificacao) references tbNotificacao(IdNotificacao),
 foreign key (IdCliente) references tbCliente(IdCliente)
 );
@@ -219,7 +221,7 @@ Quantidade int not null,
 Valor decimal(10,2) not null,
 Frete decimal(5,2) not null,
 `Status` varchar(30) default "pendente", -- "entregue"/"em transito"/"pendente"
-TipoEntrega bit not null, -- 0 = entrega própria / 1 = entrega selecta
+TipoEntrega boolean not null, -- true = entrega própria / false = entrega selecta
 foreign key (IdProduto) references tbProduto(IdProduto),
 foreign key (IdPedido) references tbPedido(IdPedido),
 primary key (IdProduto, IdPedido)
@@ -277,7 +279,7 @@ create table if not exists tbEntregador
 IdEntregador int primary key,
 IdEndereco int not null,
 Cnh char(11) not null,
-Eligibilidade bit default 0,
+Eligibilidade boolean default false,
 foreign key (IdEndereco) references tbEndereco (IdEndereco),
 foreign key (IdEntregador) references tbCliente (IdCliente)
 );
@@ -303,7 +305,7 @@ create table if not exists tbImagemProduto
 IdImagem int primary key auto_increment,
 IdProduto int not null,
 S3Key varchar(512) not null unique,
-IsPrincipal bit not null, -- 0 = não é principal / 1 = é principal
+IsPrincipal boolean not null, -- false = não é principal / true = é principal
 foreign key (IdProduto) references tbProduto (IdProduto)
 );
 

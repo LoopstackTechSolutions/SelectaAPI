@@ -85,7 +85,7 @@ namespace SelectaAPI.Repository
                Peso = pp.Produto.Peso ?? 0,
                Quantidade = pp.Produto.Quantidade ?? 0,
                Status = pp.Produto.Status,
-
+ 
                ValidoAte = pp.ValidaAte,
                Desconto = pp.Desconto
            })
