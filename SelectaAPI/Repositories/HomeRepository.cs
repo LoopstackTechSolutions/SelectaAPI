@@ -72,6 +72,7 @@ namespace SelectaAPI.Repository
                 ThenByDescending(p => name.Length).Take(20).ToListAsync();
             return search;
         }
+
         public async Task<IEnumerable<ProductsWithPromotionDTO>> Highlights()
         {
             var productsPromotion = await _context.promocoes
@@ -284,6 +285,22 @@ namespace SelectaAPI.Repository
                 deliveryPerson.isEntregador = true;
             }
             return getDeliveryPerson;
+        }
+
+        public async Task<IEnumerable<SearchProductsByCategoryDTO>> SearchProductByCategory(int id)
+        {
+            var getProductsInCategory = await _context.categoriaProdutos.Where(cp => cp.IdCategoria == id)
+                .Select(cp => new SearchProductsByCategoryDTO
+                {
+                    Nome = cp.Produto.Nome,
+                    PrecoUnitario = cp.Produto.PrecoUnitario,
+                    Condicao = cp.Produto.Condicao,
+                    Status = cp.Produto.Status,
+                    Peso = cp.Produto.Peso,
+                    NomeCategoria  = cp.Categoria.Nome,
+                    Quantidade = cp.Produto.Quantidade
+                }).ToListAsync();
+            return getProductsInCategory;
         }
     }
 }

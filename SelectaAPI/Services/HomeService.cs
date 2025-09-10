@@ -125,5 +125,11 @@ namespace SelectaAPI.Services
             var getTypeAccountDeliveryPerson = await _homeRepository.GetTypeAccountOfClientDeliveryPerson(idClient); 
                     return getTypeAccountDeliveryPerson;
         }
+
+        public async Task<IEnumerable<SearchProductsByCategoryDTO>> SearchProductByCategory(int id)
+        {
+            var getProductsByCategory = await _homeRepository.SearchProductByCategory(id);
+            return getProductsByCategory;
+        }
     }
 }

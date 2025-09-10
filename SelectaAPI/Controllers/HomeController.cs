@@ -251,6 +251,26 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, $"erro no servidor:{ex.Message}");
             }   
         }
+
+        [HttpGet("search-by-category")]
+        public async Task<IActionResult> SearchProductByCategory(int id)
+        {
+            try
+            {
+                var getProductByCategory = await _homeService.SearchProductByCategory(id);
+                return Ok(getProductByCategory);
+            }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }
+        }
     }
 
 }

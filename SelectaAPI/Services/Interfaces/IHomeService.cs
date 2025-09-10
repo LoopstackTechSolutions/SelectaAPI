@@ -16,6 +16,7 @@ namespace SelectaAPI.Services.Interfaces
         Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente);
         Task<IEnumerable<GetClientCarDTO>> GetProductsInCarOfClient(int idClient);
         Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClient(int idClient);
+        Task<IEnumerable<SearchProductsByCategoryDTO>> SearchProductByCategory(int id);
         Task<IEnumerable<tbProdutoModel>> GetAll();
     }
 }
