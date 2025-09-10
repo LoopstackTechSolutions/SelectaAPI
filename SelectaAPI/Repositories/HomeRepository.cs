@@ -68,7 +68,8 @@ namespace SelectaAPI.Repository
         [HttpGet("search")]
         public async Task<IEnumerable<tbProdutoModel>> Search([FromQuery] string name)
         {
-            var search = await _context.produtos.Where(p => EF.Functions.Like(p.Nome, $"%{name}%")).ToListAsync();
+            var search = await _context.produtos.Where(p => EF.Functions.Like(p.Nome, $"%{name}%")).OrderByDescending(p => p.Nota).
+                ThenByDescending(p => name.Length).Take(20).ToListAsync();
             return search;
         }
         public async Task<IEnumerable<ProductsWithPromotionDTO>> Highlights()
@@ -135,7 +136,7 @@ namespace SelectaAPI.Repository
             return notifications;
         }
 
-        public async Task<IEnumerable<NotificationForClientDTO>> NotificationsUnread([FromQuery] int id)
+        public async Task<ICollection<NotificationForClientDTO>> NotificationsUnread([FromQuery] int id)
         {
             var notificationsUnread = await _context.notificacoesClientes
             .Where(nc => nc.IdCliente == id && nc.IsLida == false)
