@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SelectaAPI.DTOs;
 using SelectaAPI.Services.Interfaces;
 
 namespace SelectaAPI.Controllers
@@ -16,19 +17,19 @@ namespace SelectaAPI.Controllers
         }
 
         [HttpPost("client-login")]
-        public async Task<IActionResult> ClientLogin([FromQuery] string email, string password)
+        public async Task<IActionResult> ClientLogin([FromBody] ClientLoginDTO request)
         {
             try
             {
-                Console.WriteLine($"Email recebido: '{email}'");
-                Console.WriteLine($"Senha recebida: '{password}'");
-                if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email)) return BadRequest("preencha todos os campos");
+                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Senha))
+                    return BadRequest("preencha todos os campos");
 
-                var clientLogin = await _loginService.ClientLogin(email, password);
+                var clientLogin = await _loginService.ClientLogin(request.Email, request.Senha);
 
                 if (clientLogin == null) return BadRequest("usuário inválido");
 
-                return Ok("login realizado");
+                // Return structured response
+                return Ok(new { idCliente = clientLogin.IdCliente, message = "login realizado" });
             }
             catch (DbUpdateException ex)
             {
@@ -36,9 +37,11 @@ namespace SelectaAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $" erro no servidor{ex.Message}");
+                return StatusCode(500, $"erro no servidor: {ex.Message}");
             }
         }
+
+
         [HttpPost("employee-login")]
         public async Task<IActionResult> EmployeeLogin([FromQuery]string email, string password)
         {
