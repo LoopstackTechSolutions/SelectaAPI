@@ -67,17 +67,9 @@ namespace SelectaAPI.Services
             return bestSeller;
         }
 
-        public async Task<IEnumerable<NotificationForClientDTO>> NotificationsUnread(int id)
+        public async Task<ICollection<NotificationForClientDTO>> NotificationsUnread(int id)
         {
-            var clientExists = await _context.clientes.AnyAsync(c => c.IdCliente == id);
 
-            if (!clientExists) throw new Exception("Cliente não existente");
-
-            var notificationUnread = await _homeRepository.NotificationsUnread(id);
-
-            if (!notificationUnread.Any()) return notificationUnread = null;
-      
-            return notificationUnread;
         
         
         }
@@ -110,9 +102,9 @@ namespace SelectaAPI.Services
             return addProductInWishList;
         }
 
-        public async Task<IEnumerable<GetClientCarDTO>> GetProductsInCarOfClient(int idClient)
+        public async Task<IEnumerable<GetClientCarDTO>> GetProductsInCartOfClient(int idClient)
         {
-            var getProductsInCar = await _homeRepository.GetProductsInCarOfClient(idClient);
+            var getProductsInCar = await _homeRepository.GetProductsInCartOfClient(idClient);
             if (!getProductsInCar.Any()) throw new Exception("Lista vazia");
             return getProductsInCar;
         }

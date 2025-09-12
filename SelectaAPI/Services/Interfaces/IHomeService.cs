@@ -10,11 +10,11 @@ namespace SelectaAPI.Services.Interfaces
         Task<IEnumerable<tbProdutoModel>> ForYou(int id);
         Task<IEnumerable<ProductsWithPromotionDTO>> Highlights();
         Task<IEnumerable<NotificationForClientDTO>> Notifications(int id);
-        Task<IEnumerable<NotificationForClientDTO>> NotificationsUnread(int id);
+        Task<ICollection<NotificationForClientDTO>> NotificationsUnread(int id);
         Task<IEnumerable<tbProdutoModel>> BestSellers();
         Task<IEnumerable<tbProdutoModel>> GetProductByID(int id);
         Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente);
-        Task<IEnumerable<GetClientCarDTO>> GetProductsInCarOfClient(int idClient);
+        Task<IEnumerable<GetClientCarDTO>> GetProductsInCartOfClient(int idClient);
         Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClient(int idClient);
         Task<IEnumerable<SearchProductsByCategoryDTO>> SearchProductByCategory(int id);
         Task<IEnumerable<tbProdutoModel>> GetAll();

@@ -15,7 +15,7 @@ namespace SelectaAPI.Repository.Interfaces
         Task<IEnumerable<tbProdutoModel>> BestSellers();
         Task<IEnumerable<tbProdutoModel>> GetProductByID(int id);
         Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente);
-        Task<IEnumerable<GetClientCarDTO>> GetProductsInCarOfClient(int idClient);
+        Task<IEnumerable<GetClientCarDTO>> GetProductsInCartOfClient(int idClient);
         Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClientSalesPerson(int idClient);
         Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClientDeliveryPerson(int idClient);
         Task<IEnumerable<SearchProductsByCategoryDTO>> SearchProductByCategory(int id);

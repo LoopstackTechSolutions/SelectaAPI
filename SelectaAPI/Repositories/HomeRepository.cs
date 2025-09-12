@@ -206,6 +206,7 @@ namespace SelectaAPI.Repository
                     Condicao = p.Condicao,
                     Peso = p.Peso ?? 0,
                     Status = p.Status,
+                    Descricao = p.Descricao,
                     IdVendedor = p.IdVendedor ?? 0
 
                 }).ToListAsync();
@@ -239,7 +240,7 @@ namespace SelectaAPI.Repository
             return response;
         }
 
-        public async Task<IEnumerable<GetClientCarDTO>> GetProductsInCarOfClient(int idClient)
+        public async Task<IEnumerable<GetClientCarDTO>> GetProductsInCartOfClient(int idClient)
         {
             var getProductsInCar = await _context.carrinho.Where(c => c.IdCliente == idClient)
                 .Select(c => new GetClientCarDTO
@@ -249,7 +250,7 @@ namespace SelectaAPI.Repository
                     Peso = c.Produto.Peso,
                     Condicao = c.Produto.Condicao,
                     Nome = c.Produto.Nome,
-                    Quantidade = c.Quantidade
+                    Quantidade = c.Quantidade,
                 }).ToListAsync();
 
             return getProductsInCar;

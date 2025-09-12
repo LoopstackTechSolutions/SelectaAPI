@@ -214,11 +214,11 @@ namespace SelectaAPI.Controllers
         }
 
         [HttpGet("get-products-in-car")]
-        public async Task<IActionResult> GetProductsInCarOfClient([FromQuery] int idClient)
+        public async Task<IActionResult> GetProductsInCartOfClient([FromQuery] int idClient)
         {
             try
             {
-                var getProductsInCar = await _homeService.GetProductsInCarOfClient(idClient);
+                var getProductsInCar = await _homeService.GetProductsInCartOfClient(idClient);
                 return Ok(getProductsInCar);
             }
 

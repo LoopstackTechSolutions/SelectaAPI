@@ -15,6 +15,7 @@ namespace SelectaAPI.Models
         public int? Peso { get; set; }
         public string Status { get; set; }
         public int Nota { get; set; }
+        public string Descricao { get; set; }
         /*
         public tbVendedorModel Vendedor {  get; set; } */
         [ForeignKey("Vendedor")]
