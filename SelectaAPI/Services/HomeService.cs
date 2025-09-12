@@ -70,8 +70,16 @@ namespace SelectaAPI.Services
         public async Task<ICollection<NotificationForClientDTO>> NotificationsUnread(int id)
         {
 
-        
-        
+            var clientExists = await _context.clientes.AnyAsync(c => c.IdCliente == id);
+
+            if (!clientExists) throw new Exception("Cliente não existente");
+
+            var notificationUnread = await _homeRepository.NotificationsUnread(id);
+
+            if (!notificationUnread.Any()) return notificationUnread = null;
+
+            return notificationUnread;
+
         }
 
         public async Task<IEnumerable<tbProdutoModel>> GetProductByID(int id)

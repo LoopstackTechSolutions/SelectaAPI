@@ -6,6 +6,8 @@
         public bool? IsLida { get; set; } = false;
         public DateTime? DataCriacao { get; set; }
         public string Titulo { get; set; }
+        public int IdNotificacaoCliente { get; set; }
+        public int IdContexto { get; set; }
         public ICollection<NotificationForClientDTO> Notifications { get; set; }
     }
 }

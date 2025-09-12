@@ -121,7 +121,10 @@ namespace SelectaAPI.Repository
                 {
                     DataCriacao = nc.DataCriacao,
                     Mensagem = nc.Notificacao.Mensagem,
-                    IsLida = nc.IsLida
+                    IsLida = nc.IsLida,
+                    IdContexto = nc.IdContexto,
+                    Titulo = nc.Notificacao.TabelaContexto,
+                    IdNotificacaoCliente = nc.IdNotificacaoCliente,
                 }).ToListAsync();
 
             var notificationReadUpdate = await _context.notificacoesClientes.
@@ -298,7 +301,6 @@ namespace SelectaAPI.Repository
                     Condicao = cp.Produto.Condicao,
                     Status = cp.Produto.Status,
                     Peso = cp.Produto.Peso,
-                    NomeCategoria  = cp.Categoria.Nome,
                     Quantidade = cp.Produto.Quantidade
                 }).ToListAsync();
             return getProductsInCategory;

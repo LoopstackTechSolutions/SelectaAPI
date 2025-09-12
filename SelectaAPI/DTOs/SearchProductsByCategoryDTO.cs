@@ -9,6 +9,5 @@
         public string Status { get; set; }
         public int Nota { get; set; }
         public int? Quantidade { get; set; }
-        public string NomeCategoria { get; set; }
     }
 }
