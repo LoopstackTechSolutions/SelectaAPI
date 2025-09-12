@@ -25,8 +25,8 @@ namespace SelectaAPI.Repository
                          && f.Senha.Trim() == password.Trim())
                 .Select(f => new ClientLoginDTO
                 {
-                    Email = f.Email,
-                    Senha = f.Senha
+                    IdCliente = f.IdCliente,
+                    Email = f.Email
                 })
                 .FirstOrDefaultAsync();
 

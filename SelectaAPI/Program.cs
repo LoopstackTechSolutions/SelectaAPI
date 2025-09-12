@@ -30,7 +30,6 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IFilesUploadAWSService, FilesUploadAWSService>();
 
-
 string connectionString =
     $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
     $"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
@@ -49,6 +48,7 @@ builder.Services.AddDefaultAWSOptions(new AWSOptions
         Environment.GetEnvironmentVariable("AWS_REGION") ?? "us-east-2"
     )
 });
+
 /*
 builder.Services.AddAuthentication(options =>
 {
@@ -77,7 +77,18 @@ builder.Services.AddRefitClient<IViaCepIntegracaoRefit>().ConfigureHttpClient(c 
     c.BaseAddress = new Uri("https://viacep.com.br/");
 });
 
-
+// ---------- NEW: Enable CORS for frontend ----------
+var frontendUrl = "http://localhost:5173"; // <-- your React dev server
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(frontendUrl)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+// ------------------------------------------------------
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -92,6 +103,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// ---------- APPLY CORS ----------
+app.UseCors("AllowFrontend");
+// -----------------------------
+
 app.UseAuthorization();
 app.MapControllers();
 
