@@ -20,11 +20,13 @@ namespace SelectaAPI.Services
             _homeRepository = homeInterface;
             _context = context;
         }
+        /*
         public async Task<IEnumerable<tbProdutoModel>> Search([FromQuery]string name)
         {
                 var search = await _homeRepository.Search(name);
                 return search;
         }
+        */
 
         public async Task<IEnumerable<ProductInWishListDTO>> WishList([FromQuery]int id)
         {
@@ -130,6 +132,17 @@ namespace SelectaAPI.Services
         {
             var getProductsByCategory = await _homeRepository.SearchProductByCategory(id);
             return getProductsByCategory;
+        }
+
+        public async Task<IEnumerable<GetClientByIdDTO>> GetClientById(int id)
+        {
+            var clientExists = await _context.clientes
+                .AnyAsync(c => c.IdCliente == id);
+            if (!clientExists) throw new Exception("cliente inexistente");
+
+            var getClientById = await _homeRepository.GetClientById(id);
+
+            return getClientById;
         }
     }
 }

@@ -5,7 +5,7 @@ namespace SelectaAPI.Services.Interfaces
 {
     public interface IHomeService
     {
-        Task<IEnumerable<tbProdutoModel>> Search(string name);
+       //  Task<IEnumerable<tbProdutoModel>> Search(string name);
         Task<IEnumerable<ProductInWishListDTO>> WishList(int id);
         Task<IEnumerable<tbProdutoModel>> ForYou(int id);
         Task<IEnumerable<ProductsWithPromotionDTO>> Highlights();
@@ -15,6 +15,7 @@ namespace SelectaAPI.Services.Interfaces
         Task<IEnumerable<tbProdutoModel>> GetProductByID(int id);
         Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente);
         Task<IEnumerable<GetClientCarDTO>> GetProductsInCartOfClient(int idClient);
+        Task<IEnumerable<GetClientByIdDTO>> GetClientById(int id);
         Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClient(int idClient);
         Task<IEnumerable<SearchProductsByCategoryDTO>> SearchProductByCategory(int id);
         Task<IEnumerable<tbProdutoModel>> GetAll();

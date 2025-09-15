@@ -49,7 +49,7 @@ builder.Services.AddDefaultAWSOptions(new AWSOptions
     )
 });
 
-/*
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,9 +67,10 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
-*/
 
-// ?? Injeta automaticamente o IAmazonS3 com as credenciais do .env
+builder.Services.AddAuthorization();
+
+//  Injeta automaticamente o IAmazonS3 com as credenciais do .env
 builder.Services.AddAWSService<IAmazonS3>();
 
 builder.Services.AddRefitClient<IViaCepIntegracaoRefit>().ConfigureHttpClient(c =>

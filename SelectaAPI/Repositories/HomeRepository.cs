@@ -21,7 +21,7 @@ namespace SelectaAPI.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<tbProdutoModel>> ForYou([FromQuery] int id)
+        public async Task<IEnumerable<tbProdutoModel>> ForYou(int id)
         {
             var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
             var purchased = await _context.pedidos
@@ -65,13 +65,42 @@ namespace SelectaAPI.Repository
             return recommendationList;
         }
 
-        [HttpGet("search")]
-        public async Task<IEnumerable<tbProdutoModel>> Search([FromQuery] string name)
+        /*
+        public async Task<IEnumerable<tbProdutoModel>> Search(string query)
         {
-            var search = await _context.produtos.Where(p => EF.Functions.Like(p.Nome, $"%{name}%")).OrderByDescending(p => p.Nota).
-                ThenByDescending(p => name.Length).Take(20).ToListAsync();
-            return search;
+
+            var word = query.Split("", StringSplitOptions.RemoveEmptyEntries)
+                .Select(p => p.Trim().ToLower()).ToList();
+
+            var filterProducts = await _context.categoriaProdutos.Select(p => new
+            {
+                Produto = p,
+                MatchCount = word.Count(w =>
+                    EF.Functions.Like(p.Produto.Nome.ToLower(), $"%{w}%") ||
+                    EF.Functions.Like(p.Categoria.Nome.ToLower(), $"%{w}%")
+                    )
+            })
+                .Where(x => x.MatchCount > 0)
+                .OrderByDescending(x => x.MatchCount)
+                .ThenByDescending(x => x.Produto)
+                .ToListAsync();
+            if (filterProducts.Count < 20)
+            {
+                var missing = 20 - filterProducts.Count;
+
+                var produtcsRandom = await _context.produtos
+                    .Where(p => !filterProducts.Select(r => r.Produto.IdProduto).Contains(p.IdProduto))
+                    .OrderBy(r => Guid.NewGuid())
+                    .Take(missing)
+                    .ToListAsync();
+
+                produtcsRandom.AddRange(produtcsRandom);
+            }
+
+            return filterProducts;
+
         }
+        */
 
         public async Task<IEnumerable<ProductsWithPromotionDTO>> Highlights()
         {
@@ -94,7 +123,7 @@ namespace SelectaAPI.Repository
            .ToListAsync();
             return productsPromotion;
         }
-        public async Task<IEnumerable<ProductInWishListDTO>> WishList([FromQuery] int id)
+        public async Task<IEnumerable<ProductInWishListDTO>> WishList(int id)
         {
             var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
             var wishlistProducts = await _context.listasDesejo
@@ -113,7 +142,7 @@ namespace SelectaAPI.Repository
 
             return wishlistProducts;
         }
-        public async Task<IEnumerable<NotificationForClientDTO>> Notifications([FromQuery] int id)
+        public async Task<IEnumerable<NotificationForClientDTO>> Notifications(int id)
         {
             var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
             var notifications = await _context.notificacoesClientes.Where(nc => nc.IdCliente == id)
@@ -140,7 +169,7 @@ namespace SelectaAPI.Repository
             return notifications;
         }
 
-        public async Task<ICollection<NotificationForClientDTO>> NotificationsUnread([FromQuery] int id)
+        public async Task<ICollection<NotificationForClientDTO>> NotificationsUnread(int id)
         {
             var notificationsUnread = await _context.notificacoesClientes
             .Where(nc => nc.IdCliente == id && nc.IsLida == false)
@@ -304,6 +333,21 @@ namespace SelectaAPI.Repository
                     Quantidade = cp.Produto.Quantidade
                 }).ToListAsync();
             return getProductsInCategory;
+        }
+
+        public async Task<IEnumerable<GetClientByIdDTO>> GetClientById(int id)
+        {
+            var getClientById = await _context.clientes
+                .Where(c => c.IdCliente == id)
+                 .Select(c => new GetClientByIdDTO
+                 {
+                     IdCliente = c.IdCliente,
+                     Email = c.Email,
+                     Nome = c.Nome,
+                     Saldo = c.Saldo,
+                 }).ToArrayAsync();
+
+            return getClientById;
         }
     }
 }

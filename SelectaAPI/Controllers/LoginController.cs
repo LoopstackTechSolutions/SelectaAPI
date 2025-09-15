@@ -17,7 +17,7 @@ namespace SelectaAPI.Controllers
         }
 
         [HttpPost("client-login")]
-        public async Task<IActionResult> ClientLogin([FromBody] ClientLoginDTO request)
+        public async Task<IActionResult> ClientLogin([FromBody] LoginRequestDTO request)
         {
             try
             {

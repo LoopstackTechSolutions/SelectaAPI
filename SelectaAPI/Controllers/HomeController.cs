@@ -36,6 +36,7 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, $" erro no servidor{ex.Message}");
             }
         }
+        /*
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] string name)
         {
@@ -53,6 +54,7 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, $" erro no servidor{ex.Message}");
             }
         }
+        */ 
 
         [HttpGet("highlights")]
         public async Task<IActionResult> Highlights()
@@ -261,6 +263,25 @@ namespace SelectaAPI.Controllers
                 return Ok(getProductByCategory);
             }
 
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }
+        }
+
+        [HttpGet("get-client-by-id")]
+        public async Task<IActionResult> GetClientById(int id)
+        {
+            try
+            {
+                var getClientById = await _homeService.GetClientById(id);
+                return Ok(getClientById);
+            }
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");

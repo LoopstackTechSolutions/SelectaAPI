@@ -6,7 +6,7 @@ namespace SelectaAPI.Repository.Interfaces
 {
     public interface IHomeRepository
     {
-        Task<IEnumerable<tbProdutoModel>> Search(string name);
+        // Task<IEnumerable<tbProdutoModel>> Search(string name);
         Task<IEnumerable<ProductInWishListDTO>> WishList(int id);
         Task<IEnumerable<tbProdutoModel>> ForYou(int id);
         Task<IEnumerable<ProductsWithPromotionDTO>> Highlights();
@@ -15,6 +15,7 @@ namespace SelectaAPI.Repository.Interfaces
         Task<IEnumerable<tbProdutoModel>> BestSellers();
         Task<IEnumerable<tbProdutoModel>> GetProductByID(int id);
         Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente);
+        Task<IEnumerable<GetClientByIdDTO>> GetClientById(int id);
         Task<IEnumerable<GetClientCarDTO>> GetProductsInCartOfClient(int idClient);
         Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClientSalesPerson(int idClient);
         Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClientDeliveryPerson(int idClient);

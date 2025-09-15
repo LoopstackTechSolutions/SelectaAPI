@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
@@ -15,38 +16,19 @@ namespace SelectaAPI.Repository
         {
             _context = context;
         }
-        public async Task<ClientLoginDTO> ClientLogin(string email, string password)
+        public async Task<tbClienteModel> GetCredentialsOfClient(string email, string password)
         {
-            Console.WriteLine($"Email recebido: '{email}'");
-            Console.WriteLine($"Senha recebida: '{password}'");
-
-            var verification = await _context.clientes
-                .Where(f => f.Email.ToLower().Trim() == email.ToLower().Trim()
-                         && f.Senha.Trim() == password.Trim())
-                .Select(f => new ClientLoginDTO
-                {
-                    IdCliente = f.IdCliente,
-                    Email = f.Email
-                })
-                .FirstOrDefaultAsync();
-
-            return verification;
+            return await _context.clientes
+                .FirstOrDefaultAsync(c => c.Email == email && c.Senha == password);
+           
         }
 
 
-        public async Task<EmployeeLoginDTO> EmployeeLogin([FromQuery]string email, string password)
+        public async Task<tbFuncionarioModel> GetCredentialsOfEmployee(string email, string password)
         {
-            var verification = await _context.funcionarios
-                .Where(f => f.Email.ToLower().Trim() == email.ToLower().Trim()
-                         && f.Senha.Trim() == password.Trim())
-                .Select(f => new EmployeeLoginDTO
-                {
-                    Email = f.Email,
-                    Senha = f.Senha
-                })
-                .FirstOrDefaultAsync();
-
-            return verification;
+            return await _context.funcionarios
+               .FirstOrDefaultAsync(c => c.Email == email && c.Senha == password);
+            
         }
     }
 }

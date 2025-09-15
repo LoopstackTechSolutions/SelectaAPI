@@ -1,9 +1,10 @@
 ﻿namespace SelectaAPI.DTOs
 {
-    public class ClientLoginDTO
+    public class GetClientByIdDTO
     {
+        public string Nome { get; set; }
         public int IdCliente { get; set; }
+        public decimal Saldo { get; set; }
         public string Email { get; set; }
-        public string Senha { get; set; }
     }
 }
