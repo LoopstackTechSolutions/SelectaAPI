@@ -24,10 +24,10 @@ namespace SelectaAPI.Controllers
                 if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Senha))
                     return BadRequest("preencha todos os campos");
 
-                var clientLogin = await _jwtService.Authenticate(request);
+                var clientLogin = await _jwtService.AuthenticateClient(request);
 
                 if (clientLogin == null)
-                    return BadRequest("usuário inválido");
+                    return BadRequest("email ou senha inválidos");
 
                 return Ok(clientLogin);
             }
@@ -50,10 +50,10 @@ namespace SelectaAPI.Controllers
                 if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Senha))
                     return BadRequest("preencha todos os campos");
 
-                var employeeLogin = await _jwtService.Authenticate(request);
+                var employeeLogin = await _jwtService.AuthenticateEmployee(request);
 
                 if (employeeLogin == null)
-                    return BadRequest("usuário inválido");
+                    return BadRequest("email ou senha inválidos");
 
                 return Ok(employeeLogin);
             }

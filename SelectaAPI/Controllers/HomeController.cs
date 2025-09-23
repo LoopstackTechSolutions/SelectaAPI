@@ -23,7 +23,6 @@ namespace SelectaAPI.Controllers
         {
             _homeService = homeService;
         }
-            // --------- ENDPOINTS LIVRES ---------
             [AllowAnonymous]
             [HttpGet("all")]
             public async Task<IActionResult> GetAll()
@@ -54,30 +53,48 @@ namespace SelectaAPI.Controllers
                 }
             }
 
-            // --------- ENDPOINTS QUE DEPENDEM DO CLIENTE ---------
+        /*
+        [HttpGet("debug-claims")]
+        public IActionResult DebugClaims()
+        {
+            var claims = User.Claims.Select(c => new { c.Type, c.Value });
+            return Ok(claims);
+        }
+        */
 
-            [HttpGet("wish-list")]
-            public async Task<IActionResult> WishList()
+        [HttpGet("wish-list")]
+        [Authorize]
+        public async Task<IActionResult> WishList(int clientId)
+        {
+            try
             {
-                try
+                /*
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "idCliente");
+                if (userIdClaim == null)
                 {
-                    var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var wishList = await _homeService.WishList(idCliente);
-                    return Ok(wishList);
+                    return Unauthorized("Token inválido ou idCliente não encontrado.");
                 }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"erro no servidor {ex.Message}");
-                }
+
+
+                int usuarioId = int.Parse(userIdClaim.Value);
+                */
+
+                var wishList = await _homeService.WishList(clientId);
+                return Ok(wishList);
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro no servidor: {ex.Message}");
+            }
+        }
 
-            [HttpGet("for-you")]
-            public async Task<IActionResult> ForYou()
+        [HttpGet("for-you")]
+            public async Task<IActionResult> ForYou(int clientId)
             {
                 try
                 {
-                    var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var forYou = await _homeService.ForYou(idCliente);
+                    // var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
+                    var forYou = await _homeService.ForYou(clientId);
                     return Ok(forYou);
                 }
                 catch (Exception ex)
@@ -87,12 +104,12 @@ namespace SelectaAPI.Controllers
             }
 
             [HttpGet("notifications")]
-            public async Task<IActionResult> Notifications()
+            public async Task<IActionResult> Notifications(int clientId)
             {
                 try
                 {
-                    var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var notifications = await _homeService.Notifications(idCliente);
+                    // var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
+                    var notifications = await _homeService.Notifications(clientId);
                     return Ok(notifications);
                 }
                 catch (Exception ex)
@@ -102,12 +119,12 @@ namespace SelectaAPI.Controllers
             }
 
             [HttpGet("notifications-unread")]
-            public async Task<IActionResult> NotificationsUnread()
+            public async Task<IActionResult> NotificationsUnread(int clientId)
             {
                 try
                 {
-                    var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var notifications = await _homeService.NotificationsUnread(idCliente);
+               //      var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
+                    var notifications = await _homeService.NotificationsUnread(clientId);
 
                     if (notifications == null)
                         return NotFound("todas as notificações foram lidas");
@@ -121,12 +138,12 @@ namespace SelectaAPI.Controllers
             }
 
             [HttpPost("add-products-wishList")]
-            public async Task<IActionResult> AddProductInWishList([FromQuery] int idProduto)
+            public async Task<IActionResult> AddProductInWishList([FromQuery] int idProduto, int clientId)
             {
                 try
                 {
-                    var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var result = await _homeService.AddProductInWishList(idProduto, idCliente);
+                   // var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
+                    var result = await _homeService.AddProductInWishList(idProduto, clientId);
 
                     if (result == null)
                         return NotFound("preencha todos os campos");
@@ -140,12 +157,12 @@ namespace SelectaAPI.Controllers
             }
 
             [HttpGet("get-products-in-car")]
-            public async Task<IActionResult> GetProductsInCartOfClient()
+            public async Task<IActionResult> GetProductsInCartOfClient(int clientId)
             {
                 try
                 {
-                    var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var result = await _homeService.GetProductsInCartOfClient(idCliente);
+                    // var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
+                    var result = await _homeService.GetProductsInCartOfClient(clientId);
                     return Ok(result);
                 }
                 catch (Exception ex)
@@ -155,12 +172,12 @@ namespace SelectaAPI.Controllers
             }
 
             [HttpGet("verify-type-account")]
-            public async Task<IActionResult> GetTypeAccountOfClient()
+            public async Task<IActionResult> GetTypeAccountOfClient(int clientId)
             {
                 try
                 {
-                    var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var result = await _homeService.GetTypeAccountOfClient(idCliente);
+                   // var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
+                    var result = await _homeService.GetTypeAccountOfClient(clientId);
                     return Ok(result);
                 }
                 catch (Exception ex)

@@ -50,8 +50,6 @@ builder.Services.AddDefaultAWSOptions(new AWSOptions
     )
 });
 
-var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
-var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -71,7 +69,6 @@ builder.Services.AddAuthentication(options =>
     Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:Key"]))
     };
 });
-Console.WriteLine(jwtKey);
 builder.Services.AddAuthorization();
 
 //  Injeta automaticamente o IAmazonS3 com as credenciais do .env
@@ -113,6 +110,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 // -----------------------------
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

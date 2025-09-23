@@ -33,7 +33,10 @@ namespace SelectaAPI.Services
         }
 
         public async Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
-        {     
+        {
+            string hash = PasswordHashHandler.HashPassword(addEmployeeDTO.Senha);
+
+            addEmployeeDTO.Senha = hash;
             var employeeRegister = await _registrationRepository.EmployeeRegister(addEmployeeDTO);
             return employeeRegister;
         }

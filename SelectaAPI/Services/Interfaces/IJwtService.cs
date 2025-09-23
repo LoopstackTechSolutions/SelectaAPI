@@ -4,6 +4,7 @@ namespace SelectaAPI.Services.Interfaces
 {
     public interface IJwtService
     {
-        Task<LoginResponseDTO?> Authenticate(LoginRequestDTO requestDTO);
+        Task<LoginResponseDTO?> AuthenticateClient(LoginRequestDTO requestDTO);
+        Task<LoginResponseDTO?> AuthenticateEmployee(LoginRequestDTO requestDTO);
     }
 }
