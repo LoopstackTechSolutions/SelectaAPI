@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
 using SelectaAPI.Services.Interfaces;
@@ -9,14 +10,13 @@ namespace SelectaAPI.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly ILoginService _loginService;
-
-        public LoginController(ILoginService loginService)
+        private readonly IJwtService _jwtService;
+        public LoginController(IJwtService jwtService)
         {
-            _loginService = loginService;
+            _jwtService = jwtService;
         }
-
         [HttpPost("client-login")]
+        [AllowAnonymous] 
         public async Task<IActionResult> ClientLogin([FromBody] LoginRequestDTO request)
         {
             try
@@ -24,12 +24,12 @@ namespace SelectaAPI.Controllers
                 if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Senha))
                     return BadRequest("preencha todos os campos");
 
-                var clientLogin = await _loginService.ClientLogin(request.Email, request.Senha);
+                var clientLogin = await _jwtService.Authenticate(request);
 
-                if (clientLogin == null) return BadRequest("usuário inválido");
+                if (clientLogin == null)
+                    return BadRequest("usuário inválido");
 
-                // Return structured response
-                return Ok(new { idCliente = clientLogin.IdCliente, message = "login realizado" });
+                return Ok(clientLogin);
             }
             catch (DbUpdateException ex)
             {
@@ -41,19 +41,45 @@ namespace SelectaAPI.Controllers
             }
         }
 
-
         [HttpPost("employee-login")]
-        public async Task<IActionResult> EmployeeLogin([FromQuery]string email, string password)
+        [AllowAnonymous]
+        public async Task<IActionResult> EmployeeLogin([FromBody] LoginRequestDTO request)
         {
-            Console.WriteLine($"Email recebido: '{email}'");
-            Console.WriteLine($"Senha recebida: '{password}'");
-            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email)) return BadRequest("preencha todos os campos");
+            try
+            {
+                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Senha))
+                    return BadRequest("preencha todos os campos");
 
-            var clientLogin = await _loginService.EmployeeLogin(email, password);
+                var employeeLogin = await _jwtService.Authenticate(request);
 
-            if (clientLogin == null) return StatusCode(400, "usuário inválido");
+                if (employeeLogin == null)
+                    return BadRequest("usuário inválido");
 
-            return Ok("Login realizado!");
+                return Ok(employeeLogin);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor: {ex.Message}");
+            }
+        }
+
+        [HttpGet("profile")]
+        [Authorize]
+        public IActionResult GetProfile()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "idCliente")?.Value;
+            var userName = User.Identity?.Name;
+
+            return Ok(new
+            {
+                Id = userId,
+                Nome = userName,
+                Message = "Acesso permitido com token válido ✅"
+            });
         }
     }
 }

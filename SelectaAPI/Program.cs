@@ -22,6 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IHomeRepository, HomeRepository>();
 builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
 builder.Services.AddScoped<IHomeService, HomeService>();
@@ -49,6 +50,8 @@ builder.Services.AddDefaultAWSOptions(new AWSOptions
     )
 });
 
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -62,12 +65,13 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
+        ValidAudience = builder.Configuration["JwtConfig:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+    Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:Key"]))
     };
 });
-
+Console.WriteLine(jwtKey);
 builder.Services.AddAuthorization();
 
 //  Injeta automaticamente o IAmazonS3 com as credenciais do .env

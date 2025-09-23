@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
+using SelectaAPI.Handlers;
 using SelectaAPI.Repository.Interfaces;
 using SelectaAPI.Services.Interfaces;
 
@@ -24,6 +25,9 @@ namespace SelectaAPI.Services
 
         public async Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO)
         {
+            string hash = PasswordHashHandler.HashPassword(addClientDTO.Senha);
+
+            addClientDTO.Senha = hash;
             var clientRegister = await _registrationRepository.ClientRegister(addClientDTO);
             return clientRegister;
         }
