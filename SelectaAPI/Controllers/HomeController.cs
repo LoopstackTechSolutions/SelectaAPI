@@ -31,9 +31,14 @@ namespace SelectaAPI.Controllers
                 var products = await _homeService.GetAll();
                 return Ok(products);
             }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+            }
+
             catch (Exception ex)
             {
-                return StatusCode(500, $" erro no servidor{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
         /*
@@ -66,12 +71,12 @@ namespace SelectaAPI.Controllers
             }
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $" erro no servidor{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
         [HttpGet("wish-list")]
@@ -84,12 +89,12 @@ namespace SelectaAPI.Controllers
             }
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $" erro no servidor{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
         [HttpGet("for-you")]
@@ -102,12 +107,12 @@ namespace SelectaAPI.Controllers
             }
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor:{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
         [HttpGet("notifications")]
@@ -121,12 +126,12 @@ namespace SelectaAPI.Controllers
 
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor:{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
 
@@ -144,12 +149,12 @@ namespace SelectaAPI.Controllers
 
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor:{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
         [HttpGet("best-sellers")]
@@ -163,12 +168,12 @@ namespace SelectaAPI.Controllers
 
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor:{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
 
@@ -185,12 +190,12 @@ namespace SelectaAPI.Controllers
             }
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor:{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
 
@@ -206,12 +211,12 @@ namespace SelectaAPI.Controllers
 
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor:{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
 
@@ -226,12 +231,12 @@ namespace SelectaAPI.Controllers
 
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor:{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
 
@@ -245,12 +250,12 @@ namespace SelectaAPI.Controllers
             }
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor:{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
 
@@ -265,12 +270,12 @@ namespace SelectaAPI.Controllers
 
             catch (DbUpdateException ex)
             {
-                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor:{ex.Message}");
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
     }
