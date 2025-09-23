@@ -1,5 +1,4 @@
 ﻿using Amazon.S3.Model;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,175 +22,83 @@ namespace SelectaAPI.Controllers
         {
             _homeService = homeService;
         }
-            [AllowAnonymous]
-            [HttpGet("all")]
-            public async Task<IActionResult> GetAll()
-            {
-                try
-                {
-                    var products = await _homeService.GetAll();
-                    return Ok(products);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"erro no servidor {ex.Message}");
-                }
-            }
 
-            [AllowAnonymous]
-            [HttpGet("highlights")]
-            public async Task<IActionResult> Highlights()
-            {
-                try
-                {
-                    var highlights = await _homeService.Highlights();
-                    return Ok(highlights);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"erro no servidor {ex.Message}");
-                }
-            }
-
-        /*
-        [HttpGet("debug-claims")]
-        public IActionResult DebugClaims()
-        {
-            var claims = User.Claims.Select(c => new { c.Type, c.Value });
-            return Ok(claims);
-        }
-        */
-
-        [HttpGet("wish-list")]
-        [Authorize]
-        public async Task<IActionResult> WishList(int clientId)
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                /*
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "idCliente");
-                if (userIdClaim == null)
-                {
-                    return Unauthorized("Token inválido ou idCliente não encontrado.");
-                }
-
-
-                int usuarioId = int.Parse(userIdClaim.Value);
-                */
-
-                var wishList = await _homeService.WishList(clientId);
-                return Ok(wishList);
+                var products = await _homeService.GetAll();
+                return Ok(products);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro no servidor: {ex.Message}");
+                return StatusCode(500, $" erro no servidor{ex.Message}");
             }
         }
-
-        [HttpGet("for-you")]
-            public async Task<IActionResult> ForYou(int clientId)
-            {
-                try
-                {
-                    // var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var forYou = await _homeService.ForYou(clientId);
-                    return Ok(forYou);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"erro no servidor {ex.Message}");
-                }
-            }
-
-            [HttpGet("notifications")]
-            public async Task<IActionResult> Notifications(int clientId)
-            {
-                try
-                {
-                    // var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var notifications = await _homeService.Notifications(clientId);
-                    return Ok(notifications);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"erro no servidor {ex.Message}");
-                }
-            }
-
-            [HttpGet("notifications-unread")]
-            public async Task<IActionResult> NotificationsUnread(int clientId)
-            {
-                try
-                {
-               //      var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var notifications = await _homeService.NotificationsUnread(clientId);
-
-                    if (notifications == null)
-                        return NotFound("todas as notificações foram lidas");
-
-                    return Ok(notifications);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"erro no servidor {ex.Message}");
-                }
-            }
-
-            [HttpPost("add-products-wishList")]
-            public async Task<IActionResult> AddProductInWishList([FromQuery] int idProduto, int clientId)
-            {
-                try
-                {
-                   // var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var result = await _homeService.AddProductInWishList(idProduto, clientId);
-
-                    if (result == null)
-                        return NotFound("preencha todos os campos");
-
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"erro no servidor {ex.Message}");
-                }
-            }
-
-            [HttpGet("get-products-in-car")]
-            public async Task<IActionResult> GetProductsInCartOfClient(int clientId)
-            {
-                try
-                {
-                    // var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var result = await _homeService.GetProductsInCartOfClient(clientId);
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"erro no servidor {ex.Message}");
-                }
-            }
-
-            [HttpGet("verify-type-account")]
-            public async Task<IActionResult> GetTypeAccountOfClient(int clientId)
-            {
-                try
-                {
-                   // var idCliente = int.Parse(User.FindFirst("idCliente")?.Value!);
-                    var result = await _homeService.GetTypeAccountOfClient(clientId);
-                    return Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"erro no servidor {ex.Message}");
-                }
-            }
-       [HttpGet("get-client-by-id")]
-        public async Task<IActionResult> GetClientById(int id)
+        /*
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string name)
         {
             try
             {
-                var getClientById = await _homeService.GetClientById(id);
-                return Ok(getClientById);
+                var search = await _homeService.Search(name);
+                return Ok(search);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $" erro no servidor{ex.Message}");
+            }
+        }
+        */
+
+        [HttpGet("highlights")]
+        public async Task<IActionResult> Highlights()
+        {
+            try
+            {
+                var highlights = await _homeService.Highlights();
+                return Ok(highlights);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $" erro no servidor{ex.Message}");
+            }
+        }
+        [HttpGet("wish-list")]
+        public async Task<IActionResult> WishList([FromQuery] int id)
+        {
+            try
+            {
+                var wishList = await _homeService.WishList(id);
+                return Ok(wishList);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $" erro no servidor{ex.Message}");
+            }
+        }
+        [HttpGet("for-you")]
+        public async Task<IActionResult> ForYou([FromQuery] int id)
+        {
+            try
+            {
+                var forYou = await _homeService.ForYou(id);
+                return Ok(forYou);
             }
             catch (DbUpdateException ex)
             {
@@ -203,8 +110,170 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, $"erro no servidor:{ex.Message}");
             }
         }
-    }
-}
+        [HttpGet("notifications")]
+        public async Task<IActionResult> Notifications([FromQuery] int id)
+        {
+            try
+            {
+                var notifications = await _homeService.Notifications(id);
+                return Ok(notifications);
+            }
 
- 
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }
+        }
+
+        [HttpGet("notifications-unread")]
+        public async Task<IActionResult> NotificationsUnread([FromQuery] int id)
+        {
+            try
+            {
+                var notifications = await _homeService.NotificationsUnread(id);
+
+                if (notifications == null) return NotFound("todas as notificações foram lidas");
+                return Ok(notifications);
+            }
+
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }
+        }
+        [HttpGet("best-sellers")]
+        public async Task<IActionResult> BestSellers()
+        {
+            try
+            {
+                var bestSellers = await _homeService.BestSellers();
+                return Ok(bestSellers);
+            }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }
+        }
+
+        [HttpGet("get-products-id")]
+        public async Task<IActionResult> GetProductById([FromQuery] int id)
+        {
+            try
+            {
+                var getProductById = await _homeService.GetProductByID(id);
+
+                if (getProductById == null) return BadRequest("id do produto nulo");
+
+                return Ok(getProductById);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }
+        }
+
+        [HttpPost("add-products-wishList")]
+        public async Task<IActionResult> AddProductInWishList([FromQuery] int id, int idCliente)
+        {
+            try
+            {
+                var addProductInWishList = await _homeService.AddProductInWishList(id, idCliente);
+                if (addProductInWishList == null) return NotFound("preencha todos os campos");
+                return Ok(addProductInWishList);
+            }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }
+        }
+
+        [HttpGet("get-products-in-car")]
+        public async Task<IActionResult> GetProductsInCartOfClient([FromQuery] int idClient)
+        {
+            try
+            {
+                var getProductsInCar = await _homeService.GetProductsInCartOfClient(idClient);
+                return Ok(getProductsInCar);
+            }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }
+        }
+
+        [HttpGet("verify-type-account")]
+        public async Task<IActionResult> GetTypeAccountOfClient([FromQuery] int idClient)
+        {
+            try
+            {
+                var getTypeAccountOfClient = await _homeService.GetTypeAccountOfClient(idClient);
+                return Ok(getTypeAccountOfClient);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }
+        }
+
+        [HttpGet("search-by-category")]
+        public async Task<IActionResult> SearchProductByCategory(int id)
+        {
+            try
+            {
+                var getProductByCategory = await _homeService.SearchProductByCategory(id);
+                return Ok(getProductByCategory);
+            }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor:{ex.Message}");
+            }
+        }
+    }
+
+}
 
