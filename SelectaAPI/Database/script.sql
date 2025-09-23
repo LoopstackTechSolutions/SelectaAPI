@@ -14,7 +14,7 @@ create table if not exists tbFuncionario
 IdFuncionario int primary key auto_increment,
 Nome varchar(50) not null,
 Email varchar(50) not null unique,
-Senha varchar(50) not null,
+Senha varchar(255) not null,
 Cpf char(11) not null unique,
 NivelAcesso varchar(30) -- "comum"/"gerente"
 );
@@ -35,7 +35,7 @@ create table if not exists tbCliente
 IdCliente int primary key auto_increment,
 Nome varchar(50) not null,
 Email varchar(50) not null,
-Senha varchar(50) not null,
+Senha varchar(255) not null,
 Saldo decimal(10,2) default 0
 );
 
