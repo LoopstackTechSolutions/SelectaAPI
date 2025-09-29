@@ -227,7 +227,8 @@ namespace SelectaAPI.Controllers
             {
                 var getProductsInCar = await _homeService.GetProductsInCartOfClient(idClient);
                 return Ok(getProductsInCar);
-            }
+
+                            }
 
             catch (DbUpdateException ex)
             {
@@ -259,6 +260,29 @@ namespace SelectaAPI.Controllers
             }
         }
 
+        [HttpGet("get-all-promotion-product")]
+        public async Task<IActionResult> GetPromotionOfProduct(int id)
+        {
+            try
+            {
+                var getAllPromotion = await _homeService.GetAllPromotionOfProduct(id);
+
+                if (getAllPromotion == null) return StatusCode(400, $"produto sem promoção");
+
+                return Ok(getAllPromotion);
+            }
+
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+            }
+        }
+
         [HttpGet("search-by-category")]
         public async Task<IActionResult> SearchProductByCategory(int id)
         {
@@ -272,7 +296,7 @@ namespace SelectaAPI.Controllers
             {
                 return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
-
+            
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");

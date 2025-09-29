@@ -5,6 +5,7 @@ namespace SelectaAPI.Repository.Interfaces
     public interface IRegistrationRepository
     {
         Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO);
+        Task<AddPromotionResponseDTO> PromotionRegister(AddPromotionRequestDTO addPromotionRequest);
         Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO);
         /*
         Task<IEnumerable<GetClientDTO>> GetClient();

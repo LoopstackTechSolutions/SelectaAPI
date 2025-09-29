@@ -17,28 +17,28 @@ namespace SelectaAPI.Repository
 
         public async Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryClientDTO)
         {
-                var cliente = await _context.clientes.FindAsync(addCategoryClientDTO.IdCliente);
+            var cliente = await _context.clientes.FindAsync(addCategoryClientDTO.IdCliente);
 
-                var categoria = await _context.categorias.FindAsync(addCategoryClientDTO.IdCategoria);
+            var categoria = await _context.categorias.FindAsync(addCategoryClientDTO.IdCategoria);
 
-                var exists = await _context.categoriaClientes
-                    .AnyAsync(cc => cc.IdCliente == addCategoryClientDTO.IdCliente && cc.IdCategoria == addCategoryClientDTO.IdCategoria);
+            var exists = await _context.categoriaClientes
+                .AnyAsync(cc => cc.IdCliente == addCategoryClientDTO.IdCliente && cc.IdCategoria == addCategoryClientDTO.IdCategoria);
 
-                var categoriaCliente = new tbCategoria_Cliente
-                {
-                    IdCategoria = addCategoryClientDTO.IdCategoria,
-                    IdCliente = addCategoryClientDTO.IdCliente
-                };
+            var categoriaCliente = new tbCategoria_Cliente
+            {
+                IdCategoria = addCategoryClientDTO.IdCategoria,
+                IdCliente = addCategoryClientDTO.IdCliente
+            };
 
-                _context.categoriaClientes.Add(categoriaCliente);
-                await _context.SaveChangesAsync();
+            _context.categoriaClientes.Add(categoriaCliente);
+            await _context.SaveChangesAsync();
 
-                return (new AddCategory_ClientDTO
-                {
-                  IdCategoria =  categoriaCliente.IdCategoria,
-                    IdCliente = categoriaCliente.IdCliente
-                });
-            }
+            return (new AddCategory_ClientDTO
+            {
+                IdCategoria = categoriaCliente.IdCategoria,
+                IdCliente = categoriaCliente.IdCliente
+            });
+        }
 
         public async Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO)
         {
@@ -67,11 +67,37 @@ namespace SelectaAPI.Repository
                 Cpf = addEmployeeDTO.Cpf.Trim(),
                 NivelAcesso = addEmployeeDTO.NivelAcesso.Trim()
             };
-                await _context.funcionarios.AddAsync(entityEmployee);
-                await _context.SaveChangesAsync();
+            await _context.funcionarios.AddAsync(entityEmployee);
+            await _context.SaveChangesAsync();
 
-                 return addEmployeeDTO;
-            }
+            return addEmployeeDTO;
+        }
+
+        public async Task<AddPromotionResponseDTO> PromotionRegister(AddPromotionRequestDTO addPromotionRequest)
+        {
+            var getProduct = await _context.produtos.Where(p => p.IdProduto == addPromotionRequest.IdProduto)
+                .Select(p => p.PrecoUnitario)
+                .FirstOrDefaultAsync();
+            var addPromotionEntity = new tbPromocaoModel()
+            {
+                Desconto = addPromotionRequest.Desconto,
+                IdProduto = addPromotionRequest.IdProduto,
+                Status = addPromotionRequest.Status,
+                ValidaAte = addPromotionRequest.Validade
+            };
+
+            await _context.promocoes.AddAsync(addPromotionEntity);
+            await _context.SaveChangesAsync();
+
+            return new AddPromotionResponseDTO
+            {
+                ValorDesconto = addPromotionRequest.Desconto,
+                IdProduto = addPromotionRequest.IdProduto,
+                Status = addPromotionRequest.Status,
+                Validade = addPromotionRequest.Validade,
+                ValorAnterior = getProduct
+            }; 
+        }
 
         /*
         public async Task<IEnumerable<GetClientDTO>> GetClient()
@@ -92,6 +118,7 @@ namespace SelectaAPI.Repository
             return (IEnumerable<GetEmployeeDTO>)getEmployee;
         }
         */
+
     }
-    }
+}
 

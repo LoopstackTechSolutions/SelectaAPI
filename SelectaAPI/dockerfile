@@ -34,4 +34,5 @@ EXPOSE 7065
 ENV ASPNETCORE_URLS=http://+:7065
 
 # Use wait-for-db.sh to wait for the database before starting the API
-ENTRYPOINT ["dotnet", "SelectaAPI.dll"]
+ENTRYPOINT ["./wait-for-db.sh", "dotnet", "SelectaAPI.dll"]
+

@@ -144,5 +144,16 @@ namespace SelectaAPI.Services
 
             return getClientById;
         }
+
+        public async Task<IEnumerable<tbPromocaoModel>> GetAllPromotionOfProduct(int id)
+        {
+            var productExists = await _context.promocoes.AnyAsync(p => p.IdProduto == id);
+
+            if (!productExists) return null;
+
+            var getPromotion = await _homeRepository.GetAllPromotionOfProduct(id);
+
+            return getPromotion;
+        }
     }
 }

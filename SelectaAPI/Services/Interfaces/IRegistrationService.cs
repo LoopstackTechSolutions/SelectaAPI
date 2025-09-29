@@ -6,6 +6,7 @@ namespace SelectaAPI.Services.Interfaces
     {
         Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO);
         Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO);
+        Task<AddPromotionResponseDTO> PromotionRegister(AddPromotionRequestDTO addPromotionRequest);
         // TRECHO TESTE
         /*
         Task<IEnumerable<GetClientDTO>> GetClient();

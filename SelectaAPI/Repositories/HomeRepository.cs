@@ -9,6 +9,7 @@ using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Repository.Interfaces;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace SelectaAPI.Repository
 {
@@ -101,6 +102,21 @@ namespace SelectaAPI.Repository
 
         }
         */
+
+        public async Task<IEnumerable<tbPromocaoModel>> GetAllPromotionOfProduct(int id)
+        {
+            var getPromotion = await _context.promocoes.Where(p => p.IdProduto == id)
+                .Select(p => new tbPromocaoModel
+                {
+                    IdProduto = p.IdProduto,
+                    IdPromocao = p.IdPromocao,
+                    Desconto = p.Desconto,
+                    ValidaAte = p.ValidaAte,
+                    Status = p.Status,
+                })
+                .ToListAsync();
+            return getPromotion;
+        }
 
         public async Task<IEnumerable<ProductsWithPromotionDTO>> Highlights()
         {

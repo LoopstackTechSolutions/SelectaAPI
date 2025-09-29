@@ -5,6 +5,7 @@ using SelectaAPI.DTOs;
 using SelectaAPI.Handlers;
 using SelectaAPI.Repository.Interfaces;
 using SelectaAPI.Services.Interfaces;
+using ZstdSharp.Unsafe;
 
 namespace SelectaAPI.Services
 {
@@ -39,6 +40,21 @@ namespace SelectaAPI.Services
             addEmployeeDTO.Senha = hash;
             var employeeRegister = await _registrationRepository.EmployeeRegister(addEmployeeDTO);
             return employeeRegister;
+        }
+
+        public async Task<AddPromotionResponseDTO> PromotionRegister(AddPromotionRequestDTO addPromotionRequest)
+        {
+            var addPromotion = await _registrationRepository.PromotionRegister(addPromotionRequest);
+
+            return new AddPromotionResponseDTO
+            {
+                IdProduto = addPromotion.IdProduto,
+                ValorAnterior = addPromotion.ValorAnterior,
+                ValorDesconto = addPromotion.ValorDesconto,
+                NovoValor = addPromotion.ValorDesconto * addPromotion.ValorAnterior / 100,
+                Status = addPromotion.Status,
+                Validade = addPromotion.Validade,
+            };
         }
         // TRECHO TESTE
         /*

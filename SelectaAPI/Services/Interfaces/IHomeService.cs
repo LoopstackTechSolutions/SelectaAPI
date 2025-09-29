@@ -19,5 +19,6 @@ namespace SelectaAPI.Services.Interfaces
         Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClient(int idClient);
         Task<IEnumerable<SearchProductsByCategoryDTO>> SearchProductByCategory(int id);
         Task<IEnumerable<tbProdutoModel>> GetAll();
+        Task<IEnumerable<tbPromocaoModel>> GetAllPromotionOfProduct(int id);
     }
 }
