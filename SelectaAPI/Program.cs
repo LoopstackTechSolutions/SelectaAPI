@@ -27,14 +27,12 @@ builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IFilesUploadAWSService, FilesUploadAWSService>();
 
 
-string connectionString =
-    $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
-    $"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
-    $"User={Environment.GetEnvironmentVariable("USER")};" +
-    $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
+string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
+                          ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
 
 builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>();
 
@@ -62,14 +60,14 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
+app.MapGet("/", () => "API rodando no Azure");
 app.Run();
+
