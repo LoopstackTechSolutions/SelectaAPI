@@ -35,7 +35,7 @@ string connectionString =
     $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
     $"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
     $"User={Environment.GetEnvironmentVariable("USER")};" +
-    $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
+    $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";  
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
