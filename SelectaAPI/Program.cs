@@ -40,13 +40,17 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IFilesUploadAWSService, FilesUploadAWSService>();
 
 
+string connectionString =
+$"Server={Environment.GetEnvironmentVariable("SERVER")};" +
+$"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
+$"User={Environment.GetEnvironmentVariable("USER")};" +
+$"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
 
-string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
+/*string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
                           ?? builder.Configuration.GetConnectionString("DefaultConnection");
-
+*/
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
 
 builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>();
 

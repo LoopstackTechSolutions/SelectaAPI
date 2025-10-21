@@ -9,5 +9,6 @@ namespace SelectaAPI.Services.Interfaces.ProductsInterface
         Task<AddProductDTO> ProductRegister(AddProductDTO addProduct);
         Task<AddImageOfProductDTO> AddImageOfProduct (AddImageOfProductDTO addImageDTO);
         Task<string?> GetPrincipalImage(int idProduto);
+        Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto);
     }
 }

@@ -94,5 +94,31 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpGet("get-all-images/{idProduto}")]
+        public async Task<IActionResult> GetAllImagesOfProduct(int idProduto)
+        {
+            try
+            {
+                var imageUrls = await _productService.GetAllImagesOfProduct(idProduto);
+
+                if (!imageUrls.Any())
+                    return NotFound($"Nenhuma imagem encontrada para o produto ID {idProduto}");
+
+                return Ok(new
+                {
+                    IdProduto = idProduto,
+                    Imagens = imageUrls
+                });
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

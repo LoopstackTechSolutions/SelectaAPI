@@ -5,6 +5,7 @@ using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace SelectaAPI.Services
 {
@@ -75,6 +76,25 @@ namespace SelectaAPI.Services
             };
 
             return _s3Client.GetPreSignedURL(urlRequest);
+        }
+
+        public async Task<IEnumerable<string>> GetAllImages(IEnumerable<string> s3Keys)
+        {
+            var urls = new List<string>();
+
+            foreach (var key in s3Keys)
+            {
+                var urlRequest = new GetPreSignedUrlRequest
+                {
+                    BucketName = DefaultBucketName,
+                    Key = key,
+                    Expires = DateTime.UtcNow.AddHours(1)
+                };
+
+                var url = _s3Client.GetPreSignedURL(urlRequest);
+                urls.Add(url);
+            }
+            return urls;
         }
     }
 }

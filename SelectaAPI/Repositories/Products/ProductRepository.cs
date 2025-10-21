@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
@@ -32,6 +33,14 @@ namespace SelectaAPI.Repositories.Products
             await _context.imagensProdutos.AddAsync(addImageEntity);
             await _context.SaveChangesAsync();
             return addImageDTO;
+        }
+
+        public async Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto)
+        {
+            var image = await _context.imagensProdutos.Where(i => i.IdProduto == idProduto)
+                .Select(i => i.S3Key)
+                .ToListAsync(); 
+            return image;
         }
 
         public async Task<string?> GetPrincipalImage(int idProduto)
@@ -87,6 +96,5 @@ namespace SelectaAPI.Repositories.Products
                 ValorAnterior = getProduct
             };
         }
-
     }
 }

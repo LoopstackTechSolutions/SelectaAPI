@@ -6,5 +6,6 @@ namespace SelectaAPI.Services.Interfaces
     {
         Task<S3ObjectDTO> UploadFiles(IFormFile file, string? prefix);
         Task<string?> GetImage(string s3Key);
+        Task<IEnumerable<string>> GetAllImages(IEnumerable<string> s3Keys);
     }
 }

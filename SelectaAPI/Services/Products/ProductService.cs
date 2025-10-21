@@ -24,6 +24,16 @@ namespace SelectaAPI.Services.Products
             return addImage;
         }
 
+        public async Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto)
+        {
+            var s3Keys = await _productRepository.GetAllImagesOfProduct(idProduto);
+
+            if (s3Keys == null || !s3Keys.Any())
+                return Enumerable.Empty<string>();
+
+            return await _aws.GetAllImages(s3Keys);
+        }
+
         public async Task<string?> GetPrincipalImage(int idProduto)
         {
             var s3Key = await _productRepository.GetPrincipalImage(idProduto);
