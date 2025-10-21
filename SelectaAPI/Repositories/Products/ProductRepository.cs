@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
@@ -18,24 +19,47 @@ namespace SelectaAPI.Repositories.Products
             _aws = aws;
         }
 
-        public async Task<tbProdutoModel> ProductRegister(IFormFile file, string? prefix, AddProductDTO addProductDTO)
+        public async Task<AddImageOfProductDTO> AddImageOfProduct(/*IFormFile file, string? prefix,*/ AddImageOfProductDTO addImageDTO)
         {
-            var image = await _aws.UploadFiles(file, prefix);
+            var awsCommunication = await _aws.UploadFiles(addImageDTO.File, addImageDTO.Prefix);
 
-            _context.produtos.Add(new tbProdutoModel
+            var addImageEntity = new tbImagem_ProdutoModel()
+            {
+                IdProduto = addImageDTO.IdProduto,
+                IsPrincipal = addImageDTO.Principal,
+                S3Key = awsCommunication.S3Key,
+            };
+            await _context.imagensProdutos.AddAsync(addImageEntity);
+            await _context.SaveChangesAsync();
+            return addImageDTO;
+        }
+
+        public async Task<string?> GetPrincipalImage(int idProduto)
+        {
+            var image = await _context.imagensProdutos.Where(i => i.IdProduto == idProduto && i.IsPrincipal == true)
+                .Select(i => i.S3Key)
+                .FirstOrDefaultAsync();
+
+            return image;
+        }
+
+        public async Task<AddProductDTO> ProductRegister(AddProductDTO addProductDTO)
+        {
+            var addProductEntity =(new tbProdutoModel()
             {
                 Nome = addProductDTO.Nome,
-                Nota = addProductDTO.Nota,
                 Condicao = addProductDTO.Condicao,
                 Descricao = addProductDTO.Descricao,
                 PrecoUnitario = addProductDTO.PrecoUnitario,
                 Peso = addProductDTO.Peso,
                 Quantidade = addProductDTO.Quantidade,
-                Vendedor = addProductDTO.Vendedor,
                 Status = addProductDTO.Status,
-                IdVendedor = addProductDTO.IdVendedor,
+                IdVendedor = addProductDTO.IdVendedor
             });
+            await _context.produtos.AddAsync(addProductEntity);
+            await _context.SaveChangesAsync();
 
+            return addProductDTO;
         }
 
         public async Task<AddPromotionResponseDTO> PromotionRegister(AddPromotionRequestDTO addPromotionRequest)

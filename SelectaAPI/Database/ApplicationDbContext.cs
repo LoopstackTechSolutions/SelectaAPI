@@ -27,5 +27,6 @@ namespace SelectaAPI.Database
         public DbSet<tbCarrinhoModel> carrinho { get; set; }
         public DbSet<tbEntregadorModel> entregadores { get; set; }
         public DbSet<tbVendedorModel> vendedores { get; set; }
+        public DbSet<tbImagem_ProdutoModel> imagensProdutos { get; set; }
     }
 }

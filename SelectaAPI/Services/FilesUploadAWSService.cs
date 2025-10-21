@@ -31,9 +31,13 @@ namespace SelectaAPI.Services
                     UseClientRegion = true
                 });
             }
+            string timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmssfff");
+            string safeFileName = Path.GetFileName(file.FileName); 
+            string fileNameWithTimestamp = $"{timestamp}_{safeFileName}";
 
-            var key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}/{file.FileName}";
-
+            var key = string.IsNullOrEmpty(prefix)
+                            ? fileNameWithTimestamp
+         : $"{timestamp}{('/')}/{safeFileName}";
             var request = new PutObjectRequest()
             {
                 BucketName = bucketName,
@@ -52,13 +56,25 @@ namespace SelectaAPI.Services
             };
             string temporaryUrl = _s3Client.GetPreSignedURL(urlRequest);
 
-           
-
             return new S3ObjectDTO
             {
                 Name = bucketName,
                 PresignedUrl = temporaryUrl,
-                };
+                S3Key = key
+            };
+        }
+        public async Task<string?> GetImage(string s3Key)
+        {
+            if (string.IsNullOrEmpty(s3Key)) return null;
+
+            var urlRequest = new GetPreSignedUrlRequest
+            {
+                BucketName = DefaultBucketName,
+                Key = s3Key,
+                Expires = DateTime.UtcNow.AddHours(1)
+            };
+
+            return _s3Client.GetPreSignedURL(urlRequest);
         }
     }
 }

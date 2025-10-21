@@ -6,6 +6,9 @@ namespace SelectaAPI.Repositories.Interfaces.ProductsInterface
     public interface IProductRepository
     {
         Task<AddPromotionResponseDTO> PromotionRegister(AddPromotionRequestDTO addPromotionRequest);
-        Task<tbProdutoModel> ProductRegister(IFormFile file, string? prefix, AddProductDTO addProductDTO);
+        Task<AddProductDTO> ProductRegister(AddProductDTO addProductDTO);
+        Task<AddImageOfProductDTO> AddImageOfProduct(AddImageOfProductDTO addImageDTO);
+        Task<string?> GetPrincipalImage(int idProduto);
+
     }
 }
