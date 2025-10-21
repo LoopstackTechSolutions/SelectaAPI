@@ -1,6 +1,6 @@
 ﻿using SelectaAPI.Models;
 
-namespace SelectaAPI.Services.Interfaces
+namespace SelectaAPI.Services.Interfaces.ProductsInterface
 {
     public interface ICategoryService
     {

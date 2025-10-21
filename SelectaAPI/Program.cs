@@ -1,19 +1,26 @@
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.S3;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Refit;
 using SelectaAPI.Database;
 using SelectaAPI.Integracao;
 using SelectaAPI.Integracao.Interfaces;
 using SelectaAPI.Integracao.Refit;
+using SelectaAPI.Repositories.Interfaces.ProductsInterface;
+using SelectaAPI.Repositories.Interfaces.UsersInterface;
+using SelectaAPI.Repositories.Products;
+using SelectaAPI.Repositories.Users;
 using SelectaAPI.Repository;
 using SelectaAPI.Repository.Interfaces;
 using SelectaAPI.Services;
 using SelectaAPI.Services.Interfaces;
-
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using SelectaAPI.Services.Interfaces.ProductsInterface;
+using SelectaAPI.Services.Interfaces.UsersInterface;
+using SelectaAPI.Services.Products;
+using SelectaAPI.Services.Users;
 using System.Text;
 
 Env.Load(); // carrega o .env logo no início
@@ -24,11 +31,15 @@ builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IHomeRepository, HomeRepository>();
-builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IFilesUploadAWSService, FilesUploadAWSService>();
 
 string connectionString =
@@ -46,7 +57,7 @@ builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>();
 builder.Services.AddDefaultAWSOptions(new AWSOptions
 {
     Region = Amazon.RegionEndpoint.GetBySystemName(
-        Environment.GetEnvironmentVariable("AWS_REGION") ?? "us-east-2"
+        Environment.GetEnvironmentVariable("AWS_REGION") ?? "sa-east-1"
     )
 });
 

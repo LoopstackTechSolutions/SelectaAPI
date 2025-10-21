@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace SelectaAPI.Services
+namespace SelectaAPI.Services.Users
 {
 
     public class JwtService : IJwtService
@@ -40,7 +40,7 @@ namespace SelectaAPI.Services
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new System.Security.Claims.ClaimsIdentity(new[]
+                Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("idCliente", clientAccount.IdCliente.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, requestDTO.Email)
@@ -81,7 +81,7 @@ namespace SelectaAPI.Services
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new System.Security.Claims.ClaimsIdentity(new[]
+                Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Email, requestDTO.Email)
                 }),

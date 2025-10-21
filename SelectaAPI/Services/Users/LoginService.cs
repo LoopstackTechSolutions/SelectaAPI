@@ -4,14 +4,14 @@ using Microsoft.IdentityModel.Tokens;
 using MySqlX.XDevAPI;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
+using SelectaAPI.Repositories.Interfaces.UsersInterface;
 using SelectaAPI.Repository;
-using SelectaAPI.Repository.Interfaces;
-using SelectaAPI.Services.Interfaces;
+using SelectaAPI.Services.Interfaces.UsersInterface;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace SelectaAPI.Services
+namespace SelectaAPI.Services.Users
 {
     public class LoginService : ILoginService
     {

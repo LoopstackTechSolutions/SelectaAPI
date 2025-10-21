@@ -1,7 +1,7 @@
 ﻿using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 
-namespace SelectaAPI.Repository.Interfaces
+namespace SelectaAPI.Repositories.Interfaces.UsersInterface
 {
     public interface ILoginRepository
     {

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace SelectaAPI.Services
 {
@@ -51,11 +52,13 @@ namespace SelectaAPI.Services
             };
             string temporaryUrl = _s3Client.GetPreSignedURL(urlRequest);
 
+           
+
             return new S3ObjectDTO
             {
                 Name = bucketName,
-                PresignedUrl = temporaryUrl
-            };
+                PresignedUrl = temporaryUrl,
+                };
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using SelectaAPI.Models;
 
-namespace SelectaAPI.Repository.Interfaces
+namespace SelectaAPI.Repositories.Interfaces.ProductsInterface
 {
     public interface ICategoryRepository
     {

@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
-using SelectaAPI.Repository.Interfaces;
+using SelectaAPI.Repositories.Interfaces.UsersInterface;
 using System.Net.Mail;
 
-namespace SelectaAPI.Repository
+namespace SelectaAPI.Repositories.Users
 {
     public class LoginRepository : ILoginRepository
     {

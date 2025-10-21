@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
 using SelectaAPI.Services.Interfaces;
 
-namespace SelectaAPI.Controllers
+namespace SelectaAPI.Controllers.Users
 {
     [Route("selectaAPI/[controller]")]
     [ApiController]

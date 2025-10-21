@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
 using SelectaAPI.Models;
-using SelectaAPI.Repository.Interfaces;
+using SelectaAPI.Repositories.Interfaces.ProductsInterface;
 
-namespace SelectaAPI.Repository
+namespace SelectaAPI.Repositories.Products
 {
     public class CategoryRepository : ICategoryRepository
     {

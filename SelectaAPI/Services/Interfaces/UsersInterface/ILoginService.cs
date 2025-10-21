@@ -3,7 +3,7 @@ using MySqlX.XDevAPI;
 using SelectaAPI.Models;
 using SelectaAPI.DTOs;
 
-namespace SelectaAPI.Services.Interfaces
+namespace SelectaAPI.Services.Interfaces.UsersInterface
 {
     public interface ILoginService
     {

@@ -1,8 +1,8 @@
 ﻿using SelectaAPI.Models;
-using SelectaAPI.Repository.Interfaces;
-using SelectaAPI.Services.Interfaces;
+using SelectaAPI.Repositories.Interfaces.ProductsInterface;
+using SelectaAPI.Services.Interfaces.ProductsInterface;
 
-namespace SelectaAPI.Services
+namespace SelectaAPI.Services.Products
 {
     public class CategoryService : ICategoryService
     {

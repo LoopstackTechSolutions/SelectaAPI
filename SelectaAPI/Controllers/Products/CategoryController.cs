@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
-using SelectaAPI.Services.Interfaces;
+using SelectaAPI.Services.Interfaces.ProductsInterface;
 
 namespace SelectaAPI.Controllers
 {
