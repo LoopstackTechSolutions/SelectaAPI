@@ -120,5 +120,26 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPut("edit-product")]
+        public async Task<IActionResult> EditProduct(int idProduto, EditProductDTO editProductDTO)
+        {
+            try
+            {
+                if (idProduto == null) return NotFound("ID do produto nulo");
+                var editProduct = await _productService.EditProduct(idProduto, editProductDTO) ;
+
+                return Ok(editProduct);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

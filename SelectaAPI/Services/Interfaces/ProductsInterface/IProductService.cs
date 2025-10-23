@@ -10,5 +10,6 @@ namespace SelectaAPI.Services.Interfaces.ProductsInterface
         Task<AddImageOfProductDTO> AddImageOfProduct (AddImageOfProductDTO addImageDTO);
         Task<string?> GetPrincipalImage(int idProduto);
         Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto);
+        Task<EditProductDTO> EditProduct(int idProduto, EditProductDTO editProductDTO);
     }
 }

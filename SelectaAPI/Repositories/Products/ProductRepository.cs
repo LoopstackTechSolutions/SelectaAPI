@@ -35,6 +35,22 @@ namespace SelectaAPI.Repositories.Products
             return addImageDTO;
         }
 
+        public async Task<EditProductDTO> EditProduct(int idProduto, EditProductDTO editProductDTO)
+        {
+            var editProduct = await _context.produtos.Where(p => p.IdProduto == idProduto)
+                .FirstOrDefaultAsync();
+            editProduct.Condicao = editProductDTO.Condicao;
+            editProduct.Descricao = editProductDTO.Descricao ?? editProduct.Descricao;
+            editProduct.Nome = editProductDTO.Nome ?? editProduct.Nome;
+            editProduct.Peso = editProductDTO.Peso ?? editProduct.Peso;
+            editProduct.PrecoUnitario = editProductDTO.PrecoUnitario;
+            editProduct.Quantidade = editProductDTO.Quantidade ?? editProduct.Quantidade;
+            editProduct.Status = editProductDTO.Status ?? editProduct.Status;
+            await _context.SaveChangesAsync();
+
+            return editProductDTO;
+        }
+
         public async Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto)
         {
             var image = await _context.imagensProdutos.Where(i => i.IdProduto == idProduto)

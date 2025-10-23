@@ -18,9 +18,7 @@ namespace SelectaAPI.Repositories.Users
         }
         public async Task<tbClienteModel> GetCredentialsOfClient(string email, string password)
         {
-            return await _context.clientes
-                .FirstOrDefaultAsync(c => c.Email == email && c.Senha == password);
-           
+            return await _context.clientes.FirstOrDefaultAsync(c => c.Email == email && c.Senha == password);   
         }
 
 

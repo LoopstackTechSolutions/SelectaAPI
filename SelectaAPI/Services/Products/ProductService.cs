@@ -1,4 +1,6 @@
-﻿using SelectaAPI.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using SelectaAPI.Database;
+using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.ProductsInterface;
 using SelectaAPI.Services.Interfaces;
@@ -10,18 +12,31 @@ namespace SelectaAPI.Services.Products
     {
         private readonly IProductRepository _productRepository;
         private readonly IFilesUploadAWSService _aws;
+        private readonly ApplicationDbContext _context;
 
-        public ProductService(IProductRepository productRepository, IFilesUploadAWSService aws)
+        public ProductService(IProductRepository productRepository, IFilesUploadAWSService aws, ApplicationDbContext context)
         {
             _productRepository = productRepository;
             _aws = aws;
+            _context = context;
         }
 
-        public async Task<AddImageOfProductDTO> AddImageOfProduct(/*IFormFile file, string? prefix,*/ AddImageOfProductDTO addImageDTO)
+        public async Task<AddImageOfProductDTO> AddImageOfProduct(AddImageOfProductDTO addImageDTO)
         {
-            var addImage = await _productRepository.AddImageOfProduct(/*file, prefix,*/ addImageDTO);
+            var addImage = await _productRepository.AddImageOfProduct(addImageDTO);
 
             return addImage;
+        }
+
+        public async Task<EditProductDTO> EditProduct(int idProduto, EditProductDTO editProductDTO)
+        {
+            var verifyIdProduct = await _context.produtos.AnyAsync(p => p.IdProduto == idProduto);
+
+            if (!verifyIdProduct) throw new Exception("ID do produto não existente");
+
+            var callMethodEdit = await _productRepository.EditProduct(idProduto, editProductDTO);
+
+            return callMethodEdit;
         }
 
         public async Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto)
