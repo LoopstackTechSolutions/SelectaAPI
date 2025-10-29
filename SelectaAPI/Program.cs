@@ -20,7 +20,7 @@ using SelectaAPI.Services.Interfaces.UsersInterface;
 using SelectaAPI.Services.Products;
 using SelectaAPI.Services.Users;
 
-Env.Load(); // carrega o .env logo no início
+Env.Load(); // carrega o .env logo no inÃ­cio
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,23 +39,23 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IFilesUploadAWSService, FilesUploadAWSService>();
 
+/*
 string connectionString =
 $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
 $"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
 $"User={Environment.GetEnvironmentVariable("USER")};" +
 $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
+*/
 
-
-/*
 string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
                           ?? builder.Configuration.GetConnectionString("DefaultConnection");
-*/
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>();
 
-// ?? Configuração da AWS
+// ?? ConfiguraÃ§Ã£o da AWS
 builder.Services.AddDefaultAWSOptions(new AWSOptions
 {
     Region = Amazon.RegionEndpoint.GetBySystemName(
