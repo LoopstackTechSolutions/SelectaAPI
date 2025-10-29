@@ -127,7 +127,7 @@ namespace SelectaAPI.Controllers.Products
             try
             {
                 if (idProduto == null) return NotFound("ID do produto nulo");
-                var editProduct = await _productService.EditProduct(idProduto, editProductDTO) ;
+                var editProduct = await _productService.EditProduct(idProduto, editProductDTO);
 
                 return Ok(editProduct);
             }

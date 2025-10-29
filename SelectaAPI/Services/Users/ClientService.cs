@@ -1,4 +1,6 @@
-﻿using SelectaAPI.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using SelectaAPI.Database;
+using SelectaAPI.DTOs;
 using SelectaAPI.Handlers;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
 using SelectaAPI.Repository;
@@ -11,10 +13,12 @@ namespace SelectaAPI.Services.Users
     public class ClientService : IClientService
     {
         private readonly IClientRepository _clientRepository;
+        private readonly ApplicationDbContext _context;
 
-        public ClientService(IClientRepository clientRepository)
+        public ClientService(IClientRepository clientRepository, ApplicationDbContext context)
         {
             _clientRepository = clientRepository;
+            _context = context;
         }
 
         public async Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryDTO)
@@ -22,7 +26,7 @@ namespace SelectaAPI.Services.Users
             var categoryClientRegister = await _clientRepository.CategoryClientRegister(addCategoryDTO);
             return categoryClientRegister;
         }
-    
+
         public async Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO)
         {
             string hash = PasswordHashHandler.HashPassword(addClientDTO.Senha);
@@ -30,6 +34,17 @@ namespace SelectaAPI.Services.Users
             addClientDTO.Senha = hash;
             var clientRegister = await _clientRepository.ClientRegister(addClientDTO);
             return clientRegister;
+        }
+
+        public async Task<EditClientDTO> EditClient(int idCliente, EditClientDTO editClienteDTO)
+        {
+            var verifyIdClient = await _context.clientes.AnyAsync(c => c.IdCliente == idCliente);
+
+            if (!verifyIdClient) throw new Exception("ID do cliente não existente");
+
+            var callMethodEdit = await _clientRepository.EditClient(idCliente, editClienteDTO);
+
+            return callMethodEdit;
         }
     }
 }

@@ -365,6 +365,34 @@ namespace SelectaAPI.Repository
 
             return getClientById;
         }
+
+        public async Task<tbCarrinhoModel> RemoveProductOfCart(int idCliente, int idProduto)
+        {
+            var productInCart = await _context.carrinho
+                .FirstOrDefaultAsync(c => c.IdCliente == idCliente && c.IdProduto == idProduto);
+
+            if (productInCart == null)
+                throw new Exception("Produto não encontrado no carrinho deste cliente.");
+
+            _context.carrinho.Remove(productInCart);
+            await _context.SaveChangesAsync();
+
+            return productInCart;
+        }
+
+        public async Task<tbLista_DesejoModel> RemoveProductOfWishList(int idCliente, int idProduto)
+        {
+            var productInWishList = await _context.listasDesejo
+                            .FirstOrDefaultAsync(c => c.IdCliente == idCliente && c.IdProduto == idProduto);
+
+            if (productInWishList == null)
+                throw new Exception("Produto não encontrado na lista de desejo deste cliente.");
+
+            _context.listasDesejo.Remove(productInWishList);
+            await _context.SaveChangesAsync();
+
+            return productInWishList;
+        }
     }
 }
 

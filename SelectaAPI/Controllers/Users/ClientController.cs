@@ -65,5 +65,26 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
+        [HttpPut("edit-client")]
+        public async Task<IActionResult> EditClient(int idCliente, EditClientDTO editClientDTO)
+        {
+            try
+            {
+                if (idCliente == null) return NotFound("ID do cliente nulo");
+                var editClient = await _clientService.EditClient(idCliente, editClientDTO);
+
+                return Ok("ta funcionando");
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

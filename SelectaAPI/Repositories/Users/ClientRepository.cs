@@ -1,8 +1,9 @@
-﻿using SelectaAPI.Database;
+﻿using Microsoft.EntityFrameworkCore;
+using SelectaAPI.Database;
 using SelectaAPI.DTOs;
+using SelectaAPI.Handlers;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
-using Microsoft.EntityFrameworkCore;
 
 namespace SelectaAPI.Repositories.Users
 {
@@ -46,7 +47,7 @@ namespace SelectaAPI.Repositories.Users
             {
                 Nome = addClientDTO.Nome.Trim(),
                 Email = addClientDTO.Email.Trim(),
-                Senha = addClientDTO.Senha.Trim()
+                Senha = addClientDTO.Senha.Trim(), 
             };
 
             var verification = await _context.clientes
@@ -57,5 +58,23 @@ namespace SelectaAPI.Repositories.Users
             return addClientDTO;
         }
 
+        public async Task<EditClientDTO> EditClient(int idCliente,EditClientDTO editClienteDTO)
+        {
+            var editClient = await _context.clientes.Where(c => c.IdCliente == idCliente)
+                .FirstOrDefaultAsync();
+            if (!string.IsNullOrWhiteSpace(editClienteDTO.Nome))
+                editClient.Nome = editClienteDTO.Nome.Trim();
+
+            if (!string.IsNullOrWhiteSpace(editClienteDTO.Email))
+                editClient.Email = editClienteDTO.Email.Trim().ToLower();
+
+            if (!string.IsNullOrWhiteSpace(editClienteDTO.Senha))
+            {
+                string hash = PasswordHashHandler.HashPassword(editClienteDTO.Senha.Trim());
+                editClient.Senha = hash;
+            }
+            await _context.SaveChangesAsync();
+            return editClienteDTO;
+        }
     }
 }

@@ -155,5 +155,17 @@ namespace SelectaAPI.Services
 
             return getPromotion;
         }
+
+        public async Task<tbCarrinhoModel> RemoveProductOfCart(int idCliente, int idProduto)
+        {
+            var callMethod = await _homeRepository.RemoveProductOfCart(idCliente, idProduto);
+            return callMethod;
+        }
+
+        public async Task<tbLista_DesejoModel> RemoveProductOfWishList(int idCliente, int idProduto)
+        {
+            var callMethod = await _homeRepository.RemoveProductOfWishList(idCliente, idProduto);
+            return callMethod;
+        }
     }
 }

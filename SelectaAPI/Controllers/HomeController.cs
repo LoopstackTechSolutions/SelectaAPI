@@ -302,6 +302,42 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
+        [HttpDelete("remove-product-of-cart")]
+        public async Task<IActionResult> RemoveProductOfCart(int idCliente, int idProduto)
+        {
+            try
+            {
+                var removeProduct = await _homeService.RemoveProductOfCart(idCliente, idProduto);
+                return Ok($"produto removido: {idProduto}");
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+            }
+        }
+        [HttpDelete("remove-product-of-wish-list")]
+        public async Task<IActionResult> RemoveProductOfWishList(int idCliente, int idProduto)
+        {
+            try
+            {
+                var removeProduct = await _homeService.RemoveProductOfWishList  (idCliente, idProduto);
+                return Ok($"produto removido: {idProduto}");
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+            }
+        }
     }
 
 }
