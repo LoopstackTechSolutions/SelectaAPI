@@ -167,5 +167,11 @@ namespace SelectaAPI.Services
             var callMethod = await _homeRepository.RemoveProductOfWishList(idCliente, idProduto);
             return callMethod;
         }
+
+        public async Task<tbNotificacao_ClienteModel> NotificationsRead(int idCliente, int idNotificacao)
+        {
+            var callMethod = await _homeRepository.NotificationsRead(idCliente, idNotificacao);
+            return callMethod;
+        }
     }
 }

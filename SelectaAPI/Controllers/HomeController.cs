@@ -338,6 +338,24 @@ namespace SelectaAPI.Controllers
                 return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
             }
         }
+        [HttpPost("read-notification")]
+        public async Task<IActionResult> ReadNotification(int idCliente, int idNotificacao)
+        {
+            try 
+            {
+                var reader = await _homeService.NotificationsRead(idCliente, idNotificacao);
+                return Ok(reader);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+            }
+        }
     }
 
 }

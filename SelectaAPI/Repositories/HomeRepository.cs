@@ -62,6 +62,7 @@ namespace SelectaAPI.Repository
                     Condicao = p.Condicao,
                     Quantidade = p.Quantidade
                 })
+                .Take(20)
                 .ToListAsync();
             return recommendationList;
         }
@@ -135,7 +136,7 @@ namespace SelectaAPI.Repository
                ValidoAte = pp.ValidaAte,
                Desconto = pp.Desconto
            })
-           .OrderBy(pp => pp.Desconto)
+           .OrderBy(pp => pp.Desconto).Take(20)
            .ToListAsync();
             return productsPromotion;
         }
@@ -154,6 +155,7 @@ namespace SelectaAPI.Repository
           Status = l.Produto.Status,
           Peso = l.Produto.Peso
       })
+      .Take(20)
       .ToListAsync();
 
             return wishlistProducts;
@@ -238,6 +240,7 @@ namespace SelectaAPI.Repository
                     Status = p.Status,
                     IdVendedor = p.IdVendedor ?? 0
                 })
+                .Take(20)
                 .ToListAsync();
                 return produtos;
         }
@@ -392,6 +395,20 @@ namespace SelectaAPI.Repository
             await _context.SaveChangesAsync();
 
             return productInWishList;
+        }
+
+        public async Task<tbNotificacao_ClienteModel> NotificationsRead(int idCliente, int idNotificacao)
+        {
+            var getNotification = await _context.notificacoesClientes.FirstOrDefaultAsync(nc => nc.IdCliente == idCliente && nc.IdNotificacao == idNotificacao);
+
+            var response = new tbNotificacao_ClienteModel()
+            {
+                IsLida = true,
+                IdCliente = idCliente,
+                IdNotificacao = idNotificacao
+            };
+            await _context.SaveChangesAsync();
+            return response;
         }
     }
 }

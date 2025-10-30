@@ -54,7 +54,7 @@ namespace SelectaAPI.Repositories.Products
         public async Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto)
         {
             var image = await _context.imagensProdutos.Where(i => i.IdProduto == idProduto)
-                .Select(i => i.S3Key)
+                .Select(i => i.S3Key).Take(5)
                 .ToListAsync(); 
             return image;
         }
