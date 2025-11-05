@@ -1,5 +1,6 @@
 ﻿using SelectaAPI.DTOs;
 using SelectaAPI.Handlers;
+using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
 using SelectaAPI.Services.Interfaces.UsersInterface;
 
@@ -22,5 +23,11 @@ namespace SelectaAPI.Services.Users
             return employeeRegister;
         }
 
+        public async Task<IEnumerable<tbFuncionarioModel>> ListEmployees()
+        {
+            var callMethod = await _employeeRepository.ListEmployees();
+
+            return callMethod;
+        }
     }
 }

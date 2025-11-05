@@ -47,6 +47,24 @@ namespace SelectaAPI.Controllers.Users
                 return StatusCode(500, $"erro no servidor {ex.Message}");
             }
         }
+        [HttpGet("list-employees")]
+        public async Task<IActionResult> ListEmployees()
+        {
+            try
+            {
+                var listEmployees = await _employeeService.ListEmployees();
+
+                return Ok(listEmployees); ;
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"erro no servidor {ex.Message}");
+            }
+        }
 
     }
 }

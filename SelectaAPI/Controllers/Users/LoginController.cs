@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
 using SelectaAPI.Services.Interfaces;
+using SelectaAPI.Services.Interfaces.UsersInterface;
 
 namespace SelectaAPI.Controllers.Users
 {
@@ -10,10 +11,10 @@ namespace SelectaAPI.Controllers.Users
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly IJwtService _jwtService;
-        public LoginController(IJwtService jwtService)
+        private readonly ILoginService _loginService;
+        public LoginController(ILoginService loginService)
         {
-            _jwtService = jwtService;
+            _loginService = loginService;
         }
         [HttpPost("client-login")]
         [AllowAnonymous] 
@@ -24,7 +25,7 @@ namespace SelectaAPI.Controllers.Users
                 if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Senha))
                     return BadRequest("preencha todos os campos");
 
-                var clientLogin = await _jwtService.AuthenticateClient(request);
+                var clientLogin = await _loginService.ClientLogin(request);
 
                 if (clientLogin == null)
                     return BadRequest("email ou senha inválidos");
@@ -47,10 +48,10 @@ namespace SelectaAPI.Controllers.Users
         {
             try
             {
-                if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Senha))
+                 if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Senha))
                     return BadRequest("preencha todos os campos");
 
-                var employeeLogin = await _jwtService.AuthenticateEmployee(request);
+                var employeeLogin = await _loginService.EmployeeLogin(request);
 
                 if (employeeLogin == null)
                     return BadRequest("email ou senha inválidos");
@@ -78,7 +79,7 @@ namespace SelectaAPI.Controllers.Users
             {
                 Id = userId,
                 Nome = userName,
-                Message = "Acesso permitido com token válido ✅"
+                Message = "Acesso permitido com token válido"
             });
         }
     }

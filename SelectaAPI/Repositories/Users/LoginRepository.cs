@@ -16,17 +16,18 @@ namespace SelectaAPI.Repositories.Users
         {
             _context = context;
         }
-        public async Task<tbClienteModel> GetCredentialsOfClient(string email, string password)
+        public async Task<tbClienteModel> GetCredentialsOfClient(string email)
         {
-            return await _context.clientes.FirstOrDefaultAsync(c => c.Email == email && c.Senha == password);   
+            return await _context.clientes
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Email == email);
         }
 
-
-        public async Task<tbFuncionarioModel> GetCredentialsOfEmployee(string email, string password)
+        public async Task<tbFuncionarioModel> GetCredentialsOfEmployee(string email)
         {
             return await _context.funcionarios
-               .FirstOrDefaultAsync(c => c.Email == email && c.Senha == password);
-            
+            .AsNoTracking()
+            .FirstOrDefaultAsync(f => f.Email == email);
         }
     }
 }

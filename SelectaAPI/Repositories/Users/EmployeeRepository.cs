@@ -1,4 +1,5 @@
-﻿using SelectaAPI.Database;
+﻿using Microsoft.EntityFrameworkCore;
+using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
@@ -26,6 +27,20 @@ namespace SelectaAPI.Repositories.Users
             await _context.SaveChangesAsync();
 
             return addEmployeeDTO;
+        }
+
+        public async Task<IEnumerable<tbFuncionarioModel>> ListEmployees()
+        {
+            var getAllEmployees = await _context.funcionarios.Select(f => new tbFuncionarioModel
+            {
+                IdFuncionario = f.IdFuncionario,
+                Cpf = f.Cpf.Trim(),
+                Email = f.Email.Trim(),
+                NivelAcesso = f.NivelAcesso,
+                Nome = f.Nome.Trim(),
+            }).Take(20).ToListAsync();
+
+            return getAllEmployees;
         }
     }
 }
