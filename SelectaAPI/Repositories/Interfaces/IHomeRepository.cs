@@ -24,5 +24,6 @@ namespace SelectaAPI.Repository.Interfaces
         Task<IEnumerable<tbPromocaoModel>> GetAllPromotionOfProduct(int id);
         Task<tbCarrinhoModel> RemoveProductOfCart (int idCliente, int idProduto);
         Task<tbLista_DesejoModel> RemoveProductOfWishList(int idCliente, int idProduto);
+        Task<tbNotificacao_ClienteModel> NotificationsRead(int idCliente, int idNotificacao);
     }
 }
