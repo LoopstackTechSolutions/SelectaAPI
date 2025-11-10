@@ -13,5 +13,7 @@ namespace SelectaAPI.Repositories.Interfaces.ProductsInterface
         Task<string?> GetPrincipalImage(int idProduto);
         Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto);
         Task<EditProductDTO> EditProduct(int idProduto, EditProductDTO editProductDTO);
+        Task<tbProdutoModel> GetProductById(int idProduto);
+        Task RemoveProduct(tbProdutoModel produtoModel);
     }
 }

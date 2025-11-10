@@ -1,7 +1,5 @@
-SET NAMES utf8mb4;
-SET CHARACTER SET utf8mb4;
-SET character_set_connection = utf8mb4;
-SET FOREIGN_KEY_CHECKS=0;
+create database dbSelecta;
+use dbSelecta;
 
 create table if not exists tbCategoria
 (
@@ -14,10 +12,12 @@ create table if not exists tbFuncionario
 IdFuncionario int primary key auto_increment,
 Nome varchar(50) not null,
 Email varchar(50) not null unique,
-Senha varchar(255) not null,
+Senha varchar(50) not null,
 Cpf char(11) not null unique,
 NivelAcesso varchar(30) -- "comum"/"gerente"
 );
+
+alter table tbFuncionario modify column Senha varchar(255) not null;
 
 create table if not exists tbHistorico
 (
@@ -35,9 +35,11 @@ create table if not exists tbCliente
 IdCliente int primary key auto_increment,
 Nome varchar(50) not null,
 Email varchar(50) not null,
-Senha varchar(255) not null,
+Senha varchar(50) not null,
 Saldo decimal(10,2) default 0
 );
+
+alter table tbCliente modify column Senha varchar(255) not null;
 
 create table if not exists tbCategoria_Cliente
 (
@@ -762,17 +764,21 @@ insert into tbProduto_Cd (idcd, idproduto, quantidade) values
 
 insert into tbLista_Desejo (idcliente, idproduto) values (4, 13);
 
+insert into tbLista_Desejo (idcliente, idproduto) values (9, 13);
+
+
+
 insert into tbPromocao (idproduto, desconto, validaate) values 
-(13, 20, null),
-(56, 15, null),
-(42, 20, null),
-(90, 12, null),
-(80, 20, null),
-(34, 10, null),
-(23, 20, null),
-(78, 20, null),
-(101, 25, null),
-(110, 20, null);
+(1, 20, null),
+(2, 15, null),
+(3, 20, null),
+(4, 12, null),
+(5, 20, null),
+(6, 10, null),
+(7, 20, null),
+(8, 20, null),
+(9, 25, null),
+(10, 20, null);
 
 insert into tbNotificacao_Cliente (idnotificacao, idcliente, idcontexto) values (2, 4, 13);
 
@@ -804,33 +810,348 @@ insert into tbMensagem (idticket, mensagem, remetente, idremetente) values
 
 update tbTicket set `status` = "arquivado" where idticket = 1;
 
--- select * from tbCategoria;
--- select * from tbProduto;
+ select * from tbCategoria;
+ select * from tbProduto;
 -- select * from tbProduto_Cd;
--- select * from tbCliente;
+select * from tbCliente;
 -- select * from tbCentro_Distribuicao;
--- select * from tbVendedor;
--- select * from tbEntregador;
+ select * from tbVendedor;
+select * from tbEntregador;
 -- select * from tbEntrega;
 -- select * from tbEntrega_Produto;
 -- select * from tbEntrega_Final;
--- select * from tbImagemProduto;
--- select * from tbPedido;
+ select * from tbImagemProduto;	
+ select * from tbPedido;
 -- select * from tbPedido_Interno;
--- select * from tbProduto_Pedido;
+ select * from tbProduto_Pedido;
 -- select * from tbMensagem;
 -- select * from tbReview;
--- select * from tbFuncionario;
+ select * from tbFuncionario;
 -- select * from tbPagamento;
 -- select * from tbCartao;
 -- select * from tbHistorico;
 -- select * from tbEndereco;
 -- select * from tbEmpresa_Parceira;
--- select * from tbPromocao;
--- select * from tbCarrinho;
--- select * from tbLista_Desejo;
+ select * from tbPromocao;
+ select * from tbCarrinho;
+ select * from tbLista_Desejo;
 -- select * from tbTicket;
 -- select * from tbNotificacao;
--- select * from tbNotificacao_Cliente;
+	select * from tbCategoria_Produto;
+ select * from tbNotificacao_Cliente;
+ 
+ select * from tbProduto where Idproduto = 80;
+ 
+ -- ========================================
+-- AJUSTE DE FOREIGN KEYS - ESTRUTURA ATUAL
+-- ========================================
 
-SET FOREIGN_KEY_CHECKS=1;
+-- tbCategoria_Cliente
+alter table tbCategoria_Cliente
+drop foreign key tbCategoria_Cliente_ibfk_1,
+drop foreign key tbCategoria_Cliente_ibfk_2;
+
+alter table tbCategoria_Cliente
+add constraint fk_categoria_cliente_categoria
+foreign key (IdCategoria) references tbCategoria(IdCategoria)
+on delete cascade on update cascade,
+add constraint fk_categoria_cliente_cliente
+foreign key (IdCliente) references tbCliente(IdCliente)
+on delete cascade on update cascade;
+
+-- tbCartao
+alter table tbCartao
+drop foreign key tbcartao_ibfk_1;
+
+alter table tbCartao
+add constraint fk_cartao_cliente
+foreign key (IdCliente) references tbCliente(IdCliente)
+on delete cascade on update cascade;
+
+-- tbEndereco
+alter table tbEndereco
+drop foreign key tbendereco_ibfk_1;
+
+alter table tbEndereco
+add constraint fk_endereco_cliente
+foreign key (IdCliente) references tbCliente(IdCliente)
+on delete set null on update cascade;
+
+-- tbProduto
+alter table tbProduto
+drop foreign key tbproduto_ibfk_1;
+
+alter table tbProduto
+add constraint fk_produto_vendedor
+foreign key (IdVendedor) references tbCliente(IdCliente)
+on delete cascade on update cascade;
+
+-- tbCategoria_Produto
+alter table tbCategoria_Produto
+drop foreign key tbCategoria_Produto_ibfk_1,
+drop foreign key tbCategoria_Produto_ibfk_2;
+
+alter table tbCategoria_Produto
+add constraint fk_categoria_produto_categoria
+foreign key (IdCategoria) references tbCategoria(IdCategoria)
+on delete cascade on update cascade,
+add constraint fk_categoria_produto_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade;
+
+-- tbCentro_Distribuicao
+alter table tbCentro_Distribuicao
+drop foreign key tbcentro_distribuicao_ibfk_1;
+
+alter table tbCentro_Distribuicao
+add constraint fk_cd_endereco
+foreign key (IdEndereco) references tbEndereco(IdEndereco)
+on delete cascade on update cascade;
+
+-- tbEmpresa_Parceira
+alter table tbEmpresa_Parceira
+drop foreign key tbempresa_parceira_ibfk_1;
+
+alter table tbEmpresa_Parceira
+add constraint fk_empresa_cliente
+foreign key (IdEmpresa) references tbCliente(IdCliente)
+on delete cascade on update cascade;
+
+-- tbPromocao
+alter table tbPromocao
+drop foreign key tbpromocao_ibfk_1;
+
+alter table tbPromocao
+add constraint fk_promocao_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade;
+
+-- tbNotificacao_Cliente
+alter table tbNotificacao_Cliente
+drop foreign key tbnotificacao_cliente_ibfk_1,
+drop foreign key tbnotificacao_cliente_ibfk_2;
+
+alter table tbNotificacao_Cliente
+add constraint fk_notificacao_cliente_notificacao
+foreign key (IdNotificacao) references tbNotificacao(IdNotificacao)
+on delete cascade on update cascade,
+add constraint fk_notificacao_cliente_cliente
+foreign key (IdCliente) references tbCliente(IdCliente)
+on delete cascade on update cascade;
+
+-- tbLista_Desejo
+alter table tbLista_Desejo
+drop foreign key tblista_desejo_ibfk_1,
+drop foreign key tblista_desejo_ibfk_2;
+
+alter table tbLista_Desejo
+add constraint fk_lista_desejo_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade,
+add constraint fk_lista_desejo_cliente
+foreign key (IdCliente) references tbCliente(IdCliente)
+on delete cascade on update cascade;
+
+-- tbCarrinho
+alter table tbCarrinho
+drop foreign key tbcarrinho_ibfk_1,
+drop foreign key tbcarrinho_ibfk_2;
+
+alter table tbCarrinho
+add constraint fk_carrinho_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade,
+add constraint fk_carrinho_cliente
+foreign key (IdCliente) references tbCliente(IdCliente)
+on delete cascade on update cascade;
+
+-- tbReview
+alter table tbReview
+drop foreign key tbreview_ibfk_1,
+drop foreign key tbreview_ibfk_2;
+
+alter table tbReview
+add constraint fk_review_cliente
+foreign key (IdCliente) references tbCliente(IdCliente)
+on delete cascade on update cascade,
+add constraint fk_review_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade;
+
+-- tbTicket
+alter table tbTicket
+drop foreign key tbticket_ibfk_1,
+drop foreign key tbticket_ibfk_2;
+
+alter table tbTicket
+add constraint fk_ticket_cliente
+foreign key (IdCliente) references tbCliente(IdCliente)
+on delete cascade on update cascade,
+add constraint fk_ticket_funcionario
+foreign key (IdFuncionario) references tbFuncionario(IdFuncionario)
+on delete set null on update cascade;
+
+-- tbMensagem
+alter table tbMensagem
+drop foreign key tbmensagem_ibfk_1;
+
+alter table tbMensagem
+add constraint fk_mensagem_ticket
+foreign key (IdTicket) references tbTicket(IdTicket)
+on delete cascade on update cascade;
+
+-- tbPedido
+alter table tbPedido
+drop foreign key tbpedido_ibfk_1,
+drop foreign key tbpedido_ibfk_2;
+
+alter table tbPedido
+add constraint fk_pedido_endereco
+foreign key (IdEnderecoEntrega) references tbEndereco(IdEndereco)
+on delete restrict on update cascade,
+add constraint fk_pedido_cliente
+foreign key (IdComprador) references tbCliente(IdCliente)
+on delete cascade on update cascade;
+
+-- tbPagamento
+alter table tbPagamento
+drop foreign key tbpagamento_ibfk_1,
+drop foreign key tbpagamento_ibfk_2;
+
+alter table tbPagamento
+add constraint fk_pagamento_pedido
+foreign key (IdPedido) references tbPedido(IdPedido)
+on delete cascade on update cascade,
+add constraint fk_pagamento_cartao
+foreign key (IdCartao) references tbCartao(IdCartao)
+on delete set null on update cascade;
+
+-- tbProduto_Pedido
+alter table tbProduto_Pedido
+drop foreign key tbproduto_pedido_ibfk_1,
+drop foreign key tbproduto_pedido_ibfk_2;
+
+alter table tbProduto_Pedido
+add constraint fk_produto_pedido_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade,
+add constraint fk_produto_pedido_pedido
+foreign key (IdPedido) references tbPedido(IdPedido)
+on delete cascade on update cascade;
+
+-- tbPedido_Interno
+alter table tbPedido_Interno
+drop foreign key tbpedido_interno_ibfk_1,
+drop foreign key tbpedido_interno_ibfk_2,
+drop foreign key tbpedido_interno_ibfk_3,
+drop foreign key tbpedido_interno_ibfk_4;
+
+alter table tbPedido_Interno
+add constraint fk_pedido_interno_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade,
+add constraint fk_pedido_interno_empresa
+foreign key (IdEmpresa) references tbEmpresa_Parceira(IdEmpresa)
+on delete cascade on update cascade,
+add constraint fk_pedido_interno_funcionario
+foreign key (IdFuncionario) references tbFuncionario(IdFuncionario)
+on delete cascade on update cascade,
+add constraint fk_pedido_interno_cd
+foreign key (IdCD) references tbCentro_Distribuicao(IdCD)
+on delete cascade on update cascade;
+
+-- tbProduto_Cd
+alter table tbProduto_Cd
+drop foreign key tbproduto_cd_ibfk_1,
+drop foreign key tbproduto_cd_ibfk_2;
+
+alter table tbProduto_Cd
+add constraint fk_produto_cd_cd
+foreign key (IdCD) references tbCentro_Distribuicao(IdCD)
+on delete cascade on update cascade,
+add constraint fk_produto_cd_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade;
+
+-- tbEntrega
+alter table tbEntrega
+drop foreign key tbentrega_ibfk_1,
+drop foreign key tbentrega_ibfk_2;
+
+alter table tbEntrega
+add constraint fk_entrega_pedido
+foreign key (IdPedido) references tbPedido(IdPedido)
+on delete set null on update cascade,
+add constraint fk_entrega_pedido_interno
+foreign key (IdPedidoInterno) references tbPedido_Interno(IdPedidoInterno)
+on delete set null on update cascade;
+
+-- tbEntrega_Produto
+alter table tbEntrega_Produto
+drop foreign key tbentrega_produto_ibfk_1,
+drop foreign key tbentrega_produto_ibfk_2;
+
+alter table tbEntrega_Produto
+add constraint fk_entrega_produto_entrega
+foreign key (IdEntrega) references tbEntrega(IdEntrega)
+on delete cascade on update cascade,
+add constraint fk_entrega_produto_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade;
+
+-- tbEntregador
+alter table tbEntregador
+drop foreign key tbentregador_ibfk_1,
+drop foreign key tbentregador_ibfk_2;
+
+alter table tbEntregador
+add constraint fk_entregador_endereco
+foreign key (IdEndereco) references tbEndereco(IdEndereco)
+on delete cascade on update cascade,
+add constraint fk_entregador_cliente
+foreign key (IdEntregador) references tbCliente(IdCliente)
+on delete cascade on update cascade;
+
+-- tbVendedor
+alter table tbVendedor
+drop foreign key tbvendedor_ibfk_1;
+
+alter table tbVendedor
+add constraint fk_vendedor_cliente
+foreign key (IdVendedor) references tbCliente(IdCliente)
+on delete cascade on update cascade;
+
+-- tbEntrega_Final
+alter table tbEntrega_Final
+drop foreign key tbentrega_final_ibfk_1,
+drop foreign key tbentrega_final_ibfk_2;
+
+alter table tbEntrega_Final
+add constraint fk_entrega_final_entrega
+foreign key (IdEntrega) references tbEntrega(IdEntrega)
+on delete cascade on update cascade,
+add constraint fk_entrega_final_entregador
+foreign key (IdEntregador) references tbEntregador(IdEntregador)
+on delete cascade on update cascade;
+
+-- tbImagemProduto
+alter table tbImagemProduto
+drop foreign key tbimagemproduto_ibfk_1;
+
+alter table tbImagemProduto
+add constraint fk_imagem_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade;
+
+-- tbPergunta
+alter table tbPergunta
+drop foreign key tbpergunta_ibfk_1,
+drop foreign key tbpergunta_ibfk_2;
+
+alter table tbPergunta
+add constraint fk_pergunta_cliente
+foreign key (IdCliente) references tbCliente(IdCliente)
+on delete cascade on update cascade,
+add constraint fk_pergunta_produto
+foreign key (IdProduto) references tbProduto(IdProduto)
+on delete cascade on update cascade;

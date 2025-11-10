@@ -141,5 +141,27 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpDelete("product-remove")]
+        public async Task<IActionResult> RemoveProduct(int idProduto)
+        {
+            try
+            {
+                await _productService.RemoveProduct(idProduto);
+                return Ok("Produto deletado com sucesso!");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
     }
 }

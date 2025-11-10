@@ -112,5 +112,16 @@ namespace SelectaAPI.Repositories.Products
                 ValorAnterior = getProduct
             };
         }
+
+        public async Task<tbProdutoModel> GetProductById(int idProduto)
+        {
+            return await _context.produtos.FindAsync(idProduto);
+        }
+
+        public async Task RemoveProduct(tbProdutoModel produtoModel)
+        {
+            var removeProduct = _context.produtos.Remove(produtoModel);
+            await _context.SaveChangesAsync();
+        }
     }
 }

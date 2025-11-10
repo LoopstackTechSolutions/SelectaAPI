@@ -83,5 +83,14 @@ namespace SelectaAPI.Services.Products
             };
         }
 
+        public async Task RemoveProduct(int idProduct)
+        {
+            var product = await _productRepository.GetProductById(idProduct);
+
+            if (product == null)
+                throw new ArgumentException("Produto não encontrado.");
+
+            await _productRepository.RemoveProduct(product);
+        }
     }
 }
