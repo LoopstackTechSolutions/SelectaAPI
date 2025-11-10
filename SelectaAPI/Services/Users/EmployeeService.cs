@@ -2,6 +2,7 @@
 using SelectaAPI.Handlers;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
+using SelectaAPI.Repositories.Users;
 using SelectaAPI.Services.Interfaces.UsersInterface;
 
 namespace SelectaAPI.Services.Users
@@ -35,6 +36,17 @@ namespace SelectaAPI.Services.Users
             var callMethod = await _employeeRepository.ListEmployees();
 
             return callMethod;
+        }
+
+        public async Task RemoveEmployee(int idFuncionario)
+        {
+            var employee = await _employeeRepository.GetEmployeeById(idFuncionario);
+
+            if (employee == null)
+                throw new ArgumentException("Funcionário não encontrado.");
+
+            await _employeeRepository.RemoveEmployee(employee);
+
         }
     }
 }

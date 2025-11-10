@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
@@ -49,6 +50,17 @@ namespace SelectaAPI.Repositories.Users
             }).Take(20).ToListAsync();
 
             return getAllEmployees;
+        }
+
+        public async Task<tbFuncionarioModel> GetEmployeeById(int idFuncionario)
+        {
+            return await _context.funcionarios.FindAsync(idFuncionario);
+        }
+
+        public async Task RemoveEmployee(tbFuncionarioModel funcionarioModel)
+        {
+            var removeEmployee = _context.funcionarios.Remove(funcionarioModel);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> VerificarCpf(string cpf)

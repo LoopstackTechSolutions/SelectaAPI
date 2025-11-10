@@ -91,7 +91,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
-        [HttpDelete("client-delete")]
+        [HttpDelete("client-remove")]
         public async Task<IActionResult> RemoveClient(int idCliente)
         {
             try

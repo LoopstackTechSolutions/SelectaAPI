@@ -49,13 +49,6 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IFilesUploadAWSService, FilesUploadAWSService>();
 
-/*
-string connectionString =
-$"Server={Environment.GetEnvironmentVariable("SERVER")};" +
-$"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
-$"User={Environment.GetEnvironmentVariable("USER")};" +
-$"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
-*/
 
 /*
 string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
@@ -69,6 +62,7 @@ string connectionString =
     $"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
     $"User={Environment.GetEnvironmentVariable("USER")};" +
     $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
+
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

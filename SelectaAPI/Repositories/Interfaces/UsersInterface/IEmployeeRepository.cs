@@ -9,5 +9,7 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
         Task<IEnumerable<tbFuncionarioModel>> ListEmployees();
         Task<bool> EmailVerify(string email);
         Task<bool> VerificarCpf(string cpf);
+        Task RemoveEmployee(tbFuncionarioModel funcionarioModel);
+        Task<tbFuncionarioModel> GetEmployeeById(int idFuncionario);
     }
 }

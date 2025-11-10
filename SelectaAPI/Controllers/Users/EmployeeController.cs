@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
 using SelectaAPI.Services.Interfaces;
 using SelectaAPI.Services.Interfaces.UsersInterface;
+using SelectaAPI.Services.Users;
 
 namespace SelectaAPI.Controllers.Users
 {
@@ -65,6 +66,28 @@ namespace SelectaAPI.Controllers.Users
                 return StatusCode(500, $"erro no servidor {ex.Message}");
             }
         }
+        [HttpDelete("employee-remove")]
+        public async Task<IActionResult> RemoveEmployee(int idFuncionario)
+        {
+            try
+            {
+                await _employeeService.RemoveEmployee(idFuncionario);
+                return Ok("Funcionário deletado com sucesso!");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
 
     }
 }
