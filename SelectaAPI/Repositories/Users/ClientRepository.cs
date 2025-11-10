@@ -49,9 +49,6 @@ namespace SelectaAPI.Repositories.Users
                 Email = addClientDTO.Email.Trim(),
                 Senha = addClientDTO.Senha.Trim(), 
             };
-
-            var verification = await _context.clientes
-                .FirstOrDefaultAsync(c => c.Email == entityClient.Email);
             await _context.clientes.AddAsync(entityClient);
             await _context.SaveChangesAsync();
 
@@ -75,6 +72,17 @@ namespace SelectaAPI.Repositories.Users
             }
             await _context.SaveChangesAsync();
             return editClienteDTO;
+        }
+
+        public async Task<AddClientDTO> EmailVerify(AddClientDTO addClientDTO)
+        {
+            var entityClient = new AddClientDTO()
+            {
+                Email = addClientDTO.Email,
+            };
+            var verification = await _context.clientes
+                .FirstOrDefaultAsync(c => c.Email == entityClient.Email);
+            return entityClient;
         }
     }
 }
