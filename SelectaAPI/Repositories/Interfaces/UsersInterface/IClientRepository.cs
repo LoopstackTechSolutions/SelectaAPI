@@ -1,4 +1,5 @@
 ﻿using SelectaAPI.DTOs;
+using SelectaAPI.Models;
 
 namespace SelectaAPI.Repositories.Interfaces.UsersInterface
 {
@@ -8,5 +9,7 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
         Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryDTO);
         Task<EditClientDTO> EditClient(int idCliente,EditClientDTO editClienteDTO);
         Task<bool> EmailVerify(string email);
+        Task RemoveClient(tbClienteModel clienteModel);
+        Task<tbClienteModel> GetClienteById(int idCliente);
     }
 }

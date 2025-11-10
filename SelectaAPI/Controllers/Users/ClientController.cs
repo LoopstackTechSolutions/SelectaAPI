@@ -91,5 +91,28 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
+        [HttpDelete("client-delete")]
+        public async Task<IActionResult> RemoveClient(int idCliente)
+        {
+            try
+            {
+                await _clientService.RemoveClient(idCliente);
+                return Ok("Cliente deletado com sucesso!");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
+
     }
 }

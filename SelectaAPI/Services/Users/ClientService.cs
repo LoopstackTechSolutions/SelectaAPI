@@ -50,5 +50,15 @@ namespace SelectaAPI.Services.Users
 
             return callMethodEdit;
         }
+
+        public async Task RemoveClient(int idCliente)
+        {
+            var client = await _clientRepository.GetClienteById(idCliente);
+
+            if (client == null)
+                throw new ArgumentException("Cliente não encontrado.");
+
+            await _clientRepository.RemoveClient(client);
+        }
     }
 }

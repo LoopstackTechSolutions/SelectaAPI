@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MySqlX.XDevAPI;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Handlers;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace SelectaAPI.Repositories.Users
@@ -80,6 +82,17 @@ namespace SelectaAPI.Repositories.Users
             var verification = await _context.clientes
                 .AnyAsync(c => c.Email == email);
             return verification;
+        }
+
+        public async Task<tbClienteModel> GetClienteById(int idCliente)
+        {
+            return await _context.clientes.FindAsync(idCliente);
+        }
+
+        public async Task RemoveClient(tbClienteModel clienteModel)
+        {
+           var removeCliente = _context.clientes.Remove(clienteModel);
+            await _context.SaveChangesAsync();
         }
     }
 }

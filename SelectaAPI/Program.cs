@@ -57,11 +57,12 @@ $"User={Environment.GetEnvironmentVariable("USER")};" +
 $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
 */
 
-
+/*
 string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
                           ?? builder.Configuration.GetConnectionString("DefaultConnection");
+*/
 builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>();
-/*
+
 // ==================== Configuração do DB ====================
 string connectionString =
     $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
@@ -69,7 +70,7 @@ string connectionString =
     $"User={Environment.GetEnvironmentVariable("USER")};" +
     $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
 
-*/
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
