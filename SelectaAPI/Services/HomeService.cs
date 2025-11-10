@@ -72,7 +72,7 @@ namespace SelectaAPI.Services
         public async Task<ICollection<NotificationForClientDTO>> NotificationsUnread(int id)
         {
 
-            var clientExists = await _context.clientes.AnyAsync(c => c.IdCliente == id);
+            var clientExists = await _homeRepository.ClientExists(id);
 
             if (!clientExists) throw new Exception("Cliente não existente");
 
@@ -86,7 +86,7 @@ namespace SelectaAPI.Services
 
         public async Task<IEnumerable<tbProdutoModel>> GetProductByID(int id)
         {
-            var productExists = await _context.produtos.AnyAsync(p => p.IdProduto == id);
+            var productExists = await _homeRepository.ProductExists(id);
 
             if (!productExists) throw new Exception("id do produto inexistente");
 
@@ -102,11 +102,11 @@ namespace SelectaAPI.Services
         public async Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente)
         {
             if (id == null || idCliente == null) throw new Exception("preencha todos os campos");
-            var productExist = await _context.produtos.AnyAsync(p => p.IdProduto == id);
+            var productExist = await _homeRepository.ProductExists(id);
             if (!productExist) throw new Exception("produto inexistente");
 
-            var clientExist = await _context.clientes.AnyAsync(c => c.IdCliente == idCliente);
-            if (!clientExist) throw new Exception("cliente inexistente");
+            var clientExists = await _homeRepository.ClientExists(id);
+            if (!clientExists) throw new Exception("cliente inexistente");
 
             var addProductInWishList = await _homeRepository.AddProductInWishList(id, idCliente);
             return addProductInWishList;
@@ -136,8 +136,7 @@ namespace SelectaAPI.Services
 
         public async Task<IEnumerable<GetClientByIdDTO>> GetClientById(int id)
         {
-            var clientExists = await _context.clientes
-                .AnyAsync(c => c.IdCliente == id);
+            var clientExists = await _homeRepository.ClientExists(id);
             if (!clientExists) throw new Exception("cliente inexistente");
 
             var getClientById = await _homeRepository.GetClientById(id);
@@ -147,7 +146,7 @@ namespace SelectaAPI.Services
 
         public async Task<IEnumerable<tbPromocaoModel>> GetAllPromotionOfProduct(int id)
         {
-            var productExists = await _context.promocoes.AnyAsync(p => p.IdProduto == id);
+            var productExists = await _homeRepository.PromotionExists(id);
 
             if (!productExists) return null;
 

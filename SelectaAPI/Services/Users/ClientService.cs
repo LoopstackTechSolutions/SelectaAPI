@@ -14,6 +14,7 @@ namespace SelectaAPI.Services.Users
     {
         private readonly IClientRepository _clientRepository;
         private readonly ApplicationDbContext _context;
+        private readonly HomeRepository _homeRepository; 
 
         public ClientService(IClientRepository clientRepository, ApplicationDbContext context)
         {
@@ -41,7 +42,7 @@ namespace SelectaAPI.Services.Users
 
         public async Task<EditClientDTO> EditClient(int idCliente, EditClientDTO editClienteDTO)
         {
-            var verifyIdClient = await _context.clientes.AnyAsync(c => c.IdCliente == idCliente);
+            var verifyIdClient = await _homeRepository.ClientExists(idCliente);
 
             if (!verifyIdClient) throw new Exception("ID do cliente não existente");
 

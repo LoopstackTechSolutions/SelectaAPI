@@ -3,6 +3,7 @@ using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.ProductsInterface;
+using SelectaAPI.Repository.Interfaces;
 using SelectaAPI.Services.Interfaces;
 using SelectaAPI.Services.Interfaces.ProductsInterface;
 
@@ -12,13 +13,15 @@ namespace SelectaAPI.Services.Products
     {
         private readonly IProductRepository _productRepository;
         private readonly IFilesUploadAWSService _aws;
+        private readonly IHomeRepository _homeRepository;
         private readonly ApplicationDbContext _context;
 
-        public ProductService(IProductRepository productRepository, IFilesUploadAWSService aws, ApplicationDbContext context)
+        public ProductService(IProductRepository productRepository, IFilesUploadAWSService aws, ApplicationDbContext context, IHomeRepository homeRepository)
         {
             _productRepository = productRepository;
             _aws = aws;
             _context = context;
+            _homeRepository = homeRepository;
         }
 
         public async Task<AddImageOfProductDTO> AddImageOfProduct(AddImageOfProductDTO addImageDTO)
@@ -30,7 +33,7 @@ namespace SelectaAPI.Services.Products
 
         public async Task<EditProductDTO> EditProduct(int idProduto, EditProductDTO editProductDTO)
         {
-            var verifyIdProduct = await _context.produtos.AnyAsync(p => p.IdProduto == idProduto);
+            var verifyIdProduct = await _homeRepository.ProductExists(idProduto);
 
             if (!verifyIdProduct) throw new Exception("ID do produto não existente");
 

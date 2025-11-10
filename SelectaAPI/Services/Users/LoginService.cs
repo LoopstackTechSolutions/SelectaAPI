@@ -23,15 +23,12 @@ namespace SelectaAPI.Services.Users
 
         public async Task<LoginResponseDTO?> ClientLogin(LoginRequestDTO loginRequest)
         {
-            // Busca o cliente pelo email
             var client = await _loginRepository.GetCredentialsOfClient(loginRequest.Email);
-            if (client == null) return null; // Cliente não encontrado
+            if (client == null) return null; 
 
-            // Verifica se a senha está correta
             if (!PasswordHashHandler.VerifyPassword(loginRequest.Senha, client.Senha))
-                return null; // Senha incorreta
+                return null; 
 
-            // Gera o token usando o cliente real
             var tokenObj = TokenService.GenerateJwtTokenByClient(client);
 
             // Retorna o DTO de login com o token

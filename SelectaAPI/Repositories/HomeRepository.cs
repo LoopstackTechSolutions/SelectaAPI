@@ -410,6 +410,24 @@ namespace SelectaAPI.Repository
             await _context.SaveChangesAsync();
             return response;
         }
+
+        public async Task<bool> ClientExists(int idCliente)
+        {
+            var verification = await _context.clientes.AnyAsync(c => c.IdCliente == idCliente);
+            return verification;
+        }
+
+        public async Task<bool> ProductExists(int idProduto)
+        {
+            var verification = await _context.produtos.AnyAsync(p => p.IdProduto == idProduto);
+            return verification;
+        }
+
+        public async Task<bool> PromotionExists(int idProduto)
+        {
+            var verification = await _context.promocoes.AnyAsync(p => p.IdProduto == idProduto);
+            return verification;
+        }
     }
 }
 
