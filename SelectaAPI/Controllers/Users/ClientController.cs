@@ -35,6 +35,11 @@ namespace SelectaAPI.Controllers.Users
                 return Ok("Cliente cadastrado com sucesso!");
             }
 
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");

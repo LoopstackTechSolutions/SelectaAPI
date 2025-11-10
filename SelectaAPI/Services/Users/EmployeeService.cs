@@ -16,9 +16,16 @@ namespace SelectaAPI.Services.Users
 
         public async Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
         {
+            var verification = await _employeeRepository.EmailVerify(addEmployeeDTO.Email);
+            if(verification) throw new ArgumentException("E-mail já cadastrado.");
+
+            var verificacaoCpf = await _employeeRepository.VerificarCpf(addEmployeeDTO.Cpf);
+            if(verificacaoCpf) throw new ArgumentException("CPF já cadastrado.");
+
             string hash = PasswordHashHandler.HashPassword(addEmployeeDTO.Senha);
 
             addEmployeeDTO.Senha = hash;
+
             var employeeRegister = await _employeeRepository.EmployeeRegister(addEmployeeDTO);
             return employeeRegister;
         }

@@ -3,6 +3,7 @@ using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
+using System.Text.RegularExpressions;
 
 namespace SelectaAPI.Repositories.Users
 {
@@ -13,14 +14,21 @@ namespace SelectaAPI.Repositories.Users
         {
              _context = context;
         }
+
+        public async Task<bool> EmailVerify(string email)
+        {
+            var verification = await _context.funcionarios.AnyAsync(f => f.Email == email);
+            return verification;
+        }
+
         public async Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
         {
             var entityEmployee = new tbFuncionarioModel()
             {
                 Nome = addEmployeeDTO.Nome.Trim(),
                 Senha = addEmployeeDTO.Senha.Trim(),
-                Email = addEmployeeDTO.Email.Trim(),
-                Cpf = addEmployeeDTO.Cpf.Trim(),
+                Email = Regex.Replace(addEmployeeDTO.Email.Trim().ToLowerInvariant(), @"\s+", ""),
+                Cpf = Regex.Replace(addEmployeeDTO.Cpf, @"\D", ""),
                 NivelAcesso = addEmployeeDTO.NivelAcesso.Trim()
             };
             await _context.funcionarios.AddAsync(entityEmployee);
@@ -41,6 +49,12 @@ namespace SelectaAPI.Repositories.Users
             }).Take(20).ToListAsync();
 
             return getAllEmployees;
+        }
+
+        public async Task<bool> VerificarCpf(string cpf)
+        {
+            var verificacao = await _context.funcionarios.AnyAsync(f => f.Cpf == cpf);
+            return verificacao;
         }
     }
 }

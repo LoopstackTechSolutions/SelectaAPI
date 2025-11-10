@@ -49,7 +49,6 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IFilesUploadAWSService, FilesUploadAWSService>();
 
-<<<<<<< HEAD
 
 string connectionString =
 $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
@@ -70,7 +69,6 @@ string connectionString =
     $"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
     $"User={Environment.GetEnvironmentVariable("USER")};" +
     $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
->>>>>>> features/vendas-features
 
 */
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

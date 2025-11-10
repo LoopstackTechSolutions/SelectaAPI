@@ -6,6 +6,8 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
     public interface IEmployeeRepository
     {
         Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO);
-        Task<IEnumerable<tbFuncionarioModel>> ListEmployees(); 
+        Task<IEnumerable<tbFuncionarioModel>> ListEmployees();
+        Task<bool> EmailVerify(string email);
+        Task<bool> VerificarCpf(string cpf);
     }
 }

@@ -7,6 +7,6 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
         Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO);
         Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryDTO);
         Task<EditClientDTO> EditClient(int idCliente,EditClientDTO editClienteDTO);
-        Task<AddClientDTO> EmailVerify(AddClientDTO addClientDTO);
+        Task<bool> EmailVerify(string email);
     }
 }

@@ -4,6 +4,7 @@ using SelectaAPI.DTOs;
 using SelectaAPI.Handlers;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
+using System.Text.RegularExpressions;
 
 namespace SelectaAPI.Repositories.Users
 {
@@ -46,7 +47,7 @@ namespace SelectaAPI.Repositories.Users
             var entityClient = new tbClienteModel()
             {
                 Nome = addClientDTO.Nome.Trim(),
-                Email = addClientDTO.Email.Trim(),
+                Email = Regex.Replace(addClientDTO.Email.Trim().ToLowerInvariant(), @"\s+", ""),
                 Senha = addClientDTO.Senha.Trim(), 
             };
             await _context.clientes.AddAsync(entityClient);
@@ -74,15 +75,11 @@ namespace SelectaAPI.Repositories.Users
             return editClienteDTO;
         }
 
-        public async Task<AddClientDTO> EmailVerify(AddClientDTO addClientDTO)
+        public async Task<bool> EmailVerify(string email)
         {
-            var entityClient = new AddClientDTO()
-            {
-                Email = addClientDTO.Email,
-            };
             var verification = await _context.clientes
-                .FirstOrDefaultAsync(c => c.Email == entityClient.Email);
-            return entityClient;
+                .AnyAsync(c => c.Email == email);
+            return verification;
         }
     }
 }

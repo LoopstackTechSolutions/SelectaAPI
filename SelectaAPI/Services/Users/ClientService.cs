@@ -29,6 +29,9 @@ namespace SelectaAPI.Services.Users
 
         public async Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO)
         {
+            var verification = await _clientRepository.EmailVerify(addClientDTO.Email);
+            if (verification) throw new ArgumentException("E-mail já cadastrado.");
+
             string hash = PasswordHashHandler.HashPassword(addClientDTO.Senha);
 
             addClientDTO.Senha = hash;
