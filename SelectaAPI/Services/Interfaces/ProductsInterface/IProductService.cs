@@ -12,5 +12,7 @@ namespace SelectaAPI.Services.Interfaces.ProductsInterface
         Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto);
         Task<EditProductDTO> EditProduct(int idProduto, EditProductDTO editProductDTO);
         Task RemoveProduct (int idProduct);
+        Task<EditPromotionResponseDTO> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao);
+        Task RemovePromotion(int idPromocao);
     }
 }

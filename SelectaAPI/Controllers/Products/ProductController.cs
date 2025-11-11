@@ -7,7 +7,7 @@ using SelectaAPI.Services.Interfaces;
 using SelectaAPI.Services.Interfaces.ProductsInterface;
 
 namespace SelectaAPI.Controllers.Products
-{
+{ 
     [Route("selectaAPI/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
@@ -149,6 +149,48 @@ namespace SelectaAPI.Controllers.Products
             {
                 await _productService.RemoveProduct(idProduto);
                 return Ok("Produto deletado com sucesso!");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+        [HttpDelete("promotion-remove")]
+        public async Task<IActionResult> RemovePromotion(int idPromocao)
+        {
+            try
+            {
+                await _productService.RemovePromotion(idPromocao);
+                return Ok("Promoção removida com sucesso!");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+        [HttpPut("promotion-edit")]
+        public async Task<IActionResult> EditPromotion(EditPromotionRequestDTO editPromotionRequest,int idPromocao)
+        {
+            try
+            {
+                await _productService.EditPromotion(editPromotionRequest,idPromocao);
+                return Ok("Promoção editada com sucesso!");
             }
             catch (ArgumentException ex)
             {

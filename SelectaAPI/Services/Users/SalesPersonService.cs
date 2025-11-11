@@ -19,7 +19,7 @@ namespace SelectaAPI.Services.Users
 
             var callMethod = await _salesPersonRepository.MyProducts(idVendedor);
 
-            return callMethod;  
+            return callMethod; 
         }
     }
 }

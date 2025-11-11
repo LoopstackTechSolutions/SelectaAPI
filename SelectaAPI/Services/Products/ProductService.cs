@@ -42,6 +42,12 @@ namespace SelectaAPI.Services.Products
             return callMethodEdit;
         }
 
+        public async Task<EditPromotionResponseDTO> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao)
+        {
+            var editPromotion = await _productRepository.EditPromotion(editPromotionRequest, idPromocao);
+            return editPromotion;
+        }
+
         public async Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto)
         {
             var s3Keys = await _productRepository.GetAllImagesOfProduct(idProduto);
@@ -91,6 +97,15 @@ namespace SelectaAPI.Services.Products
                 throw new ArgumentException("Produto não encontrado.");
 
             await _productRepository.RemoveProduct(product);
+        }
+
+        public async Task RemovePromotion(int idPromocao)
+        {
+            var promotion = await _productRepository.GetPromotionById(idPromocao);
+
+            if(promotion == null)
+                throw new ArgumentException("Promoção não encontrada");
+            await _productRepository.RemovePromotion(promotion);
         }
     }
 }

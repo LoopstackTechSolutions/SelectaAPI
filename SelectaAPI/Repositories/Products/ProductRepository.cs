@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
+using SelectaAPI.Handlers;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.ProductsInterface;
 using SelectaAPI.Services;
@@ -123,5 +124,41 @@ namespace SelectaAPI.Repositories.Products
             var removeProduct = _context.produtos.Remove(produtoModel);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<EditPromotionResponseDTO> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao)
+        {
+            var editProduct = await _context.promocoes.Where(c => c.IdPromocao == idPromocao)
+              .FirstOrDefaultAsync();
+            if (!string.IsNullOrWhiteSpace(editPromotionRequest.Status))
+                editProduct.Status = editPromotionRequest.Status.Trim();
+
+            if ((editPromotionRequest.ValidaAte) != null)
+                editProduct.ValidaAte = editPromotionRequest.ValidaAte;
+
+            if ((editPromotionRequest.Desconto) != null)
+                editProduct.Desconto = editPromotionRequest.Desconto;
+
+            await _context.SaveChangesAsync();
+
+            return new EditPromotionResponseDTO
+            {
+                ValorDesconto = editPromotionRequest.Desconto,
+                Status = editPromotionRequest.Status,
+                Validade = editPromotionRequest.ValidaAte,
+            };
+        }
+
+        public async Task RemovePromotion(tbPromocaoModel promocaoModel)
+        {
+            var removePromotion = _context.promocoes.Remove(promocaoModel);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<tbPromocaoModel> GetPromotionById(int idPromocao)
+        {
+            return await _context.promocoes.FindAsync(idPromocao);
+        }
+
+        
     }
 }
