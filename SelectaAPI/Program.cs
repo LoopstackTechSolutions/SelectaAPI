@@ -38,10 +38,12 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<ISalesPersonRepository, SalesPersonRepository>();
 
 // Serviços
 builder.Services.AddScoped<ILoginService, LoginService>();
 // builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<ISalesPersonService, SalesPersonService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
