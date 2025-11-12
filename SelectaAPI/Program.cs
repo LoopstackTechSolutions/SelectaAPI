@@ -52,20 +52,20 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IFilesUploadAWSService, FilesUploadAWSService>();
 
 
-/*
+
 string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
                           ?? builder.Configuration.GetConnectionString("DefaultConnection");
-*/
+
 builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>();
 
 // ==================== Configuração do DB ====================
+/*
 string connectionString =
     $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
     $"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
     $"User={Environment.GetEnvironmentVariable("USER")};" +
     $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
-
-
+*/
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
