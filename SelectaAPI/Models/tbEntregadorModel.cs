@@ -12,10 +12,6 @@ namespace SelectaAPI.Models
         public int IdEntregador { get; set; }
         public tbClienteModel Cliente { get; set; }
 
-        [ForeignKey("Endereco")]
-        public int IdEndereco { get; set; }
-        public tbEnderecoModel Endereco { get; set; }
-
         public string Cnh { get; set; }
         public bool Eligibilidade { get; set; } = false;
     }

@@ -82,13 +82,7 @@ builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>();
 string connectionString =
     $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
     $"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
-    $"User={Environment.GetEnvironmentVariable("USER")};" +
-    $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
-*/
-=======
-string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
-                          ?? builder.Configuration.GetConnectionString("DefaultConnection");
->>>>>>> ff5dbbfb4c808dca4d80654f9e13b96b683ab636
+    $"User={Environment.GetEnvironmentVariable("
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
