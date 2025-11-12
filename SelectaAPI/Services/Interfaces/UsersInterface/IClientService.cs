@@ -9,5 +9,6 @@ namespace SelectaAPI.Services.Interfaces.UsersInterface
         Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryDTO);
         Task<EditClientDTO> EditClient(int idCliente, EditClientDTO editClienteDTO);
         Task RemoveClient(int idCliente);
+        Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO addEntregador);
     }
 }

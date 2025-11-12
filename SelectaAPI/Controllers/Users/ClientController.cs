@@ -112,7 +112,27 @@ namespace SelectaAPI.Controllers.Users
                 return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
-
+        [HttpPost("tornar-entregador")]
+        public async Task<IActionResult> TornarEntregador(AddEntregadorDTO addEntregador)
+        {
+            try
+            {
+                await _clientService.TornarEntregador(addEntregador);
+                return Ok("Você está apto a realizar entregas, parabéns!");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
 
     }
 }

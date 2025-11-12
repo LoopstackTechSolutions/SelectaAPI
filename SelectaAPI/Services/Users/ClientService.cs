@@ -2,6 +2,7 @@
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Handlers;
+using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
 using SelectaAPI.Repository;
 using SelectaAPI.Repository.Interfaces;
@@ -59,6 +60,20 @@ namespace SelectaAPI.Services.Users
                 throw new ArgumentException("Cliente não encontrado.");
 
             await _clientRepository.RemoveClient(client);
+        }
+
+        public async Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO addEntregador)
+        {
+            if (string.IsNullOrEmpty(addEntregador.Cnh) || !addEntregador.Cnh.All(char.IsDigit) || addEntregador.Cnh.Length < 11 || addEntregador.Cnh.Length > 11) 
+                throw new ArgumentException("CNH inválida! preencha o campo corretamente");
+
+            var verificarCliente = await _clientRepository.GetClienteById(addEntregador.IdEntregador);
+
+            if (verificarCliente == null) throw new ArgumentException("ID do cliente não existente");
+
+            var cadastrarEntregador = await _clientRepository.TornarEntregador(addEntregador);
+
+            return cadastrarEntregador;
         }
     }
 }

@@ -94,5 +94,25 @@ namespace SelectaAPI.Repositories.Users
            var removeCliente = _context.clientes.Remove(clienteModel);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO addEntregador)
+        {
+            var tornarEntregador = new tbEntregadorModel
+            {
+                IdEntregador =addEntregador.IdEntregador,
+                IdEndereco = addEntregador.IdEndereco,
+                Cnh = Regex.Replace(addEntregador.Cnh, @"\d{11}", ""),
+                Eligibilidade = true
+            };
+            _context.entregadores.Add(tornarEntregador);
+            await _context.SaveChangesAsync();
+
+            return tornarEntregador;
+        }
+
+        public async Task<bool> VerificarEndereco(int idEndereco)
+        {
+            return await _context.enderecos.AnyAsync(e => e.IdEndereco == idEndereco);
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
         Task<bool> EmailVerify(string email);
         Task RemoveClient(tbClienteModel clienteModel);
         Task<tbClienteModel> GetClienteById(int idCliente);
-        Task<
+        Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO addEntregador);
+        Task<bool> VerificarEndereco(int idEndereco);
     }
 }
