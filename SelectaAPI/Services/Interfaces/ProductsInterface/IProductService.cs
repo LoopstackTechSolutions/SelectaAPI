@@ -14,5 +14,6 @@ namespace SelectaAPI.Services.Interfaces.ProductsInterface
         Task RemoveProduct (int idProduct);
         Task<EditPromotionResponseDTO> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao);
         Task RemovePromotion(int idPromocao);
+        Task<IEnumerable<tbProdutoModel>> PesquisarProdutos(string query);
     }
 }

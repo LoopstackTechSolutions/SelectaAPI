@@ -14,13 +14,11 @@ namespace SelectaAPI.Services.Products
         private readonly IProductRepository _productRepository;
         private readonly IFilesUploadAWSService _aws;
         private readonly IHomeRepository _homeRepository;
-        private readonly ApplicationDbContext _context;
 
         public ProductService(IProductRepository productRepository, IFilesUploadAWSService aws, ApplicationDbContext context, IHomeRepository homeRepository)
         {
             _productRepository = productRepository;
             _aws = aws;
-            _context = context;
             _homeRepository = homeRepository;
         }
 
@@ -64,6 +62,15 @@ namespace SelectaAPI.Services.Products
             if (s3Key == null) return null;
 
             return await _aws.GetImage(s3Key);
+        }
+
+        public async Task<IEnumerable<tbProdutoModel>> PesquisarProdutos(string query)
+        {
+            var pesquisa = await _productRepository.PesquisarProdutos(query);
+
+            if (pesquisa == null) throw new ArgumentException("Nenhum produto encontrado!");
+
+            return pesquisa;    
         }
 
         public async Task<AddProductDTO> ProductRegister(AddProductDTO addProductDTO)

@@ -159,6 +159,12 @@ namespace SelectaAPI.Repositories.Products
             return await _context.promocoes.FindAsync(idPromocao);
         }
 
-        
+        public async Task<IEnumerable<tbProdutoModel>> PesquisarProdutos(string query)
+        {
+            var pesquisa = await _context.produtos.Where(p => EF.Functions.Like(p.Nome, $"%{query}%"))
+            .ToListAsync();
+
+            return pesquisa;
+        }
     }
 }

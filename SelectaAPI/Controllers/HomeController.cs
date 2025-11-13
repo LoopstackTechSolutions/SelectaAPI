@@ -10,7 +10,6 @@ namespace SelectaAPI.Controllers
 {
     [Route("selectaAPI/[controller]")]
     [ApiController]
-    [Authorize]
     public class HomeController : ControllerBase
     {
         private readonly IHomeService _homeService;
@@ -66,7 +65,6 @@ namespace SelectaAPI.Controllers
         }
 
         [HttpGet("wish-list")]
-        [Authorize]
         public async Task<IActionResult> WishList()
         {
             try

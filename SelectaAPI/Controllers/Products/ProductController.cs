@@ -7,7 +7,7 @@ using SelectaAPI.Services.Interfaces;
 using SelectaAPI.Services.Interfaces.ProductsInterface;
 
 namespace SelectaAPI.Controllers.Products
-{ 
+{
     [Route("selectaAPI/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
@@ -185,16 +185,38 @@ namespace SelectaAPI.Controllers.Products
             }
         }
         [HttpPut("promotion-edit")]
-        public async Task<IActionResult> EditPromotion(EditPromotionRequestDTO editPromotionRequest,int idPromocao)
+        public async Task<IActionResult> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao)
         {
             try
             {
-                await _productService.EditPromotion(editPromotionRequest,idPromocao);
+                await _productService.EditPromotion(editPromotionRequest, idPromocao);
                 return Ok("Promoção editada com sucesso!");
             }
             catch (ArgumentException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
+        [HttpGet("pesquisar-produtos")]
+        public async Task<IActionResult> PesquisarProdutos(string query)
+        {
+            try
+            {
+                var pesquisar = await _productService.PesquisarProdutos(query);
+                return Ok(pesquisar);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (DbUpdateException ex)
             {

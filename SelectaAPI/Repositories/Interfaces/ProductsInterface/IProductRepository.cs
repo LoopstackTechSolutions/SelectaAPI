@@ -19,5 +19,6 @@ namespace SelectaAPI.Repositories.Interfaces.ProductsInterface
         Task<EditPromotionResponseDTO> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao);
         Task RemovePromotion(tbPromocaoModel promocaoModel);
         Task<tbPromocaoModel> GetPromotionById(int idPromocao);
+        Task<IEnumerable<tbProdutoModel>> PesquisarProdutos(string query);
     }
 }

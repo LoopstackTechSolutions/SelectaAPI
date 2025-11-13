@@ -17,6 +17,13 @@ namespace SelectaAPI.Services.Users
 
         public async Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
         {
+            if (addEmployeeDTO == null) throw new ArgumentException("preencha os campos");
+
+            if (string.IsNullOrEmpty(addEmployeeDTO.Nome) || string.IsNullOrEmpty(addEmployeeDTO.Email)
+                || string.IsNullOrEmpty(addEmployeeDTO.Cpf) || string.IsNullOrEmpty(addEmployeeDTO.Senha)
+                || string.IsNullOrEmpty(addEmployeeDTO.NivelAcesso)) throw new ArgumentException("Necessário preencher todas as informações");
+            
+            if (!addEmployeeDTO.Cpf.All(char.IsDigit) || addEmployeeDTO.Cpf.Length < 11 || addEmployeeDTO.Cpf.Length > 11) throw new ArgumentException("CPF inválido");
             var verification = await _employeeRepository.EmailVerify(addEmployeeDTO.Email);
             if(verification) throw new ArgumentException("E-mail já cadastrado.");
 
@@ -46,7 +53,6 @@ namespace SelectaAPI.Services.Users
                 throw new ArgumentException("Funcionário não encontrado.");
 
             await _employeeRepository.RemoveEmployee(employee);
-
         }
     }
 }

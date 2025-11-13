@@ -21,22 +21,15 @@ namespace SelectaAPI.Controllers.Users
         [HttpPost("employee-register")]
         public async Task<IActionResult> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
         {
-            if (addEmployeeDTO == null) return BadRequest("preencha os campos");
-
-            if (string.IsNullOrEmpty(addEmployeeDTO.Nome) || string.IsNullOrEmpty(addEmployeeDTO.Email)
-                || string.IsNullOrEmpty(addEmployeeDTO.Cpf) || string.IsNullOrEmpty(addEmployeeDTO.Senha)
-                || string.IsNullOrEmpty(addEmployeeDTO.NivelAcesso)
-                )
-            {
-                return BadRequest("Necessário preencher todas as informações");
-            }
-
-            if (!addEmployeeDTO.Cpf.All(char.IsDigit) || addEmployeeDTO.Cpf.Length < 11 || addEmployeeDTO.Cpf.Length > 11) return BadRequest("CPF inválido");
-
             try
             {
                 var employeeRegister = await _employeeService.EmployeeRegister(addEmployeeDTO);
                 return Ok("sucesso ao cadastrar funcionário");
+            }
+
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
 
             catch (DbUpdateException ex)
