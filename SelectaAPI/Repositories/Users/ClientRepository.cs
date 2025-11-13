@@ -19,6 +19,13 @@ namespace SelectaAPI.Repositories.Users
             _context = context;
         }
 
+        public async Task<tbEnderecoModel> CadastrarEndereco(tbEnderecoModel enderecoModel)
+        {
+            _context.enderecos.Add(enderecoModel);
+            await _context.SaveChangesAsync();
+            return enderecoModel;
+        }
+
         public async Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryClientDTO)
         {
             var cliente = await _context.clientes.FindAsync(addCategoryClientDTO.IdCliente);

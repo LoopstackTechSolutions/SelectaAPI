@@ -12,6 +12,7 @@ namespace SelectaAPI.Models
         public int Cep { get; set; }
         public string Logradouro { get; set; }
         public bool isPrincipal { get; set; } = true;
+        [ForeignKey("Cliente")]
         public int IdCliente { get; set; }
         public tbClienteModel Cliente { get; set; }
         public int Numero { get; set; }

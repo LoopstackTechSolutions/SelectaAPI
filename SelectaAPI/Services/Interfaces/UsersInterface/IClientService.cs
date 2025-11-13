@@ -10,5 +10,6 @@ namespace SelectaAPI.Services.Interfaces.UsersInterface
         Task<EditClientDTO> EditClient(int idCliente, EditClientDTO editClienteDTO);
         Task RemoveClient(int idCliente);
         Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO addEntregador);
+        Task<object> CadastrarEndereco(string cep, int idCliente);
     }
 }

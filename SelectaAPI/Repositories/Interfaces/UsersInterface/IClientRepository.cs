@@ -13,5 +13,6 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
         Task<tbClienteModel> GetClienteById(int idCliente);
         Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO addEntregador);
         Task<bool> VerificarEndereco(int idEndereco);
+        Task<tbEnderecoModel> CadastrarEndereco(tbEnderecoModel enderecoModel); 
     }
 }

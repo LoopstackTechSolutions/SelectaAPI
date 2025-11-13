@@ -134,5 +134,27 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
+        [HttpPost("cadastrar-endereco")]
+        public async Task<IActionResult> CadastrarEndereco([FromQuery] string cep, [FromQuery] int idCliente)
+        {
+            try
+            {
+                var resultado = await _clientService.CadastrarEndereco(cep, idCliente);
+                return Ok(resultado);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
     }
 }

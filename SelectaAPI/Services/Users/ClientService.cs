@@ -2,6 +2,7 @@
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Handlers;
+using SelectaAPI.Integracao.Interfaces;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
 using SelectaAPI.Repository;
@@ -14,13 +15,46 @@ namespace SelectaAPI.Services.Users
     public class ClientService : IClientService
     {
         private readonly IClientRepository _clientRepository;
-        private readonly ApplicationDbContext _context;
-        private readonly HomeRepository _homeRepository; 
+        private readonly HomeRepository _homeRepository;
+        private readonly IViaCepIntegracao _viaCepIntegracao;
 
-        public ClientService(IClientRepository clientRepository, ApplicationDbContext context)
+
+        public ClientService(IClientRepository clientRepository, IViaCepIntegracao viaCepIntegracao)
         {
             _clientRepository = clientRepository;
-            _context = context;
+            _viaCepIntegracao = viaCepIntegracao;
+
+        }
+
+        public async Task<object> CadastrarEndereco(string cep, int idCliente)
+        {
+            var enderecoApi = await _viaCepIntegracao.GetDataViaCep(cep);
+
+            if (enderecoApi == null)
+                throw new Exception("CEP não encontrado na API ViaCEP.");
+
+            var endereco = new tbEnderecoModel
+            {
+                Cep = int.Parse(enderecoApi.Cep.Replace("-", "")),
+                Logradouro = $"{enderecoApi.Logradouro}, {enderecoApi.Bairro} – {enderecoApi.Localidade},{enderecoApi.Uf}",
+                IdCliente = idCliente,
+                isPrincipal = enderecoApi.IsPrincipal,
+            };
+
+            var enderecoCadastrado = await _clientRepository.CadastrarEndereco(endereco);
+
+            return new
+            {
+                Mensagem = "Endereço cadastrado com sucesso!",
+                Endereco = new
+                {
+                    enderecoCadastrado.IdEndereco,
+                    enderecoCadastrado.Cep,
+                    enderecoCadastrado.Logradouro,
+                    enderecoCadastrado.IdCliente,
+                    enderecoCadastrado.isPrincipal
+                }
+            };
         }
 
         public async Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryDTO)
