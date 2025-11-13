@@ -56,21 +56,23 @@ builder.Services.AddScoped<IFilesUploadAWSService, FilesUploadAWSService>();
 
 
 //CONNECTION STRING PARA USO LOCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL
-
+/*
 string connectionString =
 $"Server={Environment.GetEnvironmentVariable("SERVER")};" +
 $"Database={Environment.GetEnvironmentVariable("DATABASE")};" +
 $"User={Environment.GetEnvironmentVariable("USER")};" +
 $"Password={Environment.GetEnvironmentVariable("PASSWORD")};";
+*/
 
 /*
 * CONNECTION STRING PARA POR EM PRODUÇÃO
 * ACESSAR OS ENV DO AZURE
 * SEMPRE QUE UPAR NO GITHUB TEM QUE TROCAR O CONECCTION STRING
+*/
 
 string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
                           ?? builder.Configuration.GetConnectionString("DefaultConnection");
-*/
+
 
 builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>();
 
