@@ -7,6 +7,6 @@ namespace SelectaAPI.DTOs
         public int IdProduto { get; set; }
         public int Desconto { get; set; }
         public string Status { get; set; }
-        public DateTime? Validade { get; set; }
+     public DateTime? Validade { get; set; }
     }
 }

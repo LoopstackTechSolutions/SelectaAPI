@@ -80,7 +80,27 @@ namespace SelectaAPI.Controllers.Users
                 return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
-
+        [HttpPut("editar-funcionario")]
+        public async Task<IActionResult> EditarFuncionario(int idFuncionario, EditEmployeeDTO editEmployee)
+        {
+            try
+            {
+                await _employeeService.EditarFuncionario(editEmployee, idFuncionario);
+                return Ok("Funcionário editado com sucesso!");
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
 
     }
 }

@@ -11,5 +11,7 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
         Task<bool> VerificarCpf(string cpf);
         Task RemoveEmployee(tbFuncionarioModel funcionarioModel);
         Task<tbFuncionarioModel> GetEmployeeById(int idFuncionario);
+        Task<EditEmployeeDTO> EditarFuncionario(EditEmployeeDTO editEmployee, int idFuncionario);
     }
+
 }

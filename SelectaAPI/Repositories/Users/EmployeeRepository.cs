@@ -2,6 +2,7 @@
 using Org.BouncyCastle.Crypto;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
+using SelectaAPI.Handlers;
 using SelectaAPI.Models;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
 using System.Text.RegularExpressions;
@@ -67,6 +68,31 @@ namespace SelectaAPI.Repositories.Users
         {
             var verificacao = await _context.funcionarios.AnyAsync(f => f.Cpf == cpf);
             return verificacao;
+        }
+
+        public async Task<EditEmployeeDTO> EditarFuncionario(EditEmployeeDTO editEmployee, int idFuncionario)
+        {
+            var editarFuncionario = await _context.funcionarios.Where(f => f.IdFuncionario == idFuncionario)
+               .FirstOrDefaultAsync();
+            if (!string.IsNullOrWhiteSpace(editEmployee.Nome))
+                editarFuncionario.Nome = editEmployee.Nome.Trim();
+
+            if (!string.IsNullOrWhiteSpace(editEmployee.Email))
+                editarFuncionario.Email = editEmployee.Email.Trim().ToLower();
+
+            if (editEmployee.Cpf != null)
+                editarFuncionario.Cpf = editEmployee.Cpf.Trim();
+
+            if (!string.IsNullOrWhiteSpace(editEmployee.NivelAcesso))
+                editarFuncionario.NivelAcesso = editEmployee.NivelAcesso;
+
+            if (!string.IsNullOrWhiteSpace(editEmployee.Senha))
+            {
+                string hash = PasswordHashHandler.HashPassword(editEmployee.Senha.Trim());
+                editarFuncionario.Senha = hash;
+            }
+            await _context.SaveChangesAsync();
+            return editEmployee;
         }
     }
 }

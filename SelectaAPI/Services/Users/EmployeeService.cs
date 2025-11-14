@@ -15,6 +15,12 @@ namespace SelectaAPI.Services.Users
             _employeeRepository = employeeRepository;
         }
 
+        public async Task<EditEmployeeDTO> EditarFuncionario(EditEmployeeDTO editEmployee, int idFuncionario)
+        {
+            var chamarMetodo = await _employeeRepository.EditarFuncionario(editEmployee, idFuncionario);
+            return chamarMetodo;
+        }
+
         public async Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
         {
             if (addEmployeeDTO == null) throw new ArgumentException("preencha os campos");
