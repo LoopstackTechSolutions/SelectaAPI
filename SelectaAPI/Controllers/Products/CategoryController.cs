@@ -16,12 +16,12 @@ namespace SelectaAPI.Controllers
             _categoryService = categoryService;
         }
        
-        [HttpGet("get-all-categories")]
-        public async Task<IActionResult> GetAllCategories()
+        [HttpGet("todas-categorias")]
+        public async Task<IActionResult> TodasAsCategorias()
         {
             try
             {
-                var getAll = await _categoryService.GetAllCategories();
+                var getAll = await _categoryService.TodasAsCategorias();
                 return Ok(getAll);
             }
 

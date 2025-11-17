@@ -19,13 +19,13 @@ namespace SelectaAPI.Controllers.Products
             _productService = productService;
         }
 
-        [HttpPost("promotion-register")]
-        public async Task<IActionResult> PromotionRegister(AddPromotionRequestDTO addPromotionDTO)
+        [HttpPost("cadastrar-promocao")]
+        public async Task<IActionResult> CadastrarPromocao(AddPromotionRequestDTO addPromotionDTO)
         {
             if (addPromotionDTO == null) return BadRequest("preencha os campos");
             try
             {
-                var addPromotion = await _productService.PromotionRegister(addPromotionDTO);
+                var addPromotion = await _productService.CadastrarPromocao(addPromotionDTO);
                 return Ok(addPromotion);
             }
             catch (DbUpdateException ex)
@@ -39,12 +39,12 @@ namespace SelectaAPI.Controllers.Products
             }
         }
 
-        [HttpPost("product-register")]
-        public async Task<IActionResult> ProductRegister(AddProductDTO addProductDTO)
+        [HttpPost("cadastrar-produtos")]
+        public async Task<IActionResult> CadastrarProdutos(AddProductDTO addProductDTO)
         {
             try
             {
-                var addProduct = await _productService.ProductRegister(addProductDTO);
+                var addProduct = await _productService.CadastrarProduto(addProductDTO);
                 return Ok(addProduct);
             }
             catch (DbUpdateException ex)
@@ -58,11 +58,11 @@ namespace SelectaAPI.Controllers.Products
             }
         }
         [HttpPost("image-product-register")]
-        public async Task<IActionResult> ImageProductRegister([FromForm] AddImageOfProductDTO addImageDTO)
+        public async Task<IActionResult> AdicionarImagemNoProduto([FromForm] AddImageOfProductDTO addImageDTO)
         {
             try
             {
-                var addImage = await _productService.AddImageOfProduct(addImageDTO);
+                var addImage = await _productService.AdicionarImagemNoProduto(addImageDTO);
                 return Ok(addImage);
             }
             catch (DbUpdateException ex)
@@ -75,12 +75,12 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpGet("get-principal-image/{idProduto}")]
+        [HttpGet("busar-imagem-principal/{idProduto}")]
         public async Task<IActionResult> GetPrincipalImage(int idProduto)
         {
             try
             {
-                var imageUrl = await _productService.GetPrincipalImage(idProduto);
+                var imageUrl = await _productService.BuscarImagemPrincipalDoProduto(idProduto);
                 if (imageUrl == null) return NotFound($"Nenhuma imagem encontrada para o produto ID {idProduto}");
                 return Ok(imageUrl);
             }
@@ -94,12 +94,12 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpGet("get-all-images/{idProduto}")]
-        public async Task<IActionResult> GetAllImagesOfProduct(int idProduto)
+        [HttpGet("todas-imagens/{idProduto}")]
+        public async Task<IActionResult> BuscarTodasAsImagensDoProduto(int idProduto)
         {
             try
             {
-                var imageUrls = await _productService.GetAllImagesOfProduct(idProduto);
+                var imageUrls = await _productService.BuscarTodasAsImagensDoProduto(idProduto);
 
                 if (!imageUrls.Any())
                     return NotFound($"Nenhuma imagem encontrada para o produto ID {idProduto}");
@@ -121,13 +121,13 @@ namespace SelectaAPI.Controllers.Products
             }
         }
 
-        [HttpPut("edit-product")]
-        public async Task<IActionResult> EditProduct(int idProduto, EditProductDTO editProductDTO)
+        [HttpPut("editar-produto")]
+        public async Task<IActionResult> EditarProduto(int idProduto, EditProductDTO editProductDTO)
         {
             try
             {
                 if (idProduto == null) return NotFound("ID do produto nulo");
-                var editProduct = await _productService.EditProduct(idProduto, editProductDTO);
+                var editProduct = await _productService.EditarProduto(idProduto, editProductDTO);
 
                 return Ok(editProduct);
             }
@@ -142,12 +142,12 @@ namespace SelectaAPI.Controllers.Products
             }
         }
 
-        [HttpDelete("product-remove")]
-        public async Task<IActionResult> RemoveProduct(int idProduto)
+        [HttpDelete("remover-produto")]
+        public async Task<IActionResult> RemoverProduto(int idProduto)
         {
             try
             {
-                await _productService.RemoveProduct(idProduto);
+                await _productService.RemoverProduto(idProduto);
                 return Ok("Produto deletado com sucesso!");
             }
             catch (ArgumentException ex)
@@ -163,12 +163,12 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
-        [HttpDelete("promotion-remove")]
-        public async Task<IActionResult> RemovePromotion(int idPromocao)
+        [HttpDelete("remover-promocao")]
+        public async Task<IActionResult> RemoverPromocao(int idPromocao)
         {
             try
             {
-                await _productService.RemovePromotion(idPromocao);
+                await _productService.RemoverPromocao(idPromocao);
                 return Ok("Promoção removida com sucesso!");
             }
             catch (ArgumentException ex)
@@ -185,11 +185,11 @@ namespace SelectaAPI.Controllers.Products
             }
         }
         [HttpPut("promotion-edit")]
-        public async Task<IActionResult> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao)
+        public async Task<IActionResult> EditarPromocao(EditPromotionRequestDTO editPromotionRequest, int idPromocao)
         {
             try
             {
-                await _productService.EditPromotion(editPromotionRequest, idPromocao);
+                await _productService.EditarPromocao(editPromotionRequest, idPromocao);
                 return Ok("Promoção editada com sucesso!");
             }
             catch (ArgumentException ex)

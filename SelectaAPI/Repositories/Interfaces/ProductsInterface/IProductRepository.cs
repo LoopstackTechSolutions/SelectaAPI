@@ -8,17 +8,17 @@ namespace SelectaAPI.Repositories.Interfaces.ProductsInterface
 {
     public interface IProductRepository
     {
-        Task<AddPromotionResponseDTO> PromotionRegister(AddPromotionRequestDTO addPromotionRequest);
-        Task<AddProductDTO> ProductRegister(AddProductDTO addProductDTO);
-        Task<AddImageOfProductDTO> AddImageOfProduct(AddImageOfProductDTO addImageDTO);
-        Task<string?> GetPrincipalImage(int idProduto);
-        Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto);
-        Task<EditProductDTO> EditProduct(int idProduto, EditProductDTO editProductDTO);
-        Task<tbProdutoModel> GetProductById(int idProduto);
-        Task RemoveProduct(tbProdutoModel produtoModel);
-        Task<EditPromotionResponseDTO> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao);
-        Task RemovePromotion(tbPromocaoModel promocaoModel);
-        Task<tbPromocaoModel> GetPromotionById(int idPromocao);
+        Task<AddPromotionResponseDTO> CadastrarPromocao(AddPromotionRequestDTO addPromotionRequestDTO);
+        Task<AddProductDTO> CadastrarProduto(AddProductDTO addProductDTO);
+        Task<AddImageOfProductDTO> AdicionarImagemNoProduto(AddImageOfProductDTO addImageDTO);
+        Task<string?> BuscarImagemPrincipalDoProduto(int idProduto);
+        Task<IEnumerable<string>> BuscarTodasAsImagensDoProduto(int idProduto);
+        Task<EditProductDTO> EditarProduto(int idProduto, EditProductDTO editProductDTO);
+        Task<tbProdutoModel> BuscarProdutosPorId(int idProduto);
+        Task RemoverProduto(tbProdutoModel produtoModel);
+        Task<EditPromotionResponseDTO> EditarPromocao(EditPromotionRequestDTO editPromotionRequest, int idPromocao);
+        Task RemoverPromocao(tbPromocaoModel promocaoModel);
+        Task<tbPromocaoModel> BuscarPromocaoPorId(int idPromocao);
         Task<IEnumerable<tbProdutoModel>> PesquisarProdutos(string query);
     }
 }

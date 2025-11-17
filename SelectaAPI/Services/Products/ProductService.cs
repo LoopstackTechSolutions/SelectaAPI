@@ -22,33 +22,33 @@ namespace SelectaAPI.Services.Products
             _homeRepository = homeRepository;
         }
 
-        public async Task<AddImageOfProductDTO> AddImageOfProduct(AddImageOfProductDTO addImageDTO)
+        public async Task<AddImageOfProductDTO> AdicionarImagemNoProduto(AddImageOfProductDTO addImageDTO)
         {
-            var addImage = await _productRepository.AddImageOfProduct(addImageDTO);
+            var addImage = await _productRepository.AdicionarImagemNoProduto(addImageDTO);
 
             return addImage;
         }
 
-        public async Task<EditProductDTO> EditProduct(int idProduto, EditProductDTO editProductDTO)
+        public async Task<EditProductDTO> EditarProduto(int idProduto, EditProductDTO editProductDTO)
         {
             var verifyIdProduct = await _homeRepository.ProductExists(idProduto);
 
             if (!verifyIdProduct) throw new Exception("ID do produto não existente");
 
-            var callMethodEdit = await _productRepository.EditProduct(idProduto, editProductDTO);
+            var callMethodEdit = await _productRepository.EditarProduto(idProduto, editProductDTO);
 
             return callMethodEdit;
         }
 
-        public async Task<EditPromotionResponseDTO> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao)
+        public async Task<EditPromotionResponseDTO> EditarPromocao(EditPromotionRequestDTO editPromotionRequest, int idPromocao)
         {
-            var editPromotion = await _productRepository.EditPromotion(editPromotionRequest, idPromocao);
+            var editPromotion = await _productRepository.EditarPromocao(editPromotionRequest, idPromocao);
             return editPromotion;
         }
 
-        public async Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto)
+        public async Task<IEnumerable<string>> BuscarTodasAsImagensDoProduto(int idProduto)
         {
-            var s3Keys = await _productRepository.GetAllImagesOfProduct(idProduto);
+            var s3Keys = await _productRepository.BuscarTodasAsImagensDoProduto(idProduto);
 
             if (s3Keys == null || !s3Keys.Any())
                 return Enumerable.Empty<string>();
@@ -56,9 +56,9 @@ namespace SelectaAPI.Services.Products
             return await _aws.GetAllImages(s3Keys);
         }
 
-        public async Task<string?> GetPrincipalImage(int idProduto)
+        public async Task<string?> BuscarImagemPrincipalDoProduto(int idProduto)
         {
-            var s3Key = await _productRepository.GetPrincipalImage(idProduto);
+            var s3Key = await _productRepository.BuscarImagemPrincipalDoProduto(idProduto);
             if (s3Key == null) return null;
 
             return await _aws.GetImage(s3Key);
@@ -73,17 +73,17 @@ namespace SelectaAPI.Services.Products
             return pesquisa;    
         }
 
-        public async Task<AddProductDTO> ProductRegister(AddProductDTO addProductDTO)
+        public async Task<AddProductDTO> CadastrarProduto(AddProductDTO addProductDTO)
         {
-            var addProduct = await _productRepository.ProductRegister(addProductDTO);
+            var addProduct = await _productRepository.CadastrarProduto(addProductDTO);
 
             return addProduct;
         }
 
 
-        public async Task<AddPromotionResponseDTO> PromotionRegister(AddPromotionRequestDTO addPromotionRequest)
+        public async Task<AddPromotionResponseDTO> CadastrarPromocao(AddPromotionRequestDTO addPromotionRequest)
         {
-            var addPromotion = await _productRepository.PromotionRegister(addPromotionRequest);
+            var addPromotion = await _productRepository.CadastrarPromocao(addPromotionRequest);
 
             return new AddPromotionResponseDTO
             {
@@ -96,23 +96,23 @@ namespace SelectaAPI.Services.Products
             };
         }
 
-        public async Task RemoveProduct(int idProduct)
+        public async Task RemoverProduto(int idProduto)
         {
-            var product = await _productRepository.GetProductById(idProduct);
+            var product = await _productRepository.BuscarProdutosPorId(idProduto);
 
             if (product == null)
                 throw new ArgumentException("Produto não encontrado.");
 
-            await _productRepository.RemoveProduct(product);
+            await _productRepository.RemoverProduto(product);
         }
 
-        public async Task RemovePromotion(int idPromocao)
+        public async Task RemoverPromocao(int idPromocao)
         {
-            var promotion = await _productRepository.GetPromotionById(idPromocao);
+            var promotion = await _productRepository.BuscarPromocaoPorId(idPromocao);
 
             if(promotion == null)
                 throw new ArgumentException("Promoção não encontrada");
-            await _productRepository.RemovePromotion(promotion);
+            await _productRepository.RemoverPromocao(promotion);
         }
     }
 }

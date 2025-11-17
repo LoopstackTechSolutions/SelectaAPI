@@ -247,19 +247,18 @@ namespace SelectaAPI.Repository
 
         public async Task<IEnumerable<tbProdutoModel>> GetProductByID(int id)
         {
-            var getProductById = await _context.produtos.Where(p => p.IdProduto == id).
+            var getProductById = await _context.produtos.Where(p => p.IdProduto == id && p.Quantidade > 0).
                 Select(p => new tbProdutoModel
                 {
                     IdProduto = p.IdProduto,
                     Nome = p.Nome,
-                    Quantidade = p.Quantidade ?? 0,
+                    Quantidade = p.Quantidade,
                     PrecoUnitario = p.PrecoUnitario,
                     Condicao = p.Condicao,
                     Peso = p.Peso ?? 0,
                     Status = p.Status,
-                    Descricao = p.Descricao,
-                    IdVendedor = p.IdVendedor ?? 0
-
+                    Descricao = p.Descricao ?? "Sem descrição",
+                    IdVendedor = p.IdVendedor 
                 }).ToListAsync();
 
             return getProductById;

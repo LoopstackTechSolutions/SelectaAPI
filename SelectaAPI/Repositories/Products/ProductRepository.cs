@@ -21,7 +21,7 @@ namespace SelectaAPI.Repositories.Products
             _aws = aws;
         }
 
-        public async Task<AddImageOfProductDTO> AddImageOfProduct(/*IFormFile file, string? prefix,*/ AddImageOfProductDTO addImageDTO)
+        public async Task<AddImageOfProductDTO> AdicionarImagemNoProduto(/*IFormFile file, string? prefix,*/ AddImageOfProductDTO addImageDTO)
         {
             var awsCommunication = await _aws.UploadFiles(addImageDTO.File, addImageDTO.Prefix);
 
@@ -36,7 +36,7 @@ namespace SelectaAPI.Repositories.Products
             return addImageDTO;
         }
 
-        public async Task<EditProductDTO> EditProduct(int idProduto, EditProductDTO editProductDTO)
+        public async Task<EditProductDTO> EditarProduto(int idProduto, EditProductDTO editProductDTO)
         {
             var editProduct = await _context.produtos.Where(p => p.IdProduto == idProduto)
                 .FirstOrDefaultAsync();
@@ -52,7 +52,7 @@ namespace SelectaAPI.Repositories.Products
             return editProductDTO;
         }
 
-        public async Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto)
+        public async Task<IEnumerable<string>> BuscarTodasAsImagensDoProduto(int idProduto)
         {
             var image = await _context.imagensProdutos.Where(i => i.IdProduto == idProduto)
                 .Select(i => i.S3Key).Take(5)
@@ -60,7 +60,7 @@ namespace SelectaAPI.Repositories.Products
             return image;
         }
 
-        public async Task<string?> GetPrincipalImage(int idProduto)
+        public async Task<string?> BuscarImagemPrincipalDoProduto(int idProduto)
         {
             var image = await _context.imagensProdutos.Where(i => i.IdProduto == idProduto && i.IsPrincipal == true)
                 .Select(i => i.S3Key)
@@ -69,7 +69,7 @@ namespace SelectaAPI.Repositories.Products
             return image;
         }
 
-        public async Task<AddProductDTO> ProductRegister(AddProductDTO addProductDTO)
+        public async Task<AddProductDTO> CadastrarProduto(AddProductDTO addProductDTO)
         {
             var addProductEntity =(new tbProdutoModel()
             {
@@ -88,7 +88,7 @@ namespace SelectaAPI.Repositories.Products
             return addProductDTO;
         }
 
-        public async Task<AddPromotionResponseDTO> PromotionRegister(AddPromotionRequestDTO addPromotionRequest)
+        public async Task<AddPromotionResponseDTO> CadastrarPromocao(AddPromotionRequestDTO addPromotionRequest)
         {
             var getProduct = await _context.produtos.Where(p => p.IdProduto == addPromotionRequest.IdProduto)
                 .Select(p => p.PrecoUnitario)
@@ -114,18 +114,18 @@ namespace SelectaAPI.Repositories.Products
             };
         }
 
-        public async Task<tbProdutoModel> GetProductById(int idProduto)
+        public async Task<tbProdutoModel> BuscarProdutosPorId(int idProduto)
         {
             return await _context.produtos.FindAsync(idProduto);
         }
 
-        public async Task RemoveProduct(tbProdutoModel produtoModel)
+        public async Task RemoverProduto(tbProdutoModel produtoModel)
         {
             var removeProduct = _context.produtos.Remove(produtoModel);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<EditPromotionResponseDTO> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao)
+        public async Task<EditPromotionResponseDTO> EditarPromocao(EditPromotionRequestDTO editPromotionRequest, int idPromocao)
         {
             var editProduct = await _context.promocoes.Where(c => c.IdPromocao == idPromocao)
               .FirstOrDefaultAsync();
@@ -148,13 +148,13 @@ namespace SelectaAPI.Repositories.Products
             };
         }
 
-        public async Task RemovePromotion(tbPromocaoModel promocaoModel)
+        public async Task RemoverPromocao(tbPromocaoModel promocaoModel)
         {
             var removePromotion = _context.promocoes.Remove(promocaoModel);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<tbPromocaoModel> GetPromotionById(int idPromocao)
+        public async Task<tbPromocaoModel> BuscarPromocaoPorId(int idPromocao)
         {
             return await _context.promocoes.FindAsync(idPromocao);
         }

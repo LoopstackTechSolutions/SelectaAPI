@@ -5,15 +5,15 @@ namespace SelectaAPI.Services.Interfaces.ProductsInterface
 {
     public interface IProductService
     {
-        Task<AddPromotionResponseDTO> PromotionRegister(AddPromotionRequestDTO addPromotionRequest);
-        Task<AddProductDTO> ProductRegister(AddProductDTO addProduct);
-        Task<AddImageOfProductDTO> AddImageOfProduct (AddImageOfProductDTO addImageDTO);
-        Task<string?> GetPrincipalImage(int idProduto);
-        Task<IEnumerable<string>> GetAllImagesOfProduct(int idProduto);
-        Task<EditProductDTO> EditProduct(int idProduto, EditProductDTO editProductDTO);
-        Task RemoveProduct (int idProduct);
-        Task<EditPromotionResponseDTO> EditPromotion(EditPromotionRequestDTO editPromotionRequest, int idPromocao);
-        Task RemovePromotion(int idPromocao);
+        Task<AddPromotionResponseDTO> CadastrarPromocao(AddPromotionRequestDTO addPromotionRequest);
+        Task<AddProductDTO> CadastrarProduto(AddProductDTO addProductDTO);
+        Task<AddImageOfProductDTO> AdicionarImagemNoProduto(AddImageOfProductDTO addImageDTO);
+        Task<string?> BuscarImagemPrincipalDoProduto(int idProduto);
+        Task<IEnumerable<string>> BuscarTodasAsImagensDoProduto(int idProduto);
+        Task<EditProductDTO> EditarProduto(int idProduto, EditProductDTO editProductDTO);
+        Task RemoverProduto(int idProduto);
+        Task<EditPromotionResponseDTO> EditarPromocao(EditPromotionRequestDTO editPromotionRequest, int idPromocao);
+        Task RemoverPromocao(int idPromocao);
         Task<IEnumerable<tbProdutoModel>> PesquisarProdutos(string query);
     }
 }
