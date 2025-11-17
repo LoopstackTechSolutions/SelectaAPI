@@ -11,9 +11,9 @@ namespace SelectaAPI.Services.Products
         {
             _categoryRepository = categoryRepository;
         }
-        public async Task<IEnumerable<tbCategoriaModel>> GetAllCategories()
+        public async Task<IEnumerable<tbCategoriaModel>> TodasAsCategorias()
         {
-            var getAll = await _categoryRepository.GetAllCategories();
+            var getAll = await _categoryRepository.TodasAsCategorias();
             return getAll;
         }
     }

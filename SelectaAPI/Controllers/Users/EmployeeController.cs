@@ -59,7 +59,7 @@ namespace SelectaAPI.Controllers.Users
                 return StatusCode(500, $"erro no servidor {ex.Message}");
             }
         }
-        [HttpDelete("employee-remove")]
+        [HttpDelete("employee-remove/{idFuncionario}")]
         public async Task<IActionResult> RemoveEmployee(int idFuncionario)
         {
             try

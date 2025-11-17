@@ -164,8 +164,8 @@ namespace SelectaAPI.Controllers
         public async Task<IActionResult> GetProductById([FromQuery] int id)
         {
             try
-            {
-                var product = await _homeService.GetProductByID(id);
+            {                                
+                 var product = await _homeService.GetProductByID(id);
                 if (product == null) return BadRequest("ID do produto nulo");
                 return Ok(product);
             }
