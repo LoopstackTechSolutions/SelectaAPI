@@ -189,7 +189,7 @@ namespace SelectaAPI.Controllers.Products
         {
             try
             {
-                await _productService.EditarPromocao(editPromotionRequest, idPromocao);
+                await _productService.EditarPromocao  (editPromotionRequest, idPromocao);
                 return Ok("Promoção editada com sucesso!");
             }
             catch (ArgumentException ex)

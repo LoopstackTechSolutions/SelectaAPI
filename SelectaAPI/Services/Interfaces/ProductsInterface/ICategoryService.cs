@@ -4,6 +4,6 @@ namespace SelectaAPI.Services.Interfaces.ProductsInterface
 {
     public interface ICategoryService
     {
-        Task<IEnumerable<tbCategoriaModel>> GetAllCategories();
+        Task<IEnumerable<tbCategoriaModel>> TodasAsCategorias();
     }
 }

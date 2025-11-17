@@ -34,6 +34,7 @@ namespace SelectaAPI.Services.Users
             // Retorna o DTO de login com o token
             return new LoginResponseDTO
             {
+                IdCliente = tokenObj.idTO
                 AccessToken = tokenObj.GetType().GetProperty("Token")!.GetValue(tokenObj)?.ToString()
             };
         }

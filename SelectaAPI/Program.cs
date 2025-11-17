@@ -102,63 +102,63 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Selecta API", Version = "v1" });
 
-   //  options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-//     {
-//         Name = "Authorization",
-//         Type = SecuritySchemeType.ApiKey,
-//         Scheme = "Bearer",
-//         BearerFormat = "JWT",
-//         In = ParameterLocation.Header,
-//         Description = "Digite: Bearer {seu token JWT}"
-//     });
+     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+     {
+         Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+         In = ParameterLocation.Header,
+         Description = "Digite: Bearer {seu token JWT}"
+     });
 
-//     options.AddSecurityRequirement(new OpenApiSecurityRequirement
-//     {
-//         {
-//             new OpenApiSecurityScheme
-//             {
-//                 Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-//             },
-//             Array.Empty<string>()
-//         }
-//     });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+     {
+         {
+             new OpenApiSecurityScheme
+             {
+                 Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+             },
+             Array.Empty<string>()
+         }
+     });
 });
 
-// ==================== Autenticação JWT ===============
+ // ==================== Autenticação JWT ===============
 
-// var key = Encoding.UTF8.GetBytes(Key.Secret);
+ var key = Encoding.UTF8.GetBytes(Key.Secret);
 
-// builder.Services.AddAuthentication(options =>
-// {
-//     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-// })
-// .AddJwtBearer(options =>
-// {
-// options.RequireHttpsMetadata = false;
-// options.SaveToken = true;
-//     options.TokenValidationParameters = new TokenValidationParameters
-//     {
-//         ValidateIssuer = true,
-//         ValidateAudience = true,
-//         ValidateLifetime = true,
-//         ValidateIssuerSigningKey = true,
-//         ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
-//         ValidAudience = builder.Configuration["JwtConfig:Audience"],
-//         IssuerSigningKey = new SymmetricSecurityKey(key),
-//         ClockSkew = TimeSpan.Zero,
-//     };
-// });
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+                ValidateLifetime = true,
+                 ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["JwtConfig:Issuer"],
+                ValidAudience = builder.Configuration["JwtConfig:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ClockSkew = TimeSpan.Zero,
+             };
+         });
 
-// ==================== Build e Middleware ====================
-var app = builder.Build();
+        // ==================== Build e Middleware ====================
+        var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-//app.UseAuthentication(); // 🔒 JWT
-//app.UseAuthorization();
+app.UseAuthentication(); // 🔒 JWT
+app.UseAuthorization();
 
 app.MapControllers();
 app.MapGet("/", () => "API rodando no Azure");

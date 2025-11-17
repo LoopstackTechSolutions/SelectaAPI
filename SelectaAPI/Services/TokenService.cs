@@ -27,10 +27,12 @@ namespace SelectaAPI.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
+            var idToken = cliente.IdCliente;
 
             return new
             {
                 Token = tokenString,
+     
             };
         }
     }
