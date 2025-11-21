@@ -54,13 +54,6 @@ builder.Services.AddScoped<IFilesUploadAWSService, FilesUploadAWSService>();
 
 
 
-/*
-* CONNECTION STRING PARA POR EM PRODUÇÃO
-* ACESSAR OS ENV DO AZURE
-* SEMPRE QUE UPAR NO GITHUB TEM QUE TROCAR O CONECCTION STRING
-<<<<<<< HEAD
-* */
-
 
 string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION")
                           ?? builder.Configuration.GetConnectionString("DefaultConnection");
@@ -88,6 +81,15 @@ builder.Services.AddRefitClient<IViaCepIntegracaoRefit>().ConfigureHttpClient(c 
 
 // ==================== Controllers e Swagger ====================
 builder.Services.AddControllers();
+
+builder.Services.AddSession(o =>
+{
+    o.Cookie.Name = ".SelectaCookies.Sesssion";
+    o.IdleTimeout = TimeSpan.FromHours(8);
+    o.Cookie.HttpOnly = true;
+    o.Cookie.IsEssential = true;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -98,7 +100,7 @@ builder.Services.AddSwaggerGen(options =>
          Name = "Authorization",
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer",
-        BearerFormat = "JWT",
+        BearerFormat = "Session",
          In = ParameterLocation.Header,
          Description = "Digite: Bearer {seu token JWT}"
      });
@@ -114,7 +116,7 @@ builder.Services.AddSwaggerGen(options =>
          }
      });
 });
-
+/*
  // ==================== Autenticação JWT ===============
 
  var key = Encoding.UTF8.GetBytes(Key.Secret);
@@ -139,16 +141,14 @@ builder.Services.AddAuthentication(options =>
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ClockSkew = TimeSpan.Zero,
              };
-         });
-
-        // ==================== Build e Middleware ====================
-        var app = builder.Build();
-
+ });
+*/
+ // ==================== Build e Middleware ====================
+var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-app.UseAuthentication(); // 🔒 JWT
 app.UseAuthorization();
 
 app.MapControllers();
