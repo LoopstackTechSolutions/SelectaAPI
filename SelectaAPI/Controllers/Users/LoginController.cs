@@ -53,6 +53,7 @@ namespace SelectaAPI.Controllers.Users
 
                 var employeeLogin = await _loginService.EmployeeLogin(request);
 
+
                 if (employeeLogin == null)
                     return BadRequest("email ou senha inválidos");
 
