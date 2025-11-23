@@ -59,7 +59,8 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'selectaapi'
+          app-name: 'selectaapi2'
           slot-name: 'Production'
           package: .
+
           
