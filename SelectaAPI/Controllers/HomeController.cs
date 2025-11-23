@@ -1,10 +1,6 @@
-﻿using Amazon.S3.Model;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Services.Interfaces;
-using System.Security.Claims;
 
 namespace SelectaAPI.Controllers
 {
@@ -19,14 +15,19 @@ namespace SelectaAPI.Controllers
             _homeService = homeService;
         }
 
-        private int GetClientIdFromToken()
-        {
-            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (idClaim == null)
-                throw new UnauthorizedAccessException("ID do cliente não encontrado no token.");
+        // ==================== Session ====================
 
-            return int.Parse(idClaim);
+        private int GetClientIdFromSession()
+        {
+            int? id = HttpContext.Session.GetInt32("ClientId");
+
+            if (id == null)
+                throw new UnauthorizedAccessException("Usuário não está logado ou a sessão expirou.");
+
+            return id.Value;
         }
+
+        // ==================== ENDPOINTS ====================
 
         [HttpGet("all")]
         public async Task<IActionResult> GetAll()
@@ -38,11 +39,11 @@ namespace SelectaAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return StatusCode(500, $"Erro de banco.");
             }
             catch (Exception)
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, $"Erro interno do servidor.");
             }
         }
 
@@ -56,11 +57,11 @@ namespace SelectaAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return StatusCode(500, $"Erro de banco.");
             }
             catch (Exception)
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, $"Erro interno do servidor.");
             }
         }
 
@@ -69,17 +70,21 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                int idCliente = GetClientIdFromToken();
+                int idCliente = GetClientIdFromSession();
                 var wishList = await _homeService.WishList(idCliente);
                 return Ok(wishList);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
             catch (DbUpdateException)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return StatusCode(500, $"Erro de banco.");
             }
             catch (Exception)
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, $"Erro interno do servidor.");
             }
         }
 
@@ -88,17 +93,21 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                int idCliente = GetClientIdFromToken();
+                int idCliente = GetClientIdFromSession();
                 var forYou = await _homeService.ForYou(idCliente);
                 return Ok(forYou);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
             catch (DbUpdateException)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return StatusCode(500, $"Erro de banco.");
             }
             catch (Exception)
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, $"Erro interno.");
             }
         }
 
@@ -107,17 +116,17 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                int idCliente = GetClientIdFromToken();
+                int idCliente = GetClientIdFromSession();
                 var notifications = await _homeService.Notifications(idCliente);
                 return Ok(notifications);
             }
-            catch (DbUpdateException)
+            catch (UnauthorizedAccessException ex)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return Unauthorized(ex.Message);
             }
-            catch (Exception)
+            catch
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, $"Erro no servidor.");
             }
         }
 
@@ -126,19 +135,21 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                int idCliente = GetClientIdFromToken();
+                int idCliente = GetClientIdFromSession();
                 var notifications = await _homeService.NotificationsUnread(idCliente);
 
-                if (notifications == null) return NotFound("Todas as notificações foram lidas");
+                if (notifications == null)
+                    return NotFound("Todas as notificações foram lidas.");
+
                 return Ok(notifications);
             }
-            catch (DbUpdateException)
+            catch (UnauthorizedAccessException ex)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return Unauthorized(ex.Message);
             }
-            catch (Exception)
+            catch
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, $"Erro no servidor.");
             }
         }
 
@@ -147,16 +158,11 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                var bestSellers = await _homeService.BestSellers();
-                return Ok(bestSellers);
+                return Ok(await _homeService.BestSellers());
             }
-            catch (DbUpdateException)
+            catch
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, "Erro no servidor.");
             }
         }
 
@@ -164,18 +170,17 @@ namespace SelectaAPI.Controllers
         public async Task<IActionResult> GetProductById([FromQuery] int id)
         {
             try
-            {                                
-                 var product = await _homeService.GetProductByID(id);
-                if (product == null) return BadRequest("ID do produto nulo");
+            {
+                var product = await _homeService.GetProductByID(id);
+
+                if (product == null)
+                    return BadRequest("ID do produto inválido.");
+
                 return Ok(product);
             }
-            catch (DbUpdateException)
+            catch
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, "Erro interno.");
             }
         }
 
@@ -184,18 +189,21 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                int idCliente = GetClientIdFromToken();
+                int idCliente = GetClientIdFromSession();
                 var result = await _homeService.AddProductInWishList(idProduto, idCliente);
-                if (result == null) return NotFound("Preencha todos os campos");
+
+                if (result == null)
+                    return BadRequest("Campos insuficientes.");
+
                 return Ok(result);
             }
-            catch (DbUpdateException)
+            catch (UnauthorizedAccessException ex)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return Unauthorized(ex.Message);
             }
-            catch (Exception)
+            catch
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, "Erro no servidor.");
             }
         }
 
@@ -204,17 +212,17 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                int idCliente = GetClientIdFromToken();
+                int idCliente = GetClientIdFromSession();
                 var cart = await _homeService.GetProductsInCartOfClient(idCliente);
                 return Ok(cart);
             }
-            catch (DbUpdateException)
+            catch (UnauthorizedAccessException ex)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return Unauthorized(ex.Message);
             }
-            catch (Exception)
+            catch
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, "Erro no servidor.");
             }
         }
 
@@ -223,17 +231,18 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                int idCliente = GetClientIdFromToken();
+                int idCliente = GetClientIdFromSession();
                 var typeAccount = await _homeService.GetTypeAccountOfClient(idCliente);
+
                 return Ok(typeAccount);
             }
-            catch (DbUpdateException)
+            catch (UnauthorizedAccessException ex)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return Unauthorized(ex.Message);
             }
-            catch (Exception)
+            catch
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, "Erro no servidor.");
             }
         }
 
@@ -242,17 +251,17 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                int idCliente = GetClientIdFromToken();
-                var result = await _homeService.RemoveProductOfCart(idCliente, idProduto);
+                int idCliente = GetClientIdFromSession();
+                await _homeService.RemoveProductOfCart(idCliente, idProduto);
                 return Ok($"Produto removido: {idProduto}");
             }
-            catch (DbUpdateException)
+            catch (UnauthorizedAccessException ex)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return Unauthorized(ex.Message);
             }
-            catch (Exception)
+            catch
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, "Erro no servidor.");
             }
         }
 
@@ -261,17 +270,17 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                int idCliente = GetClientIdFromToken();
-                var result = await _homeService.RemoveProductOfWishList(idCliente, idProduto);
+                int idCliente = GetClientIdFromSession();
+                await _homeService.RemoveProductOfWishList(idCliente, idProduto);
                 return Ok($"Produto removido: {idProduto}");
             }
-            catch (DbUpdateException)
+            catch (UnauthorizedAccessException ex)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return Unauthorized(ex.Message);
             }
-            catch (Exception)
+            catch
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, "Erro no servidor.");
             }
         }
 
@@ -280,17 +289,18 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                int idCliente = GetClientIdFromToken();
+                int idCliente = GetClientIdFromSession();
                 var result = await _homeService.NotificationsRead(idCliente, idNotificacao);
+
                 return Ok(result);
             }
-            catch (DbUpdateException)
+            catch (UnauthorizedAccessException ex)
             {
-                return StatusCode(500, $"Erro de banco: erro no tratamento dos dados ou falha na conexão.");
+                return Unauthorized(ex.Message);
             }
-            catch (Exception)
+            catch
             {
-                return StatusCode(500, $"Erro no servidor: erro na inicialização do servidor");
+                return StatusCode(500, "Erro no servidor.");
             }
         }
     }

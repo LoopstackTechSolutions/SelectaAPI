@@ -29,13 +29,13 @@ namespace SelectaAPI.Services.Users
             if (!PasswordHashHandler.VerifyPassword(loginRequest.Senha, client.Senha))
                 return null; 
 
-            var tokenObj = TokenService.GenerateJwtTokenByClient(client);
-
            
             // Retorna o DTO de login com o token
             return new LoginResponseDTO
             {
-                AccessToken = tokenObj.GetType().GetProperty("Token")!.GetValue(tokenObj)?.ToString()
+                IdCliente = client.IdCliente,
+                Nome = client.Nome,
+                NivelAcesso = "CLIENTE"
             };
         }
 
@@ -52,7 +52,8 @@ namespace SelectaAPI.Services.Users
             return new LoginResponseDTO
             {
                 IdFuncionario = employee.IdFuncionario,
-                ExpiressIn = 60
+                Nome = employee.Nome,
+                NivelAcesso = employee.NivelAcesso
             };
         }
 
