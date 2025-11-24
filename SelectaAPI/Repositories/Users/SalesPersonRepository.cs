@@ -13,9 +13,9 @@ namespace SelectaAPI.Repositories.Users
         {
             _context = context;
         }
-        public async Task<IEnumerable<ResponseMyProductsDTO>> MyProducts(int idVendedor, int pageNumber = 1, int pageSize = 20)
+        public async Task<IEnumerable<ResponseMyProductsDTO>> MeusProdutos(int idVendedor, int pageNumber = 1, int pageSize = 20)
         {
-            var list = await _context.produtos.Where(p => p.IdVendedor == idVendedor)
+            var lista = await _context.produtos.Where(p => p.IdVendedor == idVendedor)
                 .Select(p => new ResponseMyProductsDTO
                 {
                     IdVendedor = p.IdVendedor,
@@ -31,7 +31,7 @@ namespace SelectaAPI.Repositories.Users
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
-            return list;
+            return lista;
         }
 
         public async Task<bool> RetornoVazio(int idVendedor)

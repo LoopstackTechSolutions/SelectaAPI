@@ -66,8 +66,8 @@ namespace SelectaAPI.Controllers
         {
             try
             {
-                var resultadoado = await _homeService.ListarProdutosDaListaDeDesejos(idCliente);
-                return Ok(resultadoado);
+                var resultado= await _homeService.ListarProdutosDaListaDeDesejos(idCliente);
+                return Ok(resultado);
             }
             catch (DbUpdateException)
             {
@@ -185,7 +185,7 @@ namespace SelectaAPI.Controllers
 
                 if (resultado == null) return NotFound("Preencha todos os campos");
 
-                return Ok(resultado);
+                return Ok("Produto adicionado em sua lista!");
             }
             catch (DbUpdateException)
             {
@@ -223,7 +223,7 @@ namespace SelectaAPI.Controllers
             try
             {
                 var resultado = await _homeService.TipoDeConta(idCliente);
-                return Ok(resultado);
+                return Ok($"tipo de conta: {resultado}");
             }
             catch (DbUpdateException)
             {
@@ -241,7 +241,7 @@ namespace SelectaAPI.Controllers
             try
             {
                 await _homeService.RemoverProdutoDoCarrinho(idCliente, idProduto);
-                return Ok($"Produto removido: {idProduto}");
+                return Ok($"Produto removido com sucesso!");
             }
             catch (DbUpdateException)
             {

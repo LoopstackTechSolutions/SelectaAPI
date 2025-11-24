@@ -7,7 +7,7 @@ namespace SelectaAPI.Services.Interfaces.UsersInterface
 {
     public interface ILoginService
     {
-        Task<LoginResponseDTO?> ClientLogin (LoginRequestDTO loginRequest);
-        Task<LoginResponseDTO> EmployeeLogin(LoginRequestDTO loginRequest);
+        Task<LoginResponseDTO?> LoginDoCliente (LoginRequestDTO loginRequest);
+        Task<LoginResponseDTO> LoginDoFuncionario(LoginRequestDTO loginRequest);
     }
 }

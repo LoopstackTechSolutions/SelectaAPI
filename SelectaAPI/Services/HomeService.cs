@@ -85,7 +85,7 @@ namespace SelectaAPI.Services
             return notificacoesNaoLidas;
         }
 
-        public async Task<IEnumerable<tbProdutoModel>> ListarProdutoPorId(int idProduto)
+        public async Task<tbProdutoModel> ListarProdutoPorId(int idProduto)
         {
             var produtoExiste = await _homeRepository.VerificarSeProdutoExiste(idProduto);
 
@@ -94,7 +94,7 @@ namespace SelectaAPI.Services
 
             var produto = await _homeRepository.ObterProdutoPorId(idProduto);
 
-            if (produto == null || !produto.Any())
+            if (produto == null)
                 return null;
 
             return produto;
