@@ -16,14 +16,14 @@ namespace SelectaAPI.Repositories.Users
         {
             _context = context;
         }
-        public async Task<tbClienteModel> GetCredentialsOfClient(string email)
+        public async Task<tbClienteModel> BuscarCredenciaisDoCliente(string email)
         {
             return await _context.clientes
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.Email == email);
         }
 
-        public async Task<tbFuncionarioModel> GetCredentialsOfEmployee(string email)
+        public async Task<tbFuncionarioModel> BuscarCredenciaisDoFuncionario(string email)
         {
             return await _context.funcionarios
             .AsNoTracking()

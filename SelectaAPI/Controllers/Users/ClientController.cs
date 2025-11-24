@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
 using SelectaAPI.Services.Interfaces.UsersInterface;
@@ -11,13 +10,14 @@ namespace SelectaAPI.Controllers.Users
     public class ClientController : ControllerBase
     {
         private readonly IClientService _clientService;
+
         public ClientController(IClientService clientService)
         {
             _clientService = clientService;
         }
 
-        [HttpPost("client-register")]
-        public async Task<IActionResult> ClientRegister(AddClientDTO addClientDTO)
+        [HttpPost("registrar-cliente")]
+        public async Task<IActionResult> RegistrarCliente(AddClientDTO addClientDTO)
         {
             /// <summary>
             /// Retorna todos os funcionários ativos.
@@ -37,15 +37,13 @@ namespace SelectaAPI.Controllers.Users
 
             try
             {
-                var clientRegister = await _clientService.ClientRegister(addClientDTO);
+                await _clientService.CadastrarCliente(addClientDTO);
                 return Ok("Cliente cadastrado com sucesso!");
             }
-
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
-
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
@@ -56,53 +54,48 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
-        [HttpPost("category-client-register")]
-        public async Task<IActionResult> CategoryClientRegister(AddCategory_ClientDTO addCategoryClient)
+        [HttpPost("registrar-categoria-cliente")]
+        public async Task<IActionResult> RegistrarCategoriaCliente(AddCategory_ClientDTO addCategoryClient)
         {
             try
             {
-                var categoryClientRegister = await _clientService.CategoryClientRegister(addCategoryClient);
-                return Ok("categoria registrada");
+                await _clientService.CadastrarCategoriaDoCliente(addCategoryClient);
+                return Ok("Categoria registrada");
             }
-
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
             }
-
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
         }
 
-        [HttpPut("edit-client")]
-        public async Task<IActionResult> EditClient(int idCliente, EditClientDTO editClientDTO)
+        [HttpPut("editar-cliente/{idCliente}")]
+        public async Task<IActionResult> EditarCliente(int idCliente, EditClientDTO editClientDTO)
         {
             try
             {
-                if (idCliente == null) return NotFound("ID do cliente nulo");
-                var editClient = await _clientService.EditClient(idCliente, editClientDTO);
-
-                return Ok("ta funcionando");
+                await _clientService.EditarCliente(idCliente, editClientDTO);
+                return Ok("Cliente editado com sucesso!");
             }
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
             }
-
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
         }
 
-        [HttpDelete("client-remove")]
-        public async Task<IActionResult> RemoveClient(int idCliente)
+        [HttpDelete("remover-cliente/{idCliente}")]
+        public async Task<IActionResult> RemoverCliente(int idCliente)
         {
             try
             {
-                await _clientService.RemoveClient(idCliente);
+                await _clientService.RemoverCliente(idCliente);
                 return Ok("Cliente deletado com sucesso!");
             }
             catch (ArgumentException ex)
@@ -118,6 +111,7 @@ namespace SelectaAPI.Controllers.Users
                 return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
+
         [HttpPost("tornar-entregador")]
         public async Task<IActionResult> TornarEntregador(AddEntregadorDTO addEntregador)
         {
@@ -161,6 +155,5 @@ namespace SelectaAPI.Controllers.Users
                 return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
-
     }
 }

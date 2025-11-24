@@ -12,7 +12,7 @@ namespace SelectaAPI.Services.Users
         {
             _salesPersonRepository = salesPersonRepository;
         }
-        public async Task<IEnumerable<ResponseMyProductsDTO>> MyProducts(int idVendedor)
+        public async Task<IEnumerable<ResponseMyProductsDTO>> MeusProdutos(int idVendedor)
         {
             var listaVazia = await _salesPersonRepository.RetornoVazio(idVendedor);
             if (!listaVazia) throw new ArgumentException("Você não possui nenhum produto");

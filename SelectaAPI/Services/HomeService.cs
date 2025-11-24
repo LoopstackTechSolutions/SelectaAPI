@@ -2,11 +2,9 @@
 using SelectaAPI.Services.Interfaces;
 using SelectaAPI.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using ZstdSharp;
 using SelectaAPI.DTOs;
 using SelectaAPI.Database;
 using Microsoft.EntityFrameworkCore;
-using Amazon.Runtime.Internal.Util;
 
 namespace SelectaAPI.Services
 {
@@ -20,157 +18,183 @@ namespace SelectaAPI.Services
             _homeRepository = homeInterface;
             _context = context;
         }
-        /*
-        public async Task<IEnumerable<tbProdutoModel>> Search([FromQuery]string name)
-        {
-                var search = await _homeRepository.Search(name);
-                return search;
-        }
-        */
 
-        public async Task<IEnumerable<ProductInWishListDTO>> WishList([FromQuery]int id)
+        public async Task<IEnumerable<ProductInWishListDTO>> ListarProdutosDaListaDeDesejos([FromQuery] int idCliente)
         {
-            if (id == null) throw new Exception("Id inválido");
-            var wishList = await _homeRepository.WishList(id);
-            if(wishList == null) throw new Exception("Lista de Desejos não encontrada");
-            return wishList;
+            if (idCliente == 0)
+                throw new Exception("Id inválido");
+
+            var listaDesejos = await _homeRepository.ObterListaDeDesejos(idCliente);
+
+            if (listaDesejos == null)
+                throw new Exception("Lista de desejos não encontrada");
+
+            return listaDesejos;
         }
 
-        public async Task<IEnumerable<tbProdutoModel>> ForYou([FromQuery] int id)
+        public async Task<IEnumerable<tbProdutoModel>> ListarProdutosRecomendados([FromQuery] int idCliente)
         {
-            if (id == 0) throw new Exception("Id inválido");
-            var forYou = await _homeRepository.ForYou(id);
+            if (idCliente == 0)
+                throw new Exception("Id inválido");
 
-            return forYou;
-        }
-        public async Task<IEnumerable<ProductsWithPromotionDTO>> Highlights()
-        {
-            var HighLights = await _homeRepository.Highlights();
-            return HighLights;
+            var produtosRecomendados = await _homeRepository.ObterProdutosRecomendados(idCliente);
+
+            return produtosRecomendados;
         }
 
-        public async Task<IEnumerable<tbProdutoModel>> GetAll()
+        public async Task<IEnumerable<ProductsWithPromotionDTO>> ListarPromocoesDestaque()
         {
-            var getAll = await _homeRepository.GetAll();
-            return getAll;
+            var promocoesDestaque = await _homeRepository.ObterPromocoesDestaque();
+            return promocoesDestaque;
         }
 
-        public async Task<IEnumerable<NotificationForClientDTO>> Notifications([FromQuery] int id)
+        public async Task<IEnumerable<tbProdutoModel>> ListarTodosOsProdutos()
         {
-            if (id == null) throw new Exception("Id inválido");
-            
-            var notifications = await _homeRepository.Notifications(id);
-            return notifications;
+            var produtos = await _homeRepository.ObterTodosProdutos();
+            return produtos;
         }
 
-        public async Task<IEnumerable<tbProdutoModel>> BestSellers()
+        public async Task<IEnumerable<NotificationForClientDTO>> ListarNotificacoesDoCliente([FromQuery] int idCliente)
         {
-            var bestSeller = await _homeRepository.BestSellers();
-            return bestSeller;
+            if (idCliente == 0)
+                throw new Exception("Id inválido");
+
+            var notificacoes = await _homeRepository.ObterNotificacoesDoCliente(idCliente);
+
+            return notificacoes;
         }
 
-        public async Task<ICollection<NotificationForClientDTO>> NotificationsUnread(int id)
+        public async Task<IEnumerable<tbProdutoModel>> ListarProdutosMaisVendidos()
         {
-
-            var clientExists = await _homeRepository.ClientExists(id);
-
-            if (!clientExists) throw new Exception("Cliente não existente");
-
-            var notificationUnread = await _homeRepository.NotificationsUnread(id);
-
-            if (!notificationUnread.Any()) return notificationUnread = null;
-
-            return notificationUnread;
-
+            var maisVendidos = await _homeRepository.ObterProdutosMaisVendidos();
+            return maisVendidos;
         }
 
-        public async Task<IEnumerable<tbProdutoModel>> GetProductByID(int id)
+        public async Task<ICollection<NotificationForClientDTO>> ListarNotificacoesNaoLidasDoCliente(int idCliente)
         {
-            var productExists = await _homeRepository.ProductExists(id);
+            var clienteExiste = await _homeRepository.VerificarSeClienteExiste(idCliente);
 
-            if (!productExists) throw new Exception("id do produto inexistente");
+            if (!clienteExiste)
+                throw new Exception("Cliente não existente");
 
-            var getProductById = await _homeRepository.GetProductByID(id);
+            var notificacoesNaoLidas = await _homeRepository.ObterNotificacoesNaoLidasDoCliente(idCliente);
 
-            if (getProductById == null) throw new Exception("id do produto nulo");
+            if (!notificacoesNaoLidas.Any())
+                return null;
 
-            if (!getProductById.Any()) return getProductById = null;
-
-            return getProductById;
+            return notificacoesNaoLidas;
         }
 
-        public async Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente)
+        public async Task<tbProdutoModel> ListarProdutoPorId(int idProduto)
         {
-            if (id == null || idCliente == null) throw new Exception("preencha todos os campos");
-            var productExist = await _homeRepository.ProductExists(id);
-            if (!productExist) throw new Exception("produto inexistente");
+            var produtoExiste = await _homeRepository.VerificarSeProdutoExiste(idProduto);
 
-            var clientExists = await _homeRepository.ClientExists(id);
-            if (!clientExists) throw new Exception("cliente inexistente");
+            if (!produtoExiste)
+                throw new Exception("Produto inexistente");
 
-            var addProductInWishList = await _homeRepository.AddProductInWishList(id, idCliente);
-            return addProductInWishList;
+            var produto = await _homeRepository.ObterProdutoPorId(idProduto);
+
+            if (produto == null)
+                return null;
+
+            return produto;
         }
 
-        public async Task<IEnumerable<GetClientCarDTO>> GetProductsInCartOfClient(int idClient)
+        public async Task<ProductInWishListDTO> AdicionarProdutoNaListaDeDesejos(int idProduto, int idCliente)
         {
-            var getProductsInCar = await _homeRepository.GetProductsInCartOfClient(idClient);
-            if (!getProductsInCar.Any()) throw new Exception("Lista vazia");
-            return getProductsInCar;
+            if (idProduto == 0 || idCliente == 0)
+                throw new Exception("Preencha todos os campos");
+
+            var produtoExiste = await _homeRepository.VerificarSeProdutoExiste(idProduto);
+            if (!produtoExiste)
+                throw new Exception("Produto inexistente");
+
+            var clienteExiste = await _homeRepository.VerificarSeClienteExiste(idCliente);
+            if (!clienteExiste)
+                throw new Exception("Cliente inexistente");
+
+            var produtoAdicionado = await _homeRepository.AdicionarProdutoNaListaDeDesejos(idProduto, idCliente);
+            return produtoAdicionado;
         }
 
-        public async Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClient(int idClient)
+        public async Task<IEnumerable<GetClientCarDTO>> ListarProdutosDoCarrinho(int idCliente)
         {
-           var getTypeAccountSalesPerson = await _homeRepository.GetTypeAccountOfClientSalesPerson(idClient);
-            if (getTypeAccountSalesPerson.Any()) return getTypeAccountSalesPerson;
+            var produtosCarrinho = await _homeRepository.ObterProdutosDoCarrinho(idCliente);
 
-            var getTypeAccountDeliveryPerson = await _homeRepository.GetTypeAccountOfClientDeliveryPerson(idClient); 
-                    return getTypeAccountDeliveryPerson;
+            if (!produtosCarrinho.Any())
+                throw new Exception("Carrinho vazio");
+
+            return produtosCarrinho;
         }
 
-        public async Task<IEnumerable<SearchProductsByCategoryDTO>> SearchProductByCategory(int id)
+        public async Task<IEnumerable<TypeAccountOfClientDTO>> ListarTiposDeContaDoClienteVendedor(int idCliente)
         {
-            var getProductsByCategory = await _homeRepository.SearchProductByCategory(id);
-            return getProductsByCategory;
+            var tipoConta = await _homeRepository.ObterTipoContaClienteVendedor(idCliente);
+            return tipoConta;
         }
 
-        public async Task<IEnumerable<GetClientByIdDTO>> GetClientById(int id)
+        public async Task<IEnumerable<TypeAccountOfClientDTO>> ListarTiposDeContaDoClienteEntregador(int idCliente)
         {
-            var clientExists = await _homeRepository.ClientExists(id);
-            if (!clientExists) throw new Exception("cliente inexistente");
-
-            var getClientById = await _homeRepository.GetClientById(id);
-
-            return getClientById;
+            var tipoConta = await _homeRepository.ObterTipoContaClienteEntregador(idCliente);
+            return tipoConta;
         }
 
-        public async Task<IEnumerable<tbPromocaoModel>> GetAllPromotionOfProduct(int id)
+        public async Task<IEnumerable<SearchProductsByCategoryDTO>> ListarProdutosPorCategoria(int idCategoria)
         {
-            var productExists = await _homeRepository.PromotionExists(id);
-
-            if (!productExists) return null;
-
-            var getPromotion = await _homeRepository.GetAllPromotionOfProduct(id);
-
-            return getPromotion;
+            var produtosCategoria = await _homeRepository.BuscarProdutosPorCategoria(idCategoria);
+            return produtosCategoria;
         }
 
-        public async Task<tbCarrinhoModel> RemoveProductOfCart(int idCliente, int idProduto)
+        public async Task<IEnumerable<GetClientByIdDTO>> ListarClientePorId(int idCliente)
         {
-            var callMethod = await _homeRepository.RemoveProductOfCart(idCliente, idProduto);
-            return callMethod;
+            var clienteExiste = await _homeRepository.VerificarSeClienteExiste(idCliente);
+
+            if (!clienteExiste)
+                throw new Exception("Cliente inexistente");
+
+            var cliente = await _homeRepository.ObterClientePorId(idCliente);
+
+            return cliente;
         }
 
-        public async Task<tbLista_DesejoModel> RemoveProductOfWishList(int idCliente, int idProduto)
+        public async Task<IEnumerable<tbPromocaoModel>> ListarPromocoesDoProduto(int idProduto)
         {
-            var callMethod = await _homeRepository.RemoveProductOfWishList(idCliente, idProduto);
-            return callMethod;
+            var promocaoExiste = await _homeRepository.VerificarSePromocaoExiste(idProduto);
+
+            if (!promocaoExiste)
+                return null;
+
+            var promocoes = await _homeRepository.ObterPromocoesPorProduto(idProduto);
+
+            return promocoes;
         }
 
-        public async Task<tbNotificacao_ClienteModel> NotificationsRead(int idCliente, int idNotificacao)
+        public async Task<tbCarrinhoModel> RemoverProdutoDoCarrinho(int idCliente, int idProduto)
         {
-            var callMethod = await _homeRepository.NotificationsRead(idCliente, idNotificacao);
-            return callMethod;
+            var resultado = await _homeRepository.RemoverProdutoDoCarrinho(idCliente, idProduto);
+            return resultado;
+        }
+
+        public async Task<tbLista_DesejoModel> RemoverProdutoDaListaDeDesejos(int idCliente, int idProduto)
+        {
+            var resultado = await _homeRepository.RemoverProdutoDaListaDeDesejos(idCliente, idProduto);
+            return resultado;
+        }
+
+        public async Task<tbNotificacao_ClienteModel> MarcarNotificacaoComoLida(int idCliente, int idNotificacao)
+        {
+            var resultado = await _homeRepository.MarcarNotificacaoComoLida(idCliente, idNotificacao);
+            return resultado;
+        }
+
+        public async Task<IEnumerable<TypeAccountOfClientDTO>> TipoDeConta(int idCliente)
+        {
+            var tipoContaVendedor = await _homeRepository.ObterTipoContaClienteVendedor(idCliente);
+            if (tipoContaVendedor.Any()) return tipoContaVendedor;
+
+            var tipoContaEntregador = await _homeRepository.ObterTipoContaClienteEntregador(idCliente);
+            return tipoContaEntregador;
+
         }
     }
 }

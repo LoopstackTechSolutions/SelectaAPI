@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
-using SelectaAPI.Services.Interfaces;
 using SelectaAPI.Services.Interfaces.UsersInterface;
-using SelectaAPI.Services.Users;
 
 namespace SelectaAPI.Controllers.Users
 {
@@ -13,42 +11,42 @@ namespace SelectaAPI.Controllers.Users
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
+
         public EmployeeController(IEmployeeService employeeService)
         {
             _employeeService = employeeService;
         }
 
-        [HttpPost("employee-register")]
-        public async Task<IActionResult> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
+       
+        [HttpPost("cadastrar-funcionario")]
+        public async Task<IActionResult> CadastrarFuncionario(AddEmployeeDTO addEmployeeDTO)
         {
             try
             {
-                var employeeRegister = await _employeeService.EmployeeRegister(addEmployeeDTO);
-                return Ok("sucesso ao cadastrar funcionário");
+                var employeeRegister = await _employeeService.CadastrarFuncionario(addEmployeeDTO);
+                return Ok("Sucesso ao cadastrar funcionário");
             }
-
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
-
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor {ex.Message}");
+                return StatusCode(500, $"Erro no servidor: {ex.Message}");
             }
         }
-        [HttpGet("list-employees")]
-        public async Task<IActionResult> ListEmployees()
+
+        [HttpGet("funcionario/listar")]
+        public async Task<IActionResult> ListarFuncionarios()
         {
             try
             {
-                var listEmployees = await _employeeService.ListEmployees();
-
-                return Ok(listEmployees); ;
+                var listEmployees = await _employeeService.ListarFuncionarios();
+                return Ok(listEmployees);
             }
             catch (DbUpdateException ex)
             {
@@ -56,15 +54,17 @@ namespace SelectaAPI.Controllers.Users
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor {ex.Message}");
+                return StatusCode(500, $"Erro no servidor: {ex.Message}");
             }
         }
-        [HttpDelete("employee-remove/{idFuncionario}")]
-        public async Task<IActionResult> RemoveEmployee(int idFuncionario)
+
+      
+        [HttpDelete("funcionario/remover/{idFuncionario}")]
+        public async Task<IActionResult> RemoverFuncionario(int idFuncionario)
         {
             try
             {
-                await _employeeService.RemoveEmployee(idFuncionario);
+                await _employeeService.RemoverFuncionario(idFuncionario);
                 return Ok("Funcionário deletado com sucesso!");
             }
             catch (ArgumentException ex)
@@ -80,6 +80,8 @@ namespace SelectaAPI.Controllers.Users
                 return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
+
+      
         [HttpPut("editar-funcionario")]
         public async Task<IActionResult> EditarFuncionario(int idFuncionario, EditEmployeeDTO editEmployee)
         {
@@ -101,6 +103,5 @@ namespace SelectaAPI.Controllers.Users
                 return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
-
     }
 }

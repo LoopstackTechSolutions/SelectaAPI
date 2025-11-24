@@ -5,6 +5,6 @@ namespace SelectaAPI.Services.Interfaces.UsersInterface
 {
     public interface ISalesPersonService
     {
-        Task<IEnumerable<ResponseMyProductsDTO>> MyProducts(int idVendedor);
+        Task<IEnumerable<ResponseMyProductsDTO>> MeusProdutos(int idVendedor);
     }
 }

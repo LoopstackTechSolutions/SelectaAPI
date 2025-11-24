@@ -5,7 +5,7 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
 {
     public interface ILoginRepository
     {
-        Task<tbClienteModel> GetCredentialsOfClient(string email);
-        Task<tbFuncionarioModel> GetCredentialsOfEmployee(string email);
+        Task<tbClienteModel> BuscarCredenciaisDoCliente(string email);
+        Task<tbFuncionarioModel> BuscarCredenciaisDoFuncionario(string email);
     }
 }

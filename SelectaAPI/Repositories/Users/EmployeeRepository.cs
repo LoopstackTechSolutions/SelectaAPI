@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Crypto;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Handlers;
@@ -12,20 +11,25 @@ namespace SelectaAPI.Repositories.Users
     public class EmployeeRepository : IEmployeeRepository
     {
         private readonly ApplicationDbContext _context;
+
         public EmployeeRepository(ApplicationDbContext context)
         {
-             _context = context;
+            _context = context;
         }
 
-        public async Task<bool> EmailVerify(string email)
+        public async Task<bool> VerificarEmailExiste(string email)
         {
-            var verification = await _context.funcionarios.AnyAsync(f => f.Email == email);
-            return verification;
+            return await _context.funcionarios.AnyAsync(f => f.Email == email);
         }
 
-        public async Task<AddEmployeeDTO> EmployeeRegister(AddEmployeeDTO addEmployeeDTO)
+        public async Task<bool> VerificarCpfExiste(string cpf)
         {
-            var entityEmployee = new tbFuncionarioModel()
+            return await _context.funcionarios.AnyAsync(f => f.Cpf == cpf);
+        }
+
+        public async Task<AddEmployeeDTO> CadastrarFuncionario(AddEmployeeDTO addEmployeeDTO)
+        {
+            var entity = new tbFuncionarioModel
             {
                 Nome = addEmployeeDTO.Nome.Trim(),
                 Senha = addEmployeeDTO.Senha.Trim(),
@@ -33,66 +37,63 @@ namespace SelectaAPI.Repositories.Users
                 Cpf = Regex.Replace(addEmployeeDTO.Cpf, @"\D", ""),
                 NivelAcesso = addEmployeeDTO.NivelAcesso.Trim()
             };
-            await _context.funcionarios.AddAsync(entityEmployee);
+
+            await _context.funcionarios.AddAsync(entity);
             await _context.SaveChangesAsync();
 
             return addEmployeeDTO;
         }
 
-        public async Task<IEnumerable<tbFuncionarioModel>> ListEmployees()
+        public async Task<IEnumerable<tbFuncionarioModel>> ObterListaFuncionarios()
         {
-            var getAllEmployees = await _context.funcionarios.Select(f => new tbFuncionarioModel
-            {
-                IdFuncionario = f.IdFuncionario,
-                Cpf = f.Cpf.Trim(),
-                Email = f.Email.Trim(),
-                NivelAcesso = f.NivelAcesso,
-                Nome = f.Nome.Trim(),
-            }).Take(20).ToListAsync();
-
-            return getAllEmployees;
+            return await _context.funcionarios
+                .Select(f => new tbFuncionarioModel
+                {
+                    IdFuncionario = f.IdFuncionario,
+                    Nome = f.Nome.Trim(),
+                    Email = f.Email.Trim(),
+                    Cpf = f.Cpf.Trim(),
+                    NivelAcesso = f.NivelAcesso
+                })
+                .ToListAsync();
         }
 
-        public async Task<tbFuncionarioModel> GetEmployeeById(int idFuncionario)
+        public async Task<tbFuncionarioModel> ObterFuncionarioPorId(int idFuncionario)
         {
             return await _context.funcionarios.FindAsync(idFuncionario);
         }
 
-        public async Task RemoveEmployee(tbFuncionarioModel funcionarioModel)
+        public async Task RemoverFuncionario(tbFuncionarioModel funcionarioModel)
         {
-            var removeEmployee = _context.funcionarios.Remove(funcionarioModel);
+            _context.funcionarios.Remove(funcionarioModel);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> VerificarCpf(string cpf)
+        public async Task<EditEmployeeDTO> EditarFuncionario(EditEmployeeDTO editEmployeeDTO, int idFuncionario)
         {
-            var verificacao = await _context.funcionarios.AnyAsync(f => f.Cpf == cpf);
-            return verificacao;
-        }
+            var funcionario = await _context.funcionarios.FirstOrDefaultAsync(f => f.IdFuncionario == idFuncionario);
 
-        public async Task<EditEmployeeDTO> EditarFuncionario(EditEmployeeDTO editEmployee, int idFuncionario)
-        {
-            var editarFuncionario = await _context.funcionarios.Where(f => f.IdFuncionario == idFuncionario)
-               .FirstOrDefaultAsync();
-            if (!string.IsNullOrWhiteSpace(editEmployee.Nome))
-                editarFuncionario.Nome = editEmployee.Nome.Trim();
+            if (funcionario == null)
+                return null;
 
-            if (!string.IsNullOrWhiteSpace(editEmployee.Email))
-                editarFuncionario.Email = editEmployee.Email.Trim().ToLower();
+            if (!string.IsNullOrWhiteSpace(editEmployeeDTO.Nome))
+                funcionario.Nome = editEmployeeDTO.Nome.Trim();
 
-            if (editEmployee.Cpf != null)
-                editarFuncionario.Cpf = editEmployee.Cpf.Trim();
+            if (!string.IsNullOrWhiteSpace(editEmployeeDTO.Email))
+                funcionario.Email = editEmployeeDTO.Email.Trim().ToLowerInvariant();
 
-            if (!string.IsNullOrWhiteSpace(editEmployee.NivelAcesso))
-                editarFuncionario.NivelAcesso = editEmployee.NivelAcesso;
+            if (!string.IsNullOrWhiteSpace(editEmployeeDTO.Cpf))
+                funcionario.Cpf = Regex.Replace(editEmployeeDTO.Cpf, @"\D", "");
 
-            if (!string.IsNullOrWhiteSpace(editEmployee.Senha))
-            {
-                string hash = PasswordHashHandler.HashPassword(editEmployee.Senha.Trim());
-                editarFuncionario.Senha = hash;
-            }
+            if (!string.IsNullOrWhiteSpace(editEmployeeDTO.NivelAcesso))
+                funcionario.NivelAcesso = editEmployeeDTO.NivelAcesso;
+
+            if (!string.IsNullOrWhiteSpace(editEmployeeDTO.Senha))
+                funcionario.Senha = PasswordHashHandler.HashPassword(editEmployeeDTO.Senha.Trim());
+
             await _context.SaveChangesAsync();
-            return editEmployee;
+
+            return editEmployeeDTO;
         }
     }
 }

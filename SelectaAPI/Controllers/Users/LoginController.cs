@@ -18,7 +18,7 @@ namespace SelectaAPI.Controllers.Users
         {
             _loginService = loginService;
         }
-        [HttpPost("client-login")]
+        [HttpPost("login-cliente")]
         [AllowAnonymous] 
         public async Task<IActionResult> ClientLogin([FromBody] LoginRequestDTO request)
         {
@@ -27,16 +27,16 @@ namespace SelectaAPI.Controllers.Users
                 if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Senha))
                     return BadRequest("preencha todos os campos");
 
-                var clientLogin = await _loginService.ClientLogin(request);
+                var loginDoCliente = await _loginService.LoginDoCliente(request);
 
-                if (clientLogin == null)
+                if (loginDoCliente == null)
                     return BadRequest("email ou senha inválidos");
 
-                HttpContext.Session.SetInt32(SessionKeys.UserId, clientLogin.IdCliente);
+                HttpContext.Session.SetInt32(SessionKeys.UserId, loginDoCliente.IdCliente);
 
-                HttpContext.Session.SetString(SessionKeys.UserName, clientLogin.Nome);
-                HttpContext.Session.SetString(SessionKeys.UserRole, clientLogin.NivelAcesso);
-                return Ok(clientLogin);
+                HttpContext.Session.SetString(SessionKeys.UserName, loginDoCliente.Nome);
+                HttpContext.Session.SetString(SessionKeys.UserRole, loginDoCliente.NivelAcesso);
+                return Ok($"Olá! Seja Bem-vindo{loginDoCliente.Nome}");
 
 
             }
@@ -50,7 +50,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
-        [HttpPost("employee-login")]
+        [HttpPost("login-funcionario")]
         [AllowAnonymous]
         public async Task<IActionResult> EmployeeLogin([FromBody] LoginRequestDTO request)
         {
@@ -59,14 +59,14 @@ namespace SelectaAPI.Controllers.Users
                  if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Senha))
                     return BadRequest("preencha todos os campos");
 
-                var employeeLogin = await _loginService.EmployeeLogin(request);
-                if (employeeLogin == null)
+                var loginDoFuncionario= await _loginService.LoginDoFuncionario(request);
+                if (loginDoFuncionario == null)
                     return BadRequest("email ou senha inválidos");
 
-                HttpContext.Session.SetInt32(SessionKeys.UserId, employeeLogin.IdFuncionario);
-                HttpContext.Session.SetString(SessionKeys.UserName, employeeLogin.Nome);
-                HttpContext.Session.SetString(SessionKeys.UserRole, employeeLogin.NivelAcesso);
-                return Ok(employeeLogin);
+                HttpContext.Session.SetInt32(SessionKeys.UserId, loginDoFuncionario.IdFuncionario);
+                HttpContext.Session.SetString(SessionKeys.UserName, loginDoFuncionario.Nome);
+                HttpContext.Session.SetString(SessionKeys.UserRole, loginDoFuncionario.NivelAcesso);
+                return Ok($"Ola! Seja Bem-Vindo {loginDoFuncionario.Nome}");
 
 
             }
@@ -78,21 +78,6 @@ namespace SelectaAPI.Controllers.Users
             {
                 return StatusCode(500, $"erro no servidor: {ex.Message}");
             }
-        }
-
-        [HttpGet("profile")]
-        [Authorize]
-        public IActionResult GetProfile()
-        {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "idCliente")?.Value;
-            var userName = User.Identity?.Name;
-
-            return Ok(new
-            {
-                Id = userId,
-                Nome = userName,
-                Message = "Acesso permitido com token válido"
-            });
         }
     }
 }

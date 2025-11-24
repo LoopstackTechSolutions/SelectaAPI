@@ -5,14 +5,22 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
 {
     public interface IClientRepository
     {
-        Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO);
-        Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryDTO);
-        Task<EditClientDTO> EditClient(int idCliente,EditClientDTO editClienteDTO);
-        Task<bool> EmailVerify(string email);
-        Task RemoveClient(tbClienteModel clienteModel);
-        Task<tbClienteModel> GetClienteById(int idCliente);
-        Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO addEntregador);
-        Task<bool> VerificarEndereco(int idEndereco);
-        Task<tbEnderecoModel> CadastrarEndereco(tbEnderecoModel enderecoModel); 
+        Task<AddClientDTO> CadastrarCliente(AddClientDTO dadosCliente);
+
+        Task<AddCategory_ClientDTO> CadastrarCategoriaDoCliente(AddCategory_ClientDTO dadosCategoria);
+
+        Task<EditClientDTO> EditarCliente(int idCliente, EditClientDTO dadosEditadosCliente);
+
+        Task<bool> VerificarSeEmailExiste(string email);
+
+        Task RemoverCliente(tbClienteModel clienteModel);
+
+        Task<tbClienteModel> ObterClientePorId(int idCliente);
+
+        Task<tbEntregadorModel> TornarSeEntregador(AddEntregadorDTO dadosEntregador);
+
+        Task<bool> VerificarSeEnderecoExiste(int idEndereco);
+
+        Task<tbEnderecoModel> CadastrarEndereco(tbEnderecoModel enderecoModel);
     }
 }

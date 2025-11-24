@@ -1,15 +1,9 @@
-﻿using Amazon.Runtime.Internal;
-using Amazon.Runtime.Internal.Auth;
-using Amazon.S3.Model;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Mysqlx;
+﻿using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Database;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Repository.Interfaces;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace SelectaAPI.Repository
 {
@@ -22,37 +16,39 @@ namespace SelectaAPI.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<tbProdutoModel>> ForYou(int id)
+        public async Task<IEnumerable<tbProdutoModel>> ObterProdutosRecomendados(int idCliente)
         {
-            var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
-            var purchased = await _context.pedidos
-             .Where(p => p.IdComprador == id)
+            var cliente = await _context.clientes
+                .FirstOrDefaultAsync(c => c.IdCliente == idCliente);
+
+            var pedidosDoCliente = await _context.pedidos
+                .Where(p => p.IdComprador == idCliente)
                 .Select(p => p.IdPedido)
                 .ToListAsync();
 
-            var purchasedProduct = await _context.produtosPedidos
-                .Where(pp => purchased.Contains(pp.IdPedido))
+            var produtosComprados = await _context.produtosPedidos
+                .Where(pp => pedidosDoCliente.Contains(pp.IdPedido))
                 .Select(pp => pp.IdProduto)
                 .Distinct()
                 .ToListAsync();
 
-
-            var purchasedCategory = await _context.categoriasProdutos
-                .Where(cp => purchasedProduct.Contains(cp.IdProduto))
+            var categoriasProdutosComprados = await _context.categoriasProdutos
+                .Where(cp => produtosComprados.Contains(cp.IdProduto))
                 .Select(cp => cp.IdCategoria)
                 .Distinct()
                 .ToListAsync();
 
-            var recommendedProducts = await _context.categoriasProdutos
-                .Where(cp => purchasedCategory.Contains(cp.IdCategoria)
-                             && !purchasedProduct.Contains(cp.IdProduto))
+            var produtosRecomendadosIds = await _context.categoriasProdutos
+                .Where(cp =>
+                    categoriasProdutosComprados.Contains(cp.IdCategoria) &&
+                    !produtosComprados.Contains(cp.IdProduto))
                 .Select(cp => cp.IdProduto)
                 .Distinct()
                 .Take(20)
                 .ToListAsync();
 
-            var recommendationList = await _context.produtos
-                .Where(p => recommendedProducts.Contains(p.IdProduto))
+            var produtosRecomendados = await _context.produtos
+                .Where(p => produtosRecomendadosIds.Contains(p.IdProduto))
                 .Select(p => new tbProdutoModel
                 {
                     IdProduto = p.IdProduto,
@@ -64,106 +60,80 @@ namespace SelectaAPI.Repository
                 })
                 .Take(20)
                 .ToListAsync();
-            return recommendationList;
+
+            return produtosRecomendados;
         }
 
-        /*
-        public async Task<IEnumerable<tbProdutoModel>> Search(string query)
+        public async Task<IEnumerable<tbPromocaoModel>> ObterPromocoesPorProduto(int idProduto)
         {
-
-            var word = query.Split("", StringSplitOptions.RemoveEmptyEntries)
-                .Select(p => p.Trim().ToLower()).ToList();
-
-            var filterProducts = await _context.categoriaProdutos.Select(p => new
-            {
-                Produto = p,
-                MatchCount = word.Count(w =>
-                    EF.Functions.Like(p.Produto.Nome.ToLower(), $"%{w}%") ||
-                    EF.Functions.Like(p.Categoria.Nome.ToLower(), $"%{w}%")
-                    )
-            })
-                .Where(x => x.MatchCount > 0)
-                .OrderByDescending(x => x.MatchCount)
-                .ThenByDescending(x => x.Produto)
-                .ToListAsync();
-            if (filterProducts.Count < 20)
-            {
-                var missing = 20 - filterProducts.Count;
-
-                var produtcsRandom = await _context.produtos
-                    .Where(p => !filterProducts.Select(r => r.Produto.IdProduto).Contains(p.IdProduto))
-                    .OrderBy(r => Guid.NewGuid())
-                    .Take(missing)
-                    .ToListAsync();
-
-                produtcsRandom.AddRange(produtcsRandom);
-            }
-
-            return filterProducts;
-
-        }
-        */
-
-        public async Task<IEnumerable<tbPromocaoModel>> GetAllPromotionOfProduct(int id)
-        {
-            var getPromotion = await _context.promocoes.Where(p => p.IdProduto == id)
-                .Select(p => new tbPromocaoModel
+            var promocoes = await _context.promocoes
+                .Where(prom => prom.IdProduto == idProduto)
+                .Select(prom => new tbPromocaoModel
                 {
-                    IdProduto = p.IdProduto,
-                    IdPromocao = p.IdPromocao,
-                    Desconto = p.Desconto,
-                    ValidaAte = p.ValidaAte,
-                    Status = p.Status,
+                    IdProduto = prom.IdProduto,
+                    IdPromocao = prom.IdPromocao,
+                    Desconto = prom.Desconto,
+                    ValidaAte = prom.ValidaAte,
+                    Status = prom.Status,
                 })
                 .ToListAsync();
-            return getPromotion;
+
+            return promocoes;
         }
 
-        public async Task<IEnumerable<ProductsWithPromotionDTO>> Highlights()
+        public async Task<IEnumerable<ProductsWithPromotionDTO>> ObterPromocoesDestaque()
         {
-            var productsPromotion = await _context.promocoes
-           .Include(pp => pp.Produto)
-           .Select(pp => new ProductsWithPromotionDTO
-           {
-               IdProduto = pp.Produto.IdProduto,
-               Nome = pp.Produto.Nome,
-               PrecoUnitario = pp.Produto.PrecoUnitario,
-               Condicao = pp.Produto.Condicao,
-               Peso = pp.Produto.Peso ?? 0,
-               Quantidade = pp.Produto.Quantidade ?? 0,
-               Status = pp.Produto.Status,
- 
-               ValidoAte = pp.ValidaAte,
-               Desconto = pp.Desconto
-           })
-           .OrderBy(pp => pp.Desconto).Take(20)
-           .ToListAsync();
-            return productsPromotion;
-        }
-        public async Task<IEnumerable<ProductInWishListDTO>> WishList(int id)
-        {
-            var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
-            var wishlistProducts = await _context.listasDesejo
-      .Where(l => l.IdCliente == id)
-      .Select(l => new ProductInWishListDTO
-      {
-          IdProduto = l.Produto.IdProduto,
-          Nome = l.Produto.Nome,
-          PrecoUnitario = l.Produto.PrecoUnitario,
-          Quantidade = l.Produto.Quantidade ?? 0,
-          Condicao = l.Produto.Condicao,
-          Status = l.Produto.Status,
-          Peso = l.Produto.Peso
-      })
-      .Take(20)
-      .ToListAsync();
+            var produtosComPromocao = await _context.promocoes
+                .Include(pr => pr.Produto)
+                .Select(pr => new ProductsWithPromotionDTO
+                {
+                    IdProduto = pr.Produto.IdProduto,
+                    Nome = pr.Produto.Nome,
+                    PrecoUnitario = pr.Produto.PrecoUnitario,
+                    Condicao = pr.Produto.Condicao,
+                    Peso = pr.Produto.Peso ?? 0,
+                    Quantidade = pr.Produto.Quantidade ?? 0,
+                    Status = pr.Produto.Status,
+                    ValidoAte = pr.ValidaAte,
+                    Desconto = pr.Desconto
+                })
+                .OrderBy(dto => dto.Desconto)
+                .Take(20)
+                .ToListAsync();
 
-            return wishlistProducts;
+            return produtosComPromocao;
         }
-        public async Task<IEnumerable<NotificationForClientDTO>> Notifications(int id)
+
+        public async Task<IEnumerable<ProductInWishListDTO>> ObterListaDeDesejos(int idCliente)
         {
-            var clientUsing = await _context.clientes.Where(c => c.IdCliente == id).FirstOrDefaultAsync();
-            var notifications = await _context.notificacoesClientes.Where(nc => nc.IdCliente == id)
+            var cliente = await _context.clientes
+                .FirstOrDefaultAsync(c => c.IdCliente == idCliente);
+
+            var listaDesejos = await _context.listasDesejo
+                .Where(ld => ld.IdCliente == idCliente)
+                .Select(ld => new ProductInWishListDTO
+                {
+                    IdProduto = ld.Produto.IdProduto,
+                    Nome = ld.Produto.Nome,
+                    PrecoUnitario = ld.Produto.PrecoUnitario,
+                    Quantidade = ld.Produto.Quantidade ?? 0,
+                    Condicao = ld.Produto.Condicao,
+                    Status = ld.Produto.Status,
+                    Peso = ld.Produto.Peso
+                })
+                .Take(20)
+                .ToListAsync();
+
+            return listaDesejos;
+        }
+
+        public async Task<IEnumerable<NotificationForClientDTO>> ObterNotificacoesDoCliente(int idCliente)
+        {
+            var cliente = await _context.clientes
+                .FirstOrDefaultAsync(c => c.IdCliente == idCliente);
+
+            var notificacoes = await _context.notificacoesClientes
+                .Where(nc => nc.IdCliente == idCliente)
                 .Select(nc => new NotificationForClientDTO
                 {
                     DataCriacao = nc.DataCriacao,
@@ -172,61 +142,67 @@ namespace SelectaAPI.Repository
                     IdContexto = nc.IdContexto,
                     Titulo = nc.Notificacao.TabelaContexto,
                     IdNotificacaoCliente = nc.IdNotificacaoCliente,
-                }).ToListAsync();
+                })
+                .ToListAsync();
 
-            var notificationReadUpdate = await _context.notificacoesClientes.
-                Where(nc => nc.IdCliente == id && nc.IsLida != true).
-                ToListAsync();
+            var notificacoesNaoLidas = await _context.notificacoesClientes
+                .Where(nc => nc.IdCliente == idCliente && nc.IsLida != true)
+                .ToListAsync();
 
-            foreach (var notification in notificationReadUpdate)
+            foreach (var notificacao in notificacoesNaoLidas)
             {
-                notification.IsLida = true;
+                notificacao.IsLida = true;
             }
 
             await _context.SaveChangesAsync();
-            return notifications;
+            return notificacoes;
         }
 
-        public async Task<ICollection<NotificationForClientDTO>> NotificationsUnread(int id)
+        public async Task<ICollection<NotificationForClientDTO>> ObterNotificacoesNaoLidasDoCliente(int idCliente)
         {
-            var notificationsUnread = await _context.notificacoesClientes
-            .Where(nc => nc.IdCliente == id && nc.IsLida == false)
-                 .Select(nc => new NotificationForClientDTO
-                 {
-                     DataCriacao = nc.DataCriacao,
-                     Mensagem = nc.Notificacao.Mensagem,
-                     IsLida = nc.IsLida
-                 }).ToListAsync();
+            var notificacoesNaoLidas = await _context.notificacoesClientes
+                .Where(nc => nc.IdCliente == idCliente && nc.IsLida == false)
+                .Select(nc => new NotificationForClientDTO
+                {
+                    DataCriacao = nc.DataCriacao,
+                    Mensagem = nc.Notificacao.Mensagem,
+                    IsLida = nc.IsLida
+                })
+                .ToListAsync();
 
-            return notificationsUnread;
+            return notificacoesNaoLidas;
         }
 
-        public async Task<IEnumerable<tbProdutoModel>> BestSellers()
+        public async Task<IEnumerable<tbProdutoModel>> ObterProdutosMaisVendidos()
         {
-            var bestSellers = await _context.produtosPedidos.GroupBy(pp => pp.IdProduto)
-               .Select(bs => new
-               {
-                   IdProduto = bs.Key,
-                   quantitySold = bs.Sum(pp => pp.Quantidade)
-               })
-               .OrderByDescending(bs => bs.quantitySold)
-               .Join(_context.produtos,
-                    bs => bs.IdProduto,
-                     p => p.IdProduto,
-                    (bs, p) => new tbProdutoModel
+            var produtosVendidos = await _context.produtosPedidos
+                .GroupBy(pp => pp.IdProduto)
+                .Select(grupo => new
+                {
+                    IdProduto = grupo.Key,
+                    QuantidadeVendida = grupo.Sum(pp => pp.Quantidade)
+                })
+                .OrderByDescending(r => r.QuantidadeVendida)
+                .Join(
+                    _context.produtos,
+                    r => r.IdProduto,
+                    produto => produto.IdProduto,
+                    (r, produto) => new tbProdutoModel
                     {
-                        IdProduto = p.IdProduto,
-                        Nome = p.Nome,
-                        Peso = p.Peso,
-                        Condicao = p.Condicao,
-                        PrecoUnitario = p.PrecoUnitario,
-                        Quantidade = bs.quantitySold
-                    }).
-          Take(20)
-         .ToListAsync();
-            return bestSellers;
+                        IdProduto = produto.IdProduto,
+                        Nome = produto.Nome,
+                        Peso = produto.Peso,
+                        Condicao = produto.Condicao,
+                        PrecoUnitario = produto.PrecoUnitario,
+                        Quantidade = r.QuantidadeVendida
+                    })
+                .Take(20)
+                .ToListAsync();
+
+            return produtosVendidos;
         }
-        public async Task<IEnumerable<tbProdutoModel>> GetAll()
+
+        public async Task<IEnumerable<tbProdutoModel>> ObterTodosProdutos()
         {
             var produtos = await _context.produtos
                 .Select(p => new tbProdutoModel
@@ -242,57 +218,49 @@ namespace SelectaAPI.Repository
                 })
                 .Take(20)
                 .ToListAsync();
-                return produtos;
+
+            return produtos;
         }
 
-        public async Task<IEnumerable<tbProdutoModel>> GetProductByID(int id)
+        public async Task<tbProdutoModel> ObterProdutoPorId(int idProduto)
         {
-            var getProductById = await _context.produtos.Where(p => p.IdProduto == id && p.Quantidade > 0).
-                Select(p => new tbProdutoModel
-                {
-                    IdProduto = p.IdProduto,
-                    Nome = p.Nome,
-                    Quantidade = p.Quantidade,
-                    PrecoUnitario = p.PrecoUnitario,
-                    Condicao = p.Condicao,
-                    Peso = p.Peso ?? 0,
-                    Status = p.Status,
-                    Descricao = p.Descricao ?? "Sem descrição",
-                    IdVendedor = p.IdVendedor 
-                }).ToListAsync();
-
-            return getProductById;
+            var produto = await _context.produtos
+                .FindAsync(idProduto);
+            return produto;
         }
 
-        public async Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente)
+        public async Task<ProductInWishListDTO> AdicionarProdutoNaListaDeDesejos(int idProduto, int idCliente)
         {
-            var addProductInWishList = new tbLista_DesejoModel
+            var novoItem = new tbLista_DesejoModel
             {
-                IdProduto = id,
+                IdProduto = idProduto,
                 IdCliente = idCliente
             };
 
-             _context.listasDesejo.Add(addProductInWishList);
+            _context.listasDesejo.Add(novoItem);
             await _context.SaveChangesAsync();
 
-            var response = await _context.produtos.Where(l => l.IdProduto == id)
-                .Select(l => new ProductInWishListDTO
+            var itemInserido = await _context.produtos
+                .Where(p => p.IdProduto == idProduto)
+                .Select(p => new ProductInWishListDTO
                 {
-                    IdProduto = id,
-                    Condicao = l.Condicao,
-                    Nome = l.Nome,
-                    PrecoUnitario = l.PrecoUnitario,
-                    Peso = l.Peso ?? 0,
-                    Status = l.Status,
-                    Quantidade = l.Quantidade
-                }).FirstOrDefaultAsync();
+                    IdProduto = idProduto,
+                    Condicao = p.Condicao,
+                    Nome = p.Nome,
+                    PrecoUnitario = p.PrecoUnitario,
+                    Peso = p.Peso ?? 0,
+                    Status = p.Status,
+                    Quantidade = p.Quantidade
+                })
+                .FirstOrDefaultAsync();
 
-            return response;
+            return itemInserido;
         }
 
-        public async Task<IEnumerable<GetClientCarDTO>> GetProductsInCartOfClient(int idClient)
+        public async Task<IEnumerable<GetClientCarDTO>> ObterProdutosDoCarrinho(int idCliente)
         {
-            var getProductsInCar = await _context.carrinho.Where(c => c.IdCliente == idClient)
+            var produtos = await _context.carrinho
+                .Where(c => c.IdCliente == idCliente)
                 .Select(c => new GetClientCarDTO
                 {
                     IdProduto = c.IdProduto,
@@ -301,46 +269,56 @@ namespace SelectaAPI.Repository
                     Condicao = c.Produto.Condicao,
                     Nome = c.Produto.Nome,
                     Quantidade = c.Quantidade,
-                }).ToListAsync();
+                })
+                .ToListAsync();
 
-            return getProductsInCar;
+            return produtos;
         }
 
-        public async Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClientSalesPerson(int idClient)
+        public async Task<IEnumerable<TypeAccountOfClientDTO>> ObterTipoContaClienteVendedor(int idCliente)
         {
-            var getSalesPerson = await _context.vendedores.Where(v => v.IdVendedor == idClient)
+            var contas = await _context.vendedores
+                .Where(v => v.IdVendedor == idCliente)
                 .Select(v => new TypeAccountOfClientDTO
                 {
-                    IdCliente = idClient,
+                    IdCliente = idCliente,
                     Nome = v.Cliente.Nome
-                }).ToListAsync();
-            foreach (var salesPerson in getSalesPerson)
+                })
+                .ToListAsync();
+
+            foreach (var conta in contas)
             {
-                salesPerson.isVendedor = true;
-                salesPerson.isEntregador = false;
+                conta.isVendedor = true;
+                conta.isEntregador = false;
             }
-            return getSalesPerson;
+
+            return contas;
         }
 
-        public async Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClientDeliveryPerson(int idClient)
+        public async Task<IEnumerable<TypeAccountOfClientDTO>> ObterTipoContaClienteEntregador(int idCliente)
         {
-            var getDeliveryPerson = await _context.entregadores.Where(d => d.IdEntregador == idClient)
-                .Select(v => new TypeAccountOfClientDTO
+            var contas = await _context.entregadores
+                .Where(e => e.IdEntregador == idCliente)
+                .Select(e => new TypeAccountOfClientDTO
                 {
-                    IdCliente = idClient,
-                    Nome = v.Cliente.Nome
-                }).ToListAsync();
-            foreach (var deliveryPerson in getDeliveryPerson)
+                    IdCliente = idCliente,
+                    Nome = e.Cliente.Nome
+                })
+                .ToListAsync();
+
+            foreach (var conta in contas)
             {
-                deliveryPerson.isVendedor = false;
-                deliveryPerson.isEntregador = true;
+                conta.isVendedor = false;
+                conta.isEntregador = true;
             }
-            return getDeliveryPerson;
+
+            return contas;
         }
 
-        public async Task<IEnumerable<SearchProductsByCategoryDTO>> SearchProductByCategory(int id)
+        public async Task<IEnumerable<SearchProductsByCategoryDTO>> BuscarProdutosPorCategoria(int idCategoria)
         {
-            var getProductsInCategory = await _context.categoriaProdutos.Where(cp => cp.IdCategoria == id)
+            var produtos = await _context.categoriaProdutos
+                .Where(cp => cp.IdCategoria == idCategoria)
                 .Select(cp => new SearchProductsByCategoryDTO
                 {
                     Nome = cp.Produto.Nome,
@@ -349,84 +327,89 @@ namespace SelectaAPI.Repository
                     Status = cp.Produto.Status,
                     Peso = cp.Produto.Peso,
                     Quantidade = cp.Produto.Quantidade
-                }).ToListAsync();
-            return getProductsInCategory;
+                })
+                .ToListAsync();
+
+            return produtos;
         }
 
-        public async Task<IEnumerable<GetClientByIdDTO>> GetClientById(int id)
+        public async Task<IEnumerable<GetClientByIdDTO>> ObterClientePorId(int idCliente)
         {
-            var getClientById = await _context.clientes
-                .Where(c => c.IdCliente == id)
-                 .Select(c => new GetClientByIdDTO
-                 {
-                     IdCliente = c.IdCliente,
-                     Email = c.Email,
-                     Nome = c.Nome,
-                     Saldo = c.Saldo,
-                 }).ToArrayAsync();
+            var cliente = await _context.clientes
+                .Where(c => c.IdCliente == idCliente)
+                .Select(c => new GetClientByIdDTO
+                {
+                    IdCliente = c.IdCliente,
+                    Email = c.Email,
+                    Nome = c.Nome,
+                    Saldo = c.Saldo,
+                })
+                .ToArrayAsync();
 
-            return getClientById;
+            return cliente;
         }
 
-        public async Task<tbCarrinhoModel> RemoveProductOfCart(int idCliente, int idProduto)
+        public async Task<tbCarrinhoModel> RemoverProdutoDoCarrinho(int idCliente, int idProduto)
         {
-            var productInCart = await _context.carrinho
+            var item = await _context.carrinho
                 .FirstOrDefaultAsync(c => c.IdCliente == idCliente && c.IdProduto == idProduto);
 
-            if (productInCart == null)
+            if (item == null)
                 throw new Exception("Produto não encontrado no carrinho deste cliente.");
 
-            _context.carrinho.Remove(productInCart);
+            _context.carrinho.Remove(item);
             await _context.SaveChangesAsync();
 
-            return productInCart;
+            return item;
         }
 
-        public async Task<tbLista_DesejoModel> RemoveProductOfWishList(int idCliente, int idProduto)
+        public async Task<tbLista_DesejoModel> RemoverProdutoDaListaDeDesejos(int idCliente, int idProduto)
         {
-            var productInWishList = await _context.listasDesejo
-                            .FirstOrDefaultAsync(c => c.IdCliente == idCliente && c.IdProduto == idProduto);
+            var item = await _context.listasDesejo
+                .FirstOrDefaultAsync(l => l.IdCliente == idCliente && l.IdProduto == idProduto);
 
-            if (productInWishList == null)
-                throw new Exception("Produto não encontrado na lista de desejo deste cliente.");
+            if (item == null)
+                throw new Exception("Produto não encontrado na lista de desejos deste cliente.");
 
-            _context.listasDesejo.Remove(productInWishList);
+            _context.listasDesejo.Remove(item);
             await _context.SaveChangesAsync();
 
-            return productInWishList;
+            return item;
         }
 
-        public async Task<tbNotificacao_ClienteModel> NotificationsRead(int idCliente, int idNotificacao)
+        public async Task<tbNotificacao_ClienteModel> MarcarNotificacaoComoLida(int idCliente, int idNotificacao)
         {
-            var getNotification = await _context.notificacoesClientes.FirstOrDefaultAsync(nc => nc.IdCliente == idCliente && nc.IdNotificacao == idNotificacao);
+            var notificacao = await _context.notificacoesClientes
+                .FirstOrDefaultAsync(nc => nc.IdCliente == idCliente && nc.IdNotificacao == idNotificacao);
 
-            var response = new tbNotificacao_ClienteModel()
+            if (notificacao != null)
+            {
+                notificacao.IsLida = true;
+                await _context.SaveChangesAsync();
+                return notificacao;
+            }
+
+            return new tbNotificacao_ClienteModel
             {
                 IsLida = true,
                 IdCliente = idCliente,
                 IdNotificacao = idNotificacao
             };
-            await _context.SaveChangesAsync();
-            return response;
         }
 
-        public async Task<bool> ClientExists(int idCliente)
+        public async Task<bool> VerificarSeClienteExiste(int idCliente)
         {
-            var verification = await _context.clientes.AnyAsync(c => c.IdCliente == idCliente);
-            return verification;
+            return await _context.clientes.AnyAsync(c => c.IdCliente == idCliente);
         }
 
-        public async Task<bool> ProductExists(int idProduto)
+        public async Task<bool> VerificarSeProdutoExiste(int idProduto)
         {
-            var verification = await _context.produtos.AnyAsync(p => p.IdProduto == idProduto);
-            return verification;
+            return await _context.produtos.AnyAsync(p => p.IdProduto == idProduto);
         }
 
-        public async Task<bool> PromotionExists(int idProduto)
+        public async Task<bool> VerificarSePromocaoExiste(int idProduto)
         {
-            var verification = await _context.promocoes.AnyAsync(p => p.IdProduto == idProduto);
-            return verification;
+            return await _context.promocoes.AnyAsync(pr => pr.IdProduto == idProduto);
         }
     }
 }
-

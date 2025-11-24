@@ -16,12 +16,12 @@ namespace SelectaAPI.Controllers.Users
          _salesPersonService = salesPersonService;   
         }
 
-        [HttpGet("my-products")]
-        public async Task<IActionResult> ListProductByPerson(int idVendedor)
+        [HttpGet("meus-produtos/{idVendedor}")]
+        public async Task<IActionResult> MeusProdutos(int idVendedor)
         {
             try
             {
-                var salesPerson = await _salesPersonService.MyProducts(idVendedor);
+                var salesPerson = await _salesPersonService.MeusProdutos(idVendedor);
                 return Ok(salesPerson);
             }
             catch (ArgumentException ex)
