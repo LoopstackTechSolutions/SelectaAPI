@@ -39,7 +39,7 @@ namespace SelectaAPI.Controllers.Products
             }
         }
 
-        [HttpPost("cadastrar-produtos")]
+        [HttpPost("cadastrar-produto")]
         public async Task<IActionResult> CadastrarProdutos(AddProductDTO addProductDTO)
         {
             try
@@ -57,7 +57,7 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpPost("image-product-register")]
+        [HttpPost("produto/adicionar-imagem")]
         public async Task<IActionResult> AdicionarImagemNoProduto([FromForm] AddImageOfProductDTO addImageDTO)
         {
             try
@@ -75,8 +75,8 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpGet("buscar-imagem-principal/{idProduto}")]
-        public async Task<IActionResult> GetPrincipalImage(int idProduto)
+        [HttpGet("produto/imagem-principal/{idProduto}")]
+        public async Task<IActionResult> BuscarImagemPrincipal(int idProduto)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpGet("todas-imagens/{idProduto}")]
+        [HttpGet("produto/imagens/{idProduto}")]
         public async Task<IActionResult> BuscarTodasAsImagensDoProduto(int idProduto)
         {
             try
@@ -142,7 +142,7 @@ namespace SelectaAPI.Controllers.Products
             }
         }
 
-        [HttpDelete("remover-produto")]
+        [HttpDelete("produto/remover/{idProduto}")]
         public async Task<IActionResult> RemoverProduto(int idProduto)
         {
             try
@@ -163,7 +163,7 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
-        [HttpDelete("remover-promocao")]
+        [HttpDelete("promocao/remover/{idPromocao}")]
         public async Task<IActionResult> RemoverPromocao(int idPromocao)
         {
             try
@@ -184,7 +184,7 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
-        [HttpPut("promotion-edit")]
+        [HttpPut("promocao/editar")]
         public async Task<IActionResult> EditarPromocao(EditPromotionRequestDTO editPromotionRequest, int idPromocao)
         {
             try
