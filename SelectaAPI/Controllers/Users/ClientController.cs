@@ -19,6 +19,12 @@ namespace SelectaAPI.Controllers.Users
         [HttpPost("client-register")]
         public async Task<IActionResult> ClientRegister(AddClientDTO addClientDTO)
         {
+            /// <summary>
+            /// Retorna todos os funcionários ativos.
+            /// </summary>
+            /// <returns>Lista de funcionários</returns>
+            /// <response code="200">Sucesso ao listar funcionários</response>
+            /// <response code="404">Nenhum funcionário encontrado</response>
             if (!ModelState.IsValid)
                 return BadRequest("Os dados do cliente não foram enviados.");
 
