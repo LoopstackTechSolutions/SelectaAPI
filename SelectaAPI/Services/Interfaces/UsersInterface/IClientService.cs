@@ -5,11 +5,11 @@ namespace SelectaAPI.Services.Interfaces.UsersInterface
 {
     public interface IClientService
     {
-        Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO);
-        Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryDTO);
-        Task<EditClientDTO> EditClient(int idCliente, EditClientDTO editClienteDTO);
-        Task RemoveClient(int idCliente);
-        Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO addEntregador);
+        Task<AddClientDTO> CadastrarCliente(AddClientDTO dadosCliente);
+        Task<AddCategory_ClientDTO> CadastrarCategoriaDoCliente(AddCategory_ClientDTO dadosCategoria);
+        Task<EditClientDTO> EditarCliente(int idCliente, EditClientDTO dadosEditadosCliente);
+        Task RemoverCliente(int idCliente);
+        Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO dadosEntregador);
         Task<object> CadastrarEndereco(string cep, int idCliente);
     }
 }

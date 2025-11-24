@@ -26,98 +26,101 @@ namespace SelectaAPI.Repositories.Users
             return enderecoModel;
         }
 
-        public async Task<AddCategory_ClientDTO> CategoryClientRegister(AddCategory_ClientDTO addCategoryClientDTO)
+        public async Task<AddCategory_ClientDTO> CadastrarCategoriaDoCliente(AddCategory_ClientDTO dadosCategoria)
         {
-            var cliente = await _context.clientes.FindAsync(addCategoryClientDTO.IdCliente);
+            var cliente = await _context.clientes.FindAsync(dadosCategoria.IdCliente);
+            var categoria = await _context.categorias.FindAsync(dadosCategoria.IdCategoria);
 
-            var categoria = await _context.categorias.FindAsync(addCategoryClientDTO.IdCategoria);
-
-            var exists = await _context.categoriaClientes
-                .AnyAsync(cc => cc.IdCliente == addCategoryClientDTO.IdCliente && cc.IdCategoria == addCategoryClientDTO.IdCategoria);
+            var existeCategoriaParaCliente = await _context.categoriaClientes
+                .AnyAsync(cc => cc.IdCliente == dadosCategoria.IdCliente &&
+                                cc.IdCategoria == dadosCategoria.IdCategoria);
 
             var categoriaCliente = new tbCategoria_Cliente
             {
-                IdCategoria = addCategoryClientDTO.IdCategoria,
-                IdCliente = addCategoryClientDTO.IdCliente
+                IdCategoria = dadosCategoria.IdCategoria,
+                IdCliente = dadosCategoria.IdCliente
             };
 
             _context.categoriaClientes.Add(categoriaCliente);
             await _context.SaveChangesAsync();
 
-            return (new AddCategory_ClientDTO
+            return new AddCategory_ClientDTO
             {
                 IdCategoria = categoriaCliente.IdCategoria,
                 IdCliente = categoriaCliente.IdCliente
-            });
-        }
-
-        public async Task<AddClientDTO> ClientRegister(AddClientDTO addClientDTO)
-        {
-            var entityClient = new tbClienteModel()
-            {
-                Nome = addClientDTO.Nome.Trim(),
-                Email = Regex.Replace(addClientDTO.Email.Trim().ToLowerInvariant(), @"\s+", ""),
-                Senha = addClientDTO.Senha.Trim(), 
             };
-            await _context.clientes.AddAsync(entityClient);
-            await _context.SaveChangesAsync();
-
-            return addClientDTO;
         }
 
-        public async Task<EditClientDTO> EditClient(int idCliente,EditClientDTO editClienteDTO)
+        public async Task<AddClientDTO> CadastrarCliente(AddClientDTO dadosCliente)
         {
-            var editClient = await _context.clientes.Where(c => c.IdCliente == idCliente)
-                .FirstOrDefaultAsync();
-            if (!string.IsNullOrWhiteSpace(editClienteDTO.Nome))
-                editClient.Nome = editClienteDTO.Nome.Trim();
-
-            if (!string.IsNullOrWhiteSpace(editClienteDTO.Email))
-                editClient.Email = editClienteDTO.Email.Trim().ToLower();
-
-            if (!string.IsNullOrWhiteSpace(editClienteDTO.Senha))
+            var novoCliente = new tbClienteModel()
             {
-                string hash = PasswordHashHandler.HashPassword(editClienteDTO.Senha.Trim());
-                editClient.Senha = hash;
-            }
+                Nome = dadosCliente.Nome.Trim(),
+                Email = Regex.Replace(dadosCliente.Email.Trim().ToLowerInvariant(), @"\s+", ""),
+                Senha = dadosCliente.Senha.Trim()
+            };
+
+            await _context.clientes.AddAsync(novoCliente);
             await _context.SaveChangesAsync();
-            return editClienteDTO;
+
+            return dadosCliente;
         }
 
-        public async Task<bool> EmailVerify(string email)
+        public async Task<EditClientDTO> EditarCliente(int idCliente, EditClientDTO dadosEditadosCliente)
         {
-            var verification = await _context.clientes
-                .AnyAsync(c => c.Email == email);
-            return verification;
+            var cliente = await _context.clientes
+                .Where(c => c.IdCliente == idCliente)
+                .FirstOrDefaultAsync();
+
+            if (!string.IsNullOrWhiteSpace(dadosEditadosCliente.Nome))
+                cliente.Nome = dadosEditadosCliente.Nome.Trim();
+
+            if (!string.IsNullOrWhiteSpace(dadosEditadosCliente.Email))
+                cliente.Email = dadosEditadosCliente.Email.Trim().ToLower();
+
+            if (!string.IsNullOrWhiteSpace(dadosEditadosCliente.Senha))
+            {
+                string hash = PasswordHashHandler.HashPassword(dadosEditadosCliente.Senha.Trim());
+                cliente.Senha = hash;
+            }
+
+            await _context.SaveChangesAsync();
+            return dadosEditadosCliente;
         }
 
-        public async Task<tbClienteModel> GetClienteById(int idCliente)
+        public async Task<bool> VerificarSeEmailExiste(string email)
+        {
+            return await _context.clientes.AnyAsync(c => c.Email == email);
+        }
+
+        public async Task<tbClienteModel> ObterClientePorId(int idCliente)
         {
             return await _context.clientes.FindAsync(idCliente);
         }
 
-        public async Task RemoveClient(tbClienteModel clienteModel)
+        public async Task RemoverCliente(tbClienteModel clienteModel)
         {
-           var removeCliente = _context.clientes.Remove(clienteModel);
+            _context.clientes.Remove(clienteModel);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO addEntregador)
+        public async Task<tbEntregadorModel> TornarSeEntregador(AddEntregadorDTO dadosEntregador)
         {
-            var tornarEntregador = new tbEntregadorModel
+            var novoEntregador = new tbEntregadorModel
             {
-                IdEntregador =addEntregador.IdEntregador,
-                IdEndereco = addEntregador.IdEndereco,
-                Cnh = Regex.Replace(addEntregador.Cnh, @"\d{11}", ""),
+                IdEntregador = dadosEntregador.IdEntregador,
+                IdEndereco = dadosEntregador.IdEndereco,
+                Cnh = Regex.Replace(dadosEntregador.Cnh, @"\d{11}", ""),
                 Eligibilidade = true
             };
-            _context.entregadores.Add(tornarEntregador);
+
+            _context.entregadores.Add(novoEntregador);
             await _context.SaveChangesAsync();
 
-            return tornarEntregador;
+            return novoEntregador;
         }
 
-        public async Task<bool> VerificarEndereco(int idEndereco)
+        public async Task<bool> VerificarSeEnderecoExiste(int idEndereco)
         {
             return await _context.enderecos.AnyAsync(e => e.IdEndereco == idEndereco);
         }
