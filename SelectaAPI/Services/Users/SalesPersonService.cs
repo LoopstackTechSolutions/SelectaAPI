@@ -17,7 +17,7 @@ namespace SelectaAPI.Services.Users
             var listaVazia = await _salesPersonRepository.RetornoVazio(idVendedor);
             if (!listaVazia) throw new ArgumentException("Você não possui nenhum produto");
 
-            var callMethod = await _salesPersonRepository.MyProducts(idVendedor);
+            var callMethod = await _salesPersonRepository.MeusProdutos(idVendedor);
 
             return callMethod; 
         }
