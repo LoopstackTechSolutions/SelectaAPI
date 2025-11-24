@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Services.Interfaces;
+using System.Security.Claims;
 
 namespace SelectaAPI.Controllers
 {
@@ -14,291 +15,277 @@ namespace SelectaAPI.Controllers
         {
             _homeService = homeService;
         }
-
-        // ==================== Session ====================
-
-        private int GetClientIdFromSession()
+        /*
+        private int GetClientIdFromToken()
         {
-            int? id = HttpContext.Session.GetInt32("ClientId");
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (idClaim == null)
+                throw new UnauthorizedAccessException("ID do cliente não encontrado no token.");
 
-            if (id == null)
-                throw new UnauthorizedAccessException("Usuário não está logado ou a sessão expirou.");
-
-            return id.Value;
+            return int.Parse(idClaim);
         }
-
-        // ==================== ENDPOINTS ====================
-
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAll()
+        */
+         [HttpGet("listar-todos-produtos")]
+        public async Task<IActionResult> ListarTodosOsProdutos()
         {
             try
             {
-                var products = await _homeService.GetAll();
-                return Ok(products);
+                var resultado = await _homeService.ListarTodosOsProdutos();
+                return Ok(resultado);
             }
             catch (DbUpdateException)
             {
-                return StatusCode(500, $"Erro de banco.");
+                return StatusCode(500, "Erro de banco: erro no tratamento dos dados ou falha na conexão.");
             }
             catch (Exception)
             {
-                return StatusCode(500, $"Erro interno do servidor.");
+                return StatusCode(500, "Erro no servidor: erro na inicialização do servidor");
             }
         }
 
-        [HttpGet("highlights")]
-        public async Task<IActionResult> Highlights()
+         [HttpGet("destaques")]
+        public async Task<IActionResult> ListarDestaques()
         {
             try
             {
-                var highlights = await _homeService.Highlights();
-                return Ok(highlights);
+                var resultado = await _homeService.ListarPromocoesDestaque();
+                return Ok(resultado);
             }
             catch (DbUpdateException)
             {
-                return StatusCode(500, $"Erro de banco.");
+                return StatusCode(500, "Erro de banco.");
             }
             catch (Exception)
-            {
-                return StatusCode(500, $"Erro interno do servidor.");
-            }
-        }
-
-        [HttpGet("wish-list")]
-        public async Task<IActionResult> WishList()
-        {
-            try
-            {
-                int idCliente = GetClientIdFromSession();
-                var wishList = await _homeService.WishList(idCliente);
-                return Ok(wishList);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
-            catch (DbUpdateException)
-            {
-                return StatusCode(500, $"Erro de banco.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, $"Erro interno do servidor.");
-            }
-        }
-
-        [HttpGet("for-you")]
-        public async Task<IActionResult> ForYou()
-        {
-            try
-            {
-                int idCliente = GetClientIdFromSession();
-                var forYou = await _homeService.ForYou(idCliente);
-                return Ok(forYou);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
-            catch (DbUpdateException)
-            {
-                return StatusCode(500, $"Erro de banco.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, $"Erro interno.");
-            }
-        }
-
-        [HttpGet("notifications")]
-        public async Task<IActionResult> Notifications()
-        {
-            try
-            {
-                int idCliente = GetClientIdFromSession();
-                var notifications = await _homeService.Notifications(idCliente);
-                return Ok(notifications);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
-            catch
-            {
-                return StatusCode(500, $"Erro no servidor.");
-            }
-        }
-
-        [HttpGet("notifications-unread")]
-        public async Task<IActionResult> NotificationsUnread()
-        {
-            try
-            {
-                int idCliente = GetClientIdFromSession();
-                var notifications = await _homeService.NotificationsUnread(idCliente);
-
-                if (notifications == null)
-                    return NotFound("Todas as notificações foram lidas.");
-
-                return Ok(notifications);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
-            catch
-            {
-                return StatusCode(500, $"Erro no servidor.");
-            }
-        }
-
-        [HttpGet("best-sellers")]
-        public async Task<IActionResult> BestSellers()
-        {
-            try
-            {
-                return Ok(await _homeService.BestSellers());
-            }
-            catch
             {
                 return StatusCode(500, "Erro no servidor.");
             }
         }
 
-        [HttpGet("get-products-id")]
-        public async Task<IActionResult> GetProductById([FromQuery] int id)
+        [HttpGet("lista-de-desejos/{idCliente}")]
+        public async Task<IActionResult> ListarProdutosDaListaDeDesejos(int idCliente)
         {
             try
             {
-                var product = await _homeService.GetProductByID(id);
-
-                if (product == null)
-                    return BadRequest("ID do produto inválido.");
-
-                return Ok(product);
+                var resultadoado = await _homeService.ListarProdutosDaListaDeDesejos(idCliente);
+                return Ok(resultadoado);
             }
-            catch
+            catch (DbUpdateException)
             {
-                return StatusCode(500, "Erro interno.");
+                return StatusCode(500, "Erro de banco.");
             }
-        }
-
-        [HttpPost("add-products-wishList")]
-        public async Task<IActionResult> AddProductInWishList([FromQuery] int idProduto)
-        {
-            try
-            {
-                int idCliente = GetClientIdFromSession();
-                var result = await _homeService.AddProductInWishList(idProduto, idCliente);
-
-                if (result == null)
-                    return BadRequest("Campos insuficientes.");
-
-                return Ok(result);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
-            catch
+            catch (Exception)
             {
                 return StatusCode(500, "Erro no servidor.");
             }
         }
 
-        [HttpGet("get-products-in-car")]
-        public async Task<IActionResult> GetProductsInCartOfClient()
+        [HttpGet("for-you/{idCliente}")]
+        public async Task<IActionResult> ListarProdutosParaVoce(int idCliente)
         {
             try
             {
-                int idCliente = GetClientIdFromSession();
-                var cart = await _homeService.GetProductsInCartOfClient(idCliente);
-                return Ok(cart);
+                var resultado = await _homeService.ListarProdutosRecomendados(idCliente);
+                return Ok(resultado);
             }
-            catch (UnauthorizedAccessException ex)
+            catch (DbUpdateException)
             {
-                return Unauthorized(ex.Message);
+                return StatusCode(500, "Erro de banco.");
             }
-            catch
+            catch (Exception)
             {
                 return StatusCode(500, "Erro no servidor.");
             }
         }
 
-        [HttpGet("verify-type-account")]
-        public async Task<IActionResult> GetTypeAccountOfClient()
+
+        [HttpGet("notificacoes/listar-notificacoes/{idCliente}")]
+        public async Task<IActionResult> ListarNotificacoes(int idCliente)
         {
             try
             {
-                int idCliente = GetClientIdFromSession();
-                var typeAccount = await _homeService.GetTypeAccountOfClient(idCliente);
-
-                return Ok(typeAccount);
+                var resultado = await _homeService.ListarNotificacoesDoCliente(idCliente);
+                return Ok(resultado);
             }
-            catch (UnauthorizedAccessException ex)
+            catch (DbUpdateException)
             {
-                return Unauthorized(ex.Message);
+                return StatusCode(500, "Erro de banco.");
             }
-            catch
+            catch (Exception)
             {
                 return StatusCode(500, "Erro no servidor.");
             }
         }
 
-        [HttpDelete("remove-product-of-cart")]
-        public async Task<IActionResult> RemoveProductOfCart([FromQuery] int idProduto)
+
+        [HttpGet("notificacoes/notificacoes-nao-lidas/{idCliente}")]
+        public async Task<IActionResult> ListarNotificacoesNaoLidas(int idCliente)
         {
             try
             {
-                int idCliente = GetClientIdFromSession();
-                await _homeService.RemoveProductOfCart(idCliente, idProduto);
+                var resultado = await _homeService.ListarNotificacoesNaoLidasDoCliente(idCliente);
+
+                if (resultado == null) return NotFound("Todas as notificações foram lidas");
+
+                return Ok(resultado);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, "Erro de banco.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro no servidor.");
+            }
+        }
+
+        [HttpGet("listar-mais-vendidos")]
+        public async Task<IActionResult> ListarMaisVendidos()
+        {
+            try
+            {
+                var resultado = await _homeService.ListarProdutosMaisVendidos();
+                return Ok(resultado);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, "Erro de banco.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro no servidor.");
+            }
+        }
+
+        [HttpGet("buscar-produto-id/{idProduto}")]
+        public async Task<IActionResult> BuscarProdutoPorId(int idProduto)
+        {
+            try
+            {
+                var resultado = await _homeService.ListarProdutoPorId(idProduto);
+
+                if (resultado == null) return BadRequest("ID do produto nulo");
+                return Ok(resultado);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, "Erro de banco.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro no servidor.");
+            }
+        }
+
+        [HttpPost("lista-de-desejos/adicionar/{idProduto}")]
+        public async Task<IActionResult> AdicionarProdutoNaListaDeDesejos(int idCliente,int idProduto)
+        {
+            try
+            {
+                var resultado = await _homeService.AdicionarProdutoNaListaDeDesejos(idProduto, idCliente);
+
+                if (resultado == null) return NotFound("Preencha todos os campos");
+
+                return Ok(resultado);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, "Erro de banco.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro no servidor.");
+            }
+        }
+
+
+        [HttpGet("carrinho/listar-produtos/{idCliente}")]
+        public async Task<IActionResult> ListarProdutosNoCarrinhoDoCliente(int idCliente)
+        {
+            try
+            {
+                var resultado = await _homeService.ListarProdutosDoCarrinho(idCliente);
+                return Ok(resultado);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, "Erro de banco.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro no servidor.");
+            }
+        }
+
+      
+        [HttpGet("buscar-tipo-conta/{idCliente}")]
+        public async Task<IActionResult> BuscarTipoDeContaDoCliente(int idCliente)
+        {
+            try
+            {
+                var resultado = await _homeService.TipoDeConta(idCliente);
+                return Ok(resultado);
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, "Erro de banco.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Erro no servidor.");
+            }
+        }
+
+        [HttpDelete("carrinho/remover{idProduto}")]
+        public async Task<IActionResult> RemoverProdutoDoCarrinho(int idCliente,int idProduto)
+        {
+            try
+            {
+                await _homeService.RemoverProdutoDoCarrinho(idCliente, idProduto);
                 return Ok($"Produto removido: {idProduto}");
             }
-            catch (UnauthorizedAccessException ex)
+            catch (DbUpdateException)
             {
-                return Unauthorized(ex.Message);
+                return StatusCode(500, "Erro de banco.");
             }
-            catch
+            catch (Exception)
             {
                 return StatusCode(500, "Erro no servidor.");
             }
         }
 
-        [HttpDelete("remove-product-of-wish-list")]
-        public async Task<IActionResult> RemoveProductOfWishList([FromQuery] int idProduto)
+
+        [HttpDelete("lista-de-desejos/remover/{idProduto}")]
+        public async Task<IActionResult> RemoverProdutoDaListaDeDesejos(int idCliente, int idProduto)
         {
             try
             {
-                int idCliente = GetClientIdFromSession();
-                await _homeService.RemoveProductOfWishList(idCliente, idProduto);
+                await _homeService.RemoverProdutoDaListaDeDesejos(idCliente, idProduto);
                 return Ok($"Produto removido: {idProduto}");
             }
-            catch (UnauthorizedAccessException ex)
+            catch (DbUpdateException)
             {
-                return Unauthorized(ex.Message);
+                return StatusCode(500, "Erro de banco.");
             }
-            catch
+            catch (Exception)
             {
                 return StatusCode(500, "Erro no servidor.");
             }
         }
 
-        [HttpPost("read-notification")]
-        public async Task<IActionResult> ReadNotification([FromQuery] int idNotificacao)
+    
+        [HttpPost("marcar-notificacao-lida/{idNotificacao}")]
+        public async Task<IActionResult> MarcarNotificacaoComoLida(int idCliente, int idNotificacao)
         {
             try
             {
-                int idCliente = GetClientIdFromSession();
-                var result = await _homeService.NotificationsRead(idCliente, idNotificacao);
-
-                return Ok(result);
+                var resultado = await _homeService.MarcarNotificacaoComoLida(idCliente, idNotificacao);
+                return Ok(resultado);
             }
-            catch (UnauthorizedAccessException ex)
+            catch (DbUpdateException)
             {
-                return Unauthorized(ex.Message);
+                return StatusCode(500, "Erro de banco.");
             }
-            catch
+            catch (Exception)
             {
                 return StatusCode(500, "Erro no servidor.");
             }

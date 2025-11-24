@@ -77,7 +77,7 @@ namespace SelectaAPI.Services.Users
 
         public async Task<EditClientDTO> EditClient(int idCliente, EditClientDTO editClienteDTO)
         {
-            var verifyIdClient = await _homeRepository.ClientExists(idCliente);
+            var verifyIdClient = await _homeRepository.VerificarSeClienteExiste(idCliente);
 
             if (!verifyIdClient) throw new Exception("ID do cliente não existente");
 

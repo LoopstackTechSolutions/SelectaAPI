@@ -75,7 +75,7 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpGet("busar-imagem-principal/{idProduto}")]
+        [HttpGet("buscar-imagem-principal/{idProduto}")]
         public async Task<IActionResult> GetPrincipalImage(int idProduto)
         {
             try

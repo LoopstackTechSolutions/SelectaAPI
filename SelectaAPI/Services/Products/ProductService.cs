@@ -31,7 +31,7 @@ namespace SelectaAPI.Services.Products
 
         public async Task<EditProductDTO> EditarProduto(int idProduto, EditProductDTO editProductDTO)
         {
-            var verifyIdProduct = await _homeRepository.ProductExists(idProduto);
+            var verifyIdProduct = await _homeRepository.VerificarSeProdutoExiste(idProduto);
 
             if (!verifyIdProduct) throw new Exception("ID do produto não existente");
 

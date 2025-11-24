@@ -5,23 +5,22 @@ namespace SelectaAPI.Services.Interfaces
 {
     public interface IHomeService
     {
-       //  Task<IEnumerable<tbProdutoModel>> Search(string name);
-        Task<IEnumerable<ProductInWishListDTO>> WishList(int id);
-        Task<IEnumerable<tbProdutoModel>> ForYou(int id);
-        Task<IEnumerable<ProductsWithPromotionDTO>> Highlights();
-        Task<IEnumerable<NotificationForClientDTO>> Notifications(int id);
-        Task<ICollection<NotificationForClientDTO>> NotificationsUnread(int id);
-        Task<IEnumerable<tbProdutoModel>> BestSellers();
-        Task<IEnumerable<tbProdutoModel>> GetProductByID(int id);
-        Task<ProductInWishListDTO> AddProductInWishList(int id, int idCliente);
-        Task<IEnumerable<GetClientCarDTO>> GetProductsInCartOfClient(int idClient);
-        Task<IEnumerable<GetClientByIdDTO>> GetClientById(int id);
-        Task<IEnumerable<TypeAccountOfClientDTO>> GetTypeAccountOfClient(int idClient);
-        Task<IEnumerable<SearchProductsByCategoryDTO>> SearchProductByCategory(int id);
-        Task<IEnumerable<tbProdutoModel>> GetAll();
-        Task<IEnumerable<tbPromocaoModel>> GetAllPromotionOfProduct(int id);
-        Task<tbCarrinhoModel> RemoveProductOfCart(int idCliente, int idProduto);
-        Task<tbLista_DesejoModel> RemoveProductOfWishList(int idCliente, int idProduto);
-        Task<tbNotificacao_ClienteModel> NotificationsRead(int idCliente, int idNotificacao);
+        Task<IEnumerable<ProductInWishListDTO>> ListarProdutosDaListaDeDesejos(int idCliente);
+        Task<IEnumerable<tbProdutoModel>> ListarProdutosRecomendados(int idCliente);
+        Task<IEnumerable<ProductsWithPromotionDTO>> ListarPromocoesDestaque();
+        Task<IEnumerable<NotificationForClientDTO>> ListarNotificacoesDoCliente(int idCliente);
+        Task<ICollection<NotificationForClientDTO>> ListarNotificacoesNaoLidasDoCliente(int idCliente);
+        Task<IEnumerable<tbProdutoModel>> ListarProdutosMaisVendidos();
+        Task<IEnumerable<tbProdutoModel>> ListarProdutoPorId(int idProduto);
+        Task<ProductInWishListDTO> AdicionarProdutoNaListaDeDesejos(int idProduto, int idCliente);
+        Task<IEnumerable<GetClientCarDTO>> ListarProdutosDoCarrinho(int idCliente);
+        Task<IEnumerable<GetClientByIdDTO>> ListarClientePorId(int idCliente);
+        Task<IEnumerable<TypeAccountOfClientDTO>> TipoDeConta(int idCliente);
+        Task<IEnumerable<SearchProductsByCategoryDTO>> ListarProdutosPorCategoria(int idCategoria);
+        Task<IEnumerable<tbProdutoModel>> ListarTodosOsProdutos();
+        Task<IEnumerable<tbPromocaoModel>> ListarPromocoesDoProduto(int idProduto);
+        Task<tbCarrinhoModel> RemoverProdutoDoCarrinho(int idCliente, int idProduto);
+        Task<tbLista_DesejoModel> RemoverProdutoDaListaDeDesejos(int idCliente, int idProduto);
+        Task<tbNotificacao_ClienteModel> MarcarNotificacaoComoLida(int idCliente, int idNotificacao);
     }
 }
