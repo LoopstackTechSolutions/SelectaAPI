@@ -36,9 +36,9 @@ namespace SelectaAPI.Controllers.Users
 
                 HttpContext.Session.SetString(SessionKeys.UserName, loginDoCliente.Nome);
                 HttpContext.Session.SetString(SessionKeys.UserRole, loginDoCliente.NivelAcesso);
-                return Ok($"Olá! Seja Bem-vindo{loginDoCliente.Nome}");
+                HttpContext.Session.SetString(SessionKeys.UserRole, loginDoCliente.Email);
 
-
+                return Ok(loginDoCliente);
             }
             catch (DbUpdateException ex)
             {
@@ -66,9 +66,9 @@ namespace SelectaAPI.Controllers.Users
                 HttpContext.Session.SetInt32(SessionKeys.UserId, loginDoFuncionario.IdFuncionario);
                 HttpContext.Session.SetString(SessionKeys.UserName, loginDoFuncionario.Nome);
                 HttpContext.Session.SetString(SessionKeys.UserRole, loginDoFuncionario.NivelAcesso);
-                return Ok($"Ola! Seja Bem-Vindo {loginDoFuncionario.Nome}");
+                HttpContext.Session.SetString(SessionKeys.UserEmail, loginDoFuncionario.Email);
 
-
+                return Ok(loginDoFuncionario);
             }
             catch (DbUpdateException ex)
             {

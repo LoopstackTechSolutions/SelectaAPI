@@ -35,6 +35,7 @@ namespace SelectaAPI.Services.Users
             {
                 IdCliente = cliente.IdCliente,
                 Nome = cliente.Nome,
+                Email = cliente.Email,
                 NivelAcesso = "CLIENTE"
             };
         }
@@ -53,7 +54,8 @@ namespace SelectaAPI.Services.Users
             {
                 IdFuncionario = funcionario.IdFuncionario,
                 Nome = funcionario.Nome,
-                NivelAcesso = funcionario.NivelAcesso
+                NivelAcesso = funcionario.NivelAcesso,
+                Email = funcionario.Email
             };
         }
     }
