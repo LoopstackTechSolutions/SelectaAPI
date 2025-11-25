@@ -166,5 +166,14 @@ namespace SelectaAPI.Repositories.Products
 
             return pesquisa;
         }
+
+        public async Task<decimal> PrecoDoProduto(int idProduto)
+        {
+            var buscarPreco = await _context.produtos.Where(p => p.IdProduto == idProduto)
+                .Select(p => p.PrecoUnitario).FirstOrDefaultAsync();
+            return buscarPreco;
+        }
+
+       
     }
 }

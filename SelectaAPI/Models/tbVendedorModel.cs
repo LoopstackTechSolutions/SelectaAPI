@@ -11,6 +11,7 @@ namespace SelectaAPI.Models
         public int IdVendedor {get; set;}
         public int Nota {get; set;}  
         public int TaxaFrete {get; set;}
+        public decimal Saldo {get; set;}
         public tbClienteModel Cliente { get; set; }
     }
 }

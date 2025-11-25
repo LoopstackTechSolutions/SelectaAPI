@@ -2,9 +2,10 @@
 {
     public class PedidoDTO
     {
-        public int IdPedido { get; set; }
-        public decimal Total { get; set; }
-        public decimal Frete { get; set; }
-        public string StatusPagamento { get; set; }
+        public int IdCliente { get; set; }
+        public int IdProduto { get; set; }
+        public int Quantidade { get; set; }
+        public string FormaPagamento { get; set; } // "credito", "debito", "pix"
+        public int IdEnderecoEntrega { get; set; }
     }
 }

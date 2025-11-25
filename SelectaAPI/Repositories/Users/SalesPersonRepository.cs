@@ -34,9 +34,46 @@ namespace SelectaAPI.Repositories.Users
             return lista;
         }
 
+        public async Task<tbVendedorModel> ObterVendedorPorId(int idVendedor)
+        {
+            return await _context.vendedores.FindAsync(idVendedor);
+        }
+
+        public async Task<int?> ObterProdutoDoVendedor(int idProduto)
+        {
+            return await _context.produtos
+              .Where(p => p.IdProduto == idProduto)
+            .Select(p => (int?)p.IdVendedor)
+        .FirstOrDefaultAsync();
+        }
+
         public async Task<bool> RetornoVazio(int idVendedor)
         {
             return await _context.produtos.AnyAsync(p => p.IdVendedor == idVendedor);
         }
+
+        public async Task<bool> AtualizarSaldoDoVendedor(decimal total, int idProduto)
+        {
+            var produto = await _context.produtos
+                 .Include(p => p.Vendedor)
+                .FirstOrDefaultAsync(p => p.IdProduto == idProduto);
+
+            var buscarVendedor = await _context.vendedores.Where(v => v.IdVendedor == produto.IdVendedor)
+                .FirstOrDefaultAsync();
+
+            buscarVendedor.Saldo += total;
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        /*
+        public async Task<tbProdutoModel> BuscarClienteLigadoAoProduto(int idProduto)
+        {
+            var produto = await _context.produtos
+                  .Include(p => p.Vendedor)
+                 .FirstOrDefaultAsync(p => p.IdProduto == idProduto);
+            return produto;
+        }
+        */
     }
 }

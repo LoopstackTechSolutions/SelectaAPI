@@ -33,8 +33,11 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ISalesPersonRepository, SalesPersonRepository>();
+builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+
 
 // ==================== Serviços ====================
+builder.Services.AddScoped<ISaleService, SaleService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ISalesPersonService, SalesPersonService>();
 builder.Services.AddScoped<IHomeService, HomeService>();

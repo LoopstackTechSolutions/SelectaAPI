@@ -20,5 +20,6 @@ namespace SelectaAPI.Repositories.Interfaces.ProductsInterface
         Task RemoverPromocao(tbPromocaoModel promocaoModel);
         Task<tbPromocaoModel> BuscarPromocaoPorId(int idPromocao);
         Task<IEnumerable<tbProdutoModel>> PesquisarProdutos(string query);
+        Task<decimal> PrecoDoProduto(int idProduto);
     }
 }
