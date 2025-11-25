@@ -20,7 +20,6 @@ using SelectaAPI.Services.Interfaces.ProductsInterface;
 using SelectaAPI.Services.Interfaces.UsersInterface;
 using SelectaAPI.Services.Products;
 using SelectaAPI.Services.Users;
-using System.Reflection;
 
 Env.Load();
 
@@ -114,7 +113,6 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
-  
 });
 
 // ==================== Build ====================
