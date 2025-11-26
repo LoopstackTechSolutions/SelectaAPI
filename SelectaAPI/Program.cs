@@ -25,18 +25,17 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ==================== CORS ====================
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost",
-        policy =>
-        {
-            policy
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowAnyOrigin();
-        });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
 });
-
 
 // ==================== Repositórios ====================
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
@@ -47,7 +46,6 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ISalesPersonRepository, SalesPersonRepository>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
-
 
 // ==================== Serviços ====================
 builder.Services.AddScoped<ISaleService, SaleService>();
@@ -139,9 +137,9 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseSession(); // <-- ESSENCIAL (tem que vir antes do UseAuthorization)
-
-app.UseAuthorization();
+app.UseCors("AllowAll");  
+app.UseSession();         
+app.UseAuthorization();  
 
 app.MapControllers();
 
