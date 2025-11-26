@@ -124,5 +124,11 @@ namespace SelectaAPI.Services.Users
             var adicionarProdutoNoCarrinho = await _clientRepository.AdicionarProdutoNoCarrinho(adicionarDTO);
             return adicionarProdutoNoCarrinho;
         }
+
+        public async Task<tbClienteModel> ObterClientePorId(int idCliente)
+        {
+            var buscarCliente = await _clientRepository.ObterClientePorId(idCliente);
+            return buscarCliente;
+        }
     }
 }
