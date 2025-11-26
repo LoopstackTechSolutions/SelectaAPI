@@ -21,10 +21,12 @@ namespace SelectaAPI.Repositories.Users
 
             try
             {
-                var produto = await _context.produtos.FirstOrDefaultAsync(p => p.IdProduto == pedidoDTO.IdProduto && p.Status == "ativo" || p.Status == "disponivel");
-                if (produto == null) return null;
+                var produto = await _context.produtos.FirstOrDefaultAsync(p => p.IdProduto == pedidoDTO.IdProduto);
 
                 decimal total = produto.PrecoUnitario * pedidoDTO.Quantidade;
+                Console.WriteLine($"Unitário: {produto.PrecoUnitario}");
+                Console.WriteLine($"Quantidade: {pedidoDTO.Quantidade}");
+                Console.WriteLine($"Total calculado: {produto.PrecoUnitario * pedidoDTO.Quantidade}");
                 decimal frete = (decimal)(produto.Peso * 0.01 * pedidoDTO.Quantidade);
 
                 var pedido = new tbPedidoModel
@@ -46,7 +48,7 @@ namespace SelectaAPI.Repositories.Users
                     Quantidade = pedidoDTO.Quantidade,
                     Valor = produto.PrecoUnitario,
                     Frete = frete,
-                    Status = "pendente",
+                    Status = "pago",
                     TipoEntrega = true
                 };
                 _context.produtosPedidos.Add(produtoPedido);

@@ -21,5 +21,7 @@ namespace SelectaAPI.Repositories.Interfaces.ProductsInterface
         Task<tbPromocaoModel> BuscarPromocaoPorId(int idPromocao);
         Task<IEnumerable<tbProdutoModel>> PesquisarProdutos(string query);
         Task<decimal> PrecoDoProduto(int idProduto);
+        Task<bool> VerificarEstoque(int idProduto);
+        Task<bool> VerificarStatusDoProduto(int idProduto);
     }
 }

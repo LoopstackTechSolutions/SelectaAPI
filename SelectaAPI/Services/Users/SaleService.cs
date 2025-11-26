@@ -29,14 +29,18 @@ namespace SelectaAPI.Services.Users
             var verificarVendedor = await _salesPersonRepository.ObterProdutoDoVendedor(pedidoDTO.IdProduto);
             if (verificarVendedor == pedidoDTO.IdCliente) throw new ArgumentException("Você não pode comprar o seu próprio produto");
 
-            var preco = await _productRepository.PrecoDoProduto(pedidoDTO.IdProduto);
+            var verificarQuantidadeDoProduto = await _productRepository.VerificarEstoque(pedidoDTO.IdProduto);
+            if (!verificarQuantidadeDoProduto) throw new ArgumentException("Quantidade excedida");
 
+            var verificarStatusDoProduto = await _productRepository.VerificarStatusDoProduto(pedidoDTO.IdProduto);
+            if (!verificarStatusDoProduto) throw new ArgumentException("O produto não está disponivel para venda");
 
             var chamarMetodoDoPedido = await _saleRepository.ComprarProduto(pedidoDTO);
+            if (chamarMetodoDoPedido == null) throw new Exception("Falha ao gerar pedido");
+    
 
             var atualizarSaldoDoVendedor = await _salesPersonRepository.AtualizarSaldoDoVendedor(chamarMetodoDoPedido.Total,pedidoDTO.IdProduto);
 
-            if (chamarMetodoDoPedido == null) throw new Exception("Falha ao gerar pedido");
 
             return new PedidoResponseDTO
             {

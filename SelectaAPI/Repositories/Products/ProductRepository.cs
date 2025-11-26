@@ -174,6 +174,14 @@ namespace SelectaAPI.Repositories.Products
             return buscarPreco;
         }
 
-       
+        public async Task<bool> VerificarEstoque(int idProduto)
+        {
+            return await _context.produtos.AnyAsync(p => p.IdProduto == idProduto && p.Quantidade > 0);
+        }
+
+        public async Task<bool> VerificarStatusDoProduto(int idProduto)
+        {
+            return await _context.produtos.AnyAsync(p => p.IdProduto == idProduto && (p.Status == "disponivel" || p.Status == "ativo"));
+        }
     }
 }
