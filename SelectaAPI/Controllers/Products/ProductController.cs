@@ -207,7 +207,7 @@ namespace SelectaAPI.Controllers.Products
         }
 
         [HttpGet("pesquisar-produtos")]
-        public async Task<IActionResult> PesquisarProdutos(string query)
+        public async Task<IActionResult> PesquisarProdutos(string?query)
         {
             try
             {

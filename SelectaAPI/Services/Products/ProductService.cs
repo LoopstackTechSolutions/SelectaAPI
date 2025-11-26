@@ -67,9 +67,6 @@ namespace SelectaAPI.Services.Products
         public async Task<IEnumerable<tbProdutoModel>> PesquisarProdutos(string query)
         {
             var pesquisa = await _productRepository.PesquisarProdutos(query);
-
-            if (pesquisa == null) throw new ArgumentException("Nenhum produto encontrado!");
-
             return pesquisa;    
         }
 

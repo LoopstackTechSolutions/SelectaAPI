@@ -161,10 +161,10 @@ namespace SelectaAPI.Repositories.Products
 
         public async Task<IEnumerable<tbProdutoModel>> PesquisarProdutos(string query)
         {
-            var pesquisa = await _context.produtos.Where(p => EF.Functions.Like(p.Nome, $"%{query}%"))
-            .ToListAsync();
-
-            return pesquisa;
+            return await _context.produtos
+                .Where(p => string.IsNullOrWhiteSpace(query)
+                    || EF.Functions.Like(p.Nome, $"%{query}%"))
+                .ToListAsync();
         }
 
         public async Task<decimal> PrecoDoProduto(int idProduto)
