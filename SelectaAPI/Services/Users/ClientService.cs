@@ -3,8 +3,11 @@ using SelectaAPI.DTOs;
 using SelectaAPI.Handlers;
 using SelectaAPI.Integracao.Interfaces;
 using SelectaAPI.Models;
+using SelectaAPI.Repositories.Interfaces.ProductsInterface;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
+using SelectaAPI.Services.Interfaces.ProductsInterface;
 using SelectaAPI.Services.Interfaces.UsersInterface;
+using ZstdSharp.Unsafe;
 
 namespace SelectaAPI.Services.Users
 {
@@ -12,11 +15,13 @@ namespace SelectaAPI.Services.Users
     {
         private readonly IClientRepository _clientRepository;
         private readonly IViaCepIntegracao _viaCepIntegracao;
+        private readonly IProductRepository _productRepository;
 
-        public ClientService(IClientRepository clientRepository, IViaCepIntegracao viaCepIntegracao)
+        public ClientService(IClientRepository clientRepository, IViaCepIntegracao viaCepIntegracao, IProductRepository productRepository)
         {
             _clientRepository = clientRepository;
             _viaCepIntegracao = viaCepIntegracao;
+            _productRepository = productRepository;
         }
 
         public async Task<object> CadastrarEndereco(string cep, int idCliente)
@@ -103,6 +108,21 @@ namespace SelectaAPI.Services.Users
                 throw new ArgumentException("ID do cliente não existente");
 
             return await _clientRepository.TornarSeEntregador(addEntregador);
+        }
+
+        public async Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(AdicionarProdutoNoCarrinhoDTO adicionarDTO)
+        {
+            var verificarEstoque = await _productRepository.VerificarEstoque(adicionarDTO.IdProduto);
+            if (!verificarEstoque) throw new ArgumentException("O produto não possui estoque");
+
+            var verificarCliente = await _clientRepository.ObterClientePorId(adicionarDTO.IdCliente);
+            if (verificarCliente == null) throw new ArgumentException("Cliente inexistente");
+
+            var verificarQuantidadeSelecionada = await _productRepository.QuantidadeSelecionada(adicionarDTO.IdProduto, adicionarDTO.Quantidade);
+            if (!verificarQuantidadeSelecionada) throw new ArgumentException("Quantidade excedida");
+
+            var adicionarProdutoNoCarrinho = await _clientRepository.AdicionarProdutoNoCarrinho(adicionarDTO);
+            return adicionarProdutoNoCarrinho;
         }
     }
 }

@@ -30,10 +30,13 @@ namespace SelectaAPI.Services.Users
             if (verificarVendedor == pedidoDTO.IdCliente) throw new ArgumentException("Você não pode comprar o seu próprio produto");
 
             var verificarQuantidadeDoProduto = await _productRepository.VerificarEstoque(pedidoDTO.IdProduto);
-            if (!verificarQuantidadeDoProduto) throw new ArgumentException("Quantidade excedida");
+            if (!verificarQuantidadeDoProduto) throw new ArgumentException("Produto sem estoque!");
 
             var verificarStatusDoProduto = await _productRepository.VerificarStatusDoProduto(pedidoDTO.IdProduto);
             if (!verificarStatusDoProduto) throw new ArgumentException("O produto não está disponivel para venda");
+
+            var QuantidadeSelecionada = await _productRepository.QuantidadeSelecionada(pedidoDTO.IdProduto, pedidoDTO.Quantidade);
+            if (!QuantidadeSelecionada) throw new ArgumentException("A quantidade selecionada é maior que o estoque do produto");
 
             var chamarMetodoDoPedido = await _saleRepository.ComprarProduto(pedidoDTO);
             if (chamarMetodoDoPedido == null) throw new Exception("Falha ao gerar pedido");

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
+using SelectaAPI.Models;
 using SelectaAPI.Services.Interfaces.UsersInterface;
 
 namespace SelectaAPI.Controllers.Users
@@ -141,6 +142,27 @@ namespace SelectaAPI.Controllers.Users
             {
                 var resultado = await _clientService.CadastrarEndereco(cep, idCliente);
                 return Ok(resultado);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+        [HttpPost("carrinho/adicionar-produto")]
+        public async Task<IActionResult> AdicionarProdutoNoCarrinho(AdicionarProdutoNoCarrinhoDTO adicionarDTO)
+        {
+            try
+            {
+                var resultado = await _clientService.AdicionarProdutoNoCarrinho(adicionarDTO);
+                return Ok("Produto adicionado  no seu carrinho!");
             }
             catch (ArgumentException ex)
             {

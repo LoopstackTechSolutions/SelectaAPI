@@ -124,5 +124,19 @@ namespace SelectaAPI.Repositories.Users
         {
             return await _context.enderecos.AnyAsync(e => e.IdEndereco == idEndereco);
         }
+
+        public async Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(AdicionarProdutoNoCarrinhoDTO adicionarDTO)
+        {
+            var adicionarProduto = new tbCarrinhoModel()
+            {
+                IdProduto = adicionarDTO.IdProduto,
+                IdCliente = adicionarDTO.IdCliente,
+                Quantidade = adicionarDTO.Quantidade
+            };
+            _context.carrinho.Add(adicionarProduto);
+            await _context.SaveChangesAsync(); 
+
+            return adicionarProduto;
+        }
     }
 }

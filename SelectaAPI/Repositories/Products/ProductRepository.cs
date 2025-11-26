@@ -179,6 +179,11 @@ namespace SelectaAPI.Repositories.Products
             return await _context.produtos.AnyAsync(p => p.IdProduto == idProduto && p.Quantidade > 0);
         }
 
+       public async Task<bool> QuantidadeSelecionada(int idProduto, int quantidade)
+        {
+            return await _context.produtos.AnyAsync(p => p.IdProduto == idProduto && p.Quantidade > quantidade);
+        }
+
         public async Task<bool> VerificarStatusDoProduto(int idProduto)
         {
             return await _context.produtos.AnyAsync(p => p.IdProduto == idProduto && (p.Status == "disponivel" || p.Status == "ativo"));

@@ -23,5 +23,6 @@ namespace SelectaAPI.Repositories.Interfaces.ProductsInterface
         Task<decimal> PrecoDoProduto(int idProduto);
         Task<bool> VerificarEstoque(int idProduto);
         Task<bool> VerificarStatusDoProduto(int idProduto);
+        Task<bool> QuantidadeSelecionada(int idProduto, int quantidade);
     }
 }

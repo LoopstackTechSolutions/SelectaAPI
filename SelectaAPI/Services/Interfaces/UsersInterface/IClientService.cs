@@ -11,5 +11,6 @@ namespace SelectaAPI.Services.Interfaces.UsersInterface
         Task RemoverCliente(int idCliente);
         Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO dadosEntregador);
         Task<object> CadastrarEndereco(string cep, int idCliente);
+        Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(AdicionarProdutoNoCarrinhoDTO adicionarDTO);
     }
 }
