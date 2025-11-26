@@ -82,7 +82,7 @@ namespace SelectaAPI.Controllers.Users
         }
 
       
-        [HttpPut("editar-funcionario")]
+        [HttpPut("editar-funcionario/{idFuncionario}")]
         public async Task<IActionResult> EditarFuncionario(int idFuncionario, EditEmployeeDTO editEmployee)
         {
             try
