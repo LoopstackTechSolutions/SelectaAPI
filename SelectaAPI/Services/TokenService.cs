@@ -32,5 +32,30 @@ namespace SelectaAPI.Services
 
             return tokenString;
         }
+
+        public static string GenerateJwtTokenByEmployee(tbFuncionarioModel funcionario)
+        {
+            var keyBytes = Encoding.UTF8.GetBytes(Key.SecretKey);
+            var signingKey = new SymmetricSecurityKey(keyBytes);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new System.Security.Claims.ClaimsIdentity(new Claim[]
+                {
+                    new Claim("employeeId", funcionario.IdFuncionario.ToString()),
+                    new Claim("employeeEmail", funcionario.Email.ToString()),
+                    new Claim ("funcionarioNome", funcionario.Nome.ToString()),
+                    new Claim ("funcionarioNome", funcionario.Nome.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(180),
+                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256Signature)
+            };
+
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            return tokenString;
+        }
     }
 }
