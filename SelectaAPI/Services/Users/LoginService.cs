@@ -35,11 +35,7 @@ namespace SelectaAPI.Services.Users
             // Retorna o DTO de login com o token
             return new LoginResponseDTO
             {
-                IdCliente = cliente.IdCliente,
-                Nome = cliente.Nome,
-                Email = cliente.Email,
                 Token = token,
-                NivelAcesso = "CLIENTE"
             };
         }
 
