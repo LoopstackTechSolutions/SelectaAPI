@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Services.Interfaces;
 using System.Security.Claims;
@@ -7,6 +8,7 @@ namespace SelectaAPI.Controllers
 {
     [Route("selectaAPI/[controller]")]
     [ApiController]
+    [Authorize]
     public class HomeController : ControllerBase
     {
         private readonly IHomeService _homeService;

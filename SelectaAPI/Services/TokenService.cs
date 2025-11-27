@@ -1,5 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using SelectaAPI.JWT;
+using SelectaAPI.Autenticacao;
 using SelectaAPI.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,9 +9,9 @@ namespace SelectaAPI.Services
 {
     public class TokenService
     {
-        public static object GenerateJwtTokenByClient(tbClienteModel cliente)
+        public static string GenerateJwtTokenByClient(tbClienteModel cliente)
         {
-            var keyBytes = Encoding.UTF8.GetBytes(Key.Secret);
+            var keyBytes = Encoding.UTF8.GetBytes(Key.SecretKey);
             var signingKey = new SymmetricSecurityKey(keyBytes);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -20,20 +20,15 @@ namespace SelectaAPI.Services
                     new Claim("clientId", cliente.IdCliente.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(180),
-                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256Signature)
             };
 
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-            var idToken = cliente.IdCliente;
 
-            return new
-            {
-                Token = tokenString,
-     
-            };
+            return tokenString;
         }
     }
 }

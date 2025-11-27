@@ -1,9 +1,13 @@
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.S3;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Org.BouncyCastle.Pqc.Crypto.Crystals.Dilithium;
 using Refit;
+using SelectaAPI.Autenticacao;
 using SelectaAPI.Database;
 using SelectaAPI.Integracao;
 using SelectaAPI.Integracao.Interfaces;
@@ -20,6 +24,7 @@ using SelectaAPI.Services.Interfaces.ProductsInterface;
 using SelectaAPI.Services.Interfaces.UsersInterface;
 using SelectaAPI.Services.Products;
 using SelectaAPI.Services.Users;
+using System.Text;
 
 Env.Load();
 
@@ -53,6 +58,7 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ISalesPersonService, SalesPersonService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
@@ -105,28 +111,49 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Selecta API", Version = "v1" });
-
-    // Habilita cookies no Swagger
-    c.AddSecurityDefinition("SessionCookie", new OpenApiSecurityScheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
+        Name = "Authorization",
+        In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
-        In = ParameterLocation.Cookie,
-        Name = ".Selecta.Session",
-        Description = "Utiliza o cookie de sessão gerado automaticamente ao chamar /login"
+        Scheme = "Bearer"
     });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
     {
+        { 
+        new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme {
-                Reference = new OpenApiReference {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "SessionCookie"
-                }
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer",
             },
-            Array.Empty<string>()
-        }
+            Scheme = "oauth2",
+            Name = "Bearer",
+            In = ParameterLocation.Header,
+        },
+        new List<string>()
+    }
     });
+});
+
+// JWT
+var key = Encoding.UTF8.GetBytes(Key.SecretKey);
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = true;
+    x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
 });
 
 // ==================== Build ====================

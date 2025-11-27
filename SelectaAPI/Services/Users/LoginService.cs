@@ -14,11 +14,11 @@ namespace SelectaAPI.Services.Users
     {
         private readonly ILoginRepository _loginRepository;
         private readonly IConfiguration _config;
-
-        public LoginService(ILoginRepository loginRepository, IConfiguration config)
+        public LoginService(ILoginRepository loginRepository, IConfiguration config, TokenService tokenService)
         {
             _loginRepository = loginRepository;
             _config = config;
+
         }
 
         public async Task<LoginResponseDTO?> LoginDoCliente(LoginRequestDTO loginRequest)
@@ -27,7 +27,9 @@ namespace SelectaAPI.Services.Users
             if (cliente == null) return null; 
 
             if (!PasswordHashHandler.VerifyPassword(loginRequest.Senha, cliente.Senha))
-                return null; 
+                return null;
+
+            var token = TokenService.GenerateJwtTokenByClient(cliente);
 
            
             // Retorna o DTO de login com o token
@@ -36,6 +38,7 @@ namespace SelectaAPI.Services.Users
                 IdCliente = cliente.IdCliente,
                 Nome = cliente.Nome,
                 Email = cliente.Email,
+                Token = token,
                 NivelAcesso = "CLIENTE"
             };
         }

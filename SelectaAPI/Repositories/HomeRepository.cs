@@ -57,8 +57,7 @@ namespace SelectaAPI.Repository
                     Peso = p.Peso,
                     Condicao = p.Condicao,
                     Quantidade = p.Quantidade
-                })
-                .Take(20)
+                }).Take(20)
                 .ToListAsync();
 
             return produtosRecomendados;
@@ -105,7 +104,7 @@ namespace SelectaAPI.Repository
         }
 
         public async Task<IEnumerable<ProductInWishListDTO>> ObterListaDeDesejos(int idCliente)
-        {
+        { 
             var cliente = await _context.clientes
                 .FirstOrDefaultAsync(c => c.IdCliente == idCliente);
 
@@ -121,7 +120,6 @@ namespace SelectaAPI.Repository
                     Status = ld.Produto.Status,
                     Peso = ld.Produto.Peso
                 })
-                .Take(20)
                 .ToListAsync();
 
             return listaDesejos;

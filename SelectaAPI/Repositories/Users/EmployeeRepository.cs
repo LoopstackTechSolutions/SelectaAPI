@@ -44,7 +44,7 @@ namespace SelectaAPI.Repositories.Users
             return addEmployeeDTO;
         }
 
-        public async Task<IEnumerable<tbFuncionarioModel>> ObterListaFuncionarios()
+        public async Task<IEnumerable<tbFuncionarioModel>> ObterListaFuncionarios(int pageNumber = 1, int pageSize = 2)
         {
             return await _context.funcionarios
                 .Select(f => new tbFuncionarioModel
@@ -55,7 +55,10 @@ namespace SelectaAPI.Repositories.Users
                     Cpf = f.Cpf.Trim(),
                     NivelAcesso = f.NivelAcesso
                 })
-                .ToListAsync();
+                .OrderByDescending(f => f.Nome)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+               .ToListAsync();
         }
 
         public async Task<tbFuncionarioModel> ObterFuncionarioPorId(int idFuncionario)

@@ -32,12 +32,6 @@ namespace SelectaAPI.Controllers.Users
                 if (loginDoCliente == null)
                     return BadRequest("email ou senha inválidos");
 
-                HttpContext.Session.SetInt32(SessionKeys.UserId, loginDoCliente.IdCliente);
-
-                HttpContext.Session.SetString(SessionKeys.UserName, loginDoCliente.Nome);
-                HttpContext.Session.SetString(SessionKeys.UserRole, loginDoCliente.NivelAcesso);
-                HttpContext.Session.SetString(SessionKeys.UserRole, loginDoCliente.Email);
-
                 return Ok(loginDoCliente);
             }
             catch (DbUpdateException ex)
@@ -62,11 +56,6 @@ namespace SelectaAPI.Controllers.Users
                 var loginDoFuncionario= await _loginService.LoginDoFuncionario(request);
                 if (loginDoFuncionario == null)
                     return BadRequest("email ou senha inválidos");
-
-                HttpContext.Session.SetInt32(SessionKeys.UserId, loginDoFuncionario.IdFuncionario);
-                HttpContext.Session.SetString(SessionKeys.UserName, loginDoFuncionario.Nome);
-                HttpContext.Session.SetString(SessionKeys.UserRole, loginDoFuncionario.NivelAcesso);
-                HttpContext.Session.SetString(SessionKeys.UserEmail, loginDoFuncionario.Email);
 
                 return Ok(loginDoFuncionario);
             }
