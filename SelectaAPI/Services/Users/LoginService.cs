@@ -36,7 +36,7 @@ namespace SelectaAPI.Services.Users
             return token;
         }
 
-        public async Task<LoginResponseDTO> LoginDoFuncionario(LoginRequestDTO loginRequest)
+        public async Task<string> LoginDoFuncionario(LoginRequestDTO loginRequest)
         {
             var funcionario = await _loginRepository.BuscarCredenciaisDoFuncionario(loginRequest.Email);
             if (funcionario == null) return null;
@@ -45,14 +45,10 @@ namespace SelectaAPI.Services.Users
             if (!PasswordHashHandler.VerifyPassword(loginRequest.Senha, funcionario.Senha))
                 return null;
 
+            var token = TokenService.GenerateJwtTokenByEmployee(funcionario);
 
-            return new LoginResponseDTO
-            {
-                IdFuncionario = funcionario.IdFuncionario,
-                Nome = funcionario.Nome,
-                NivelAcesso = funcionario.NivelAcesso,
-                Email = funcionario.Email
-            };
+
+            return token;
         }
     }
 }
