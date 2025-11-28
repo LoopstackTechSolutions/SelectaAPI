@@ -104,13 +104,13 @@ namespace SelectaAPI.Repositories.Users
             await _context.SaveChangesAsync();
         }
 
-        public async Task<tbEntregadorModel> TornarSeEntregador(AddEntregadorDTO dadosEntregador)
+        public async Task<tbEntregadorModel> TornarSeEntregador(int idEntregador, AddEntregadorDTO addEntregador)
         {
             var novoEntregador = new tbEntregadorModel
             {
-                IdEntregador = dadosEntregador.IdEntregador,
-                IdEndereco = dadosEntregador.IdEndereco,
-                Cnh = Regex.Replace(dadosEntregador.Cnh, @"\d{11}", ""),
+                IdEntregador = idEntregador,
+                IdEndereco = addEntregador.IdEndereco,
+                Cnh = Regex.Replace(addEntregador.Cnh, @"\d{11}", ""),
                 Eligibilidade = true
             };
 
@@ -125,12 +125,12 @@ namespace SelectaAPI.Repositories.Users
             return await _context.enderecos.AnyAsync(e => e.IdEndereco == idEndereco);
         }
 
-        public async Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(AdicionarProdutoNoCarrinhoDTO adicionarDTO)
+        public async Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(int idCliente, AdicionarProdutoNoCarrinhoDTO adicionarDTO)
         {
             var adicionarProduto = new tbCarrinhoModel()
             {
                 IdProduto = adicionarDTO.IdProduto,
-                IdCliente = adicionarDTO.IdCliente,
+                IdCliente = idCliente,
                 Quantidade = adicionarDTO.Quantidade
             };
             _context.carrinho.Add(adicionarProduto);

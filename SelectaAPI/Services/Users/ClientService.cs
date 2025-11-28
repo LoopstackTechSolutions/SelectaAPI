@@ -93,7 +93,7 @@ namespace SelectaAPI.Services.Users
             await _clientRepository.RemoverCliente(cliente);
         }
 
-        public async Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO addEntregador)
+        public async Task<tbEntregadorModel> TornarEntregador(int idEntregador, AddEntregadorDTO addEntregador)
         {
             if (string.IsNullOrEmpty(addEntregador.Cnh) ||
                 !addEntregador.Cnh.All(char.IsDigit) ||
@@ -102,26 +102,26 @@ namespace SelectaAPI.Services.Users
                 throw new ArgumentException("CNH inválida! Preencha o campo corretamente");
             }
 
-            var cliente = await _clientRepository.ObterClientePorId(addEntregador.IdEntregador);
+            var cliente = await _clientRepository.ObterClientePorId(idEntregador);
 
             if (cliente == null)
                 throw new ArgumentException("ID do cliente não existente");
 
-            return await _clientRepository.TornarSeEntregador(addEntregador);
+            return await _clientRepository.TornarSeEntregador(idEntregador, addEntregador);
         }
 
-        public async Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(AdicionarProdutoNoCarrinhoDTO adicionarDTO)
+        public async Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(int idCliente, AdicionarProdutoNoCarrinhoDTO adicionarDTO)
         {
             var verificarEstoque = await _productRepository.VerificarEstoque(adicionarDTO.IdProduto);
             if (!verificarEstoque) throw new ArgumentException("O produto não possui estoque");
 
-            var verificarCliente = await _clientRepository.ObterClientePorId(adicionarDTO.IdCliente);
+            var verificarCliente = await _clientRepository.ObterClientePorId(idCliente);
             if (verificarCliente == null) throw new ArgumentException("Cliente inexistente");
 
             var verificarQuantidadeSelecionada = await _productRepository.QuantidadeSelecionada(adicionarDTO.IdProduto, adicionarDTO.Quantidade);
             if (!verificarQuantidadeSelecionada) throw new ArgumentException("Quantidade excedida");
 
-            var adicionarProdutoNoCarrinho = await _clientRepository.AdicionarProdutoNoCarrinho(adicionarDTO);
+            var adicionarProdutoNoCarrinho = await _clientRepository.AdicionarProdutoNoCarrinho(idCliente,adicionarDTO);
             return adicionarProdutoNoCarrinho;
         }
 

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
 using SelectaAPI.Services.Interfaces.UsersInterface;
+using System.Security.Claims;
 
 namespace SelectaAPI.Controllers.Users
 {
@@ -17,6 +19,16 @@ namespace SelectaAPI.Controllers.Users
         {
             _clientService = clientService;
         }
+
+        private int GetClientIdFromToken()
+        {
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (idClaim == null)
+                throw new UnauthorizedAccessException("ID do cliente não encontrado no token.");
+
+            return int.Parse(idClaim);
+        }
+
 
         [HttpPost("registrar-cliente")]
         public async Task<IActionResult> RegistrarCliente(AddClientDTO addClientDTO)
@@ -69,11 +81,12 @@ namespace SelectaAPI.Controllers.Users
         }
 
         [Authorize]
-        [HttpPut("editar-cliente/{idCliente}")]
-        public async Task<IActionResult> EditarCliente(int idCliente, EditClientDTO editClientDTO)
+        [HttpPut("editar-cliente")]
+        public async Task<IActionResult> EditarCliente(EditClientDTO editClientDTO)
         {
             try
             {
+                int idCliente = GetClientIdFromToken();
                 await _clientService.EditarCliente(idCliente, editClientDTO);
                 return Ok("Cliente editado com sucesso!");
             }
@@ -88,11 +101,12 @@ namespace SelectaAPI.Controllers.Users
         }
 
         [Authorize]
-        [HttpDelete("remover-cliente/{idCliente}")]
-        public async Task<IActionResult> RemoverCliente(int idCliente)
+        [HttpDelete("remover-cliente")]
+        public async Task<IActionResult> RemoverCliente()
         {
             try
             {
+                int idCliente = GetClientIdFromToken();
                 await _clientService.RemoverCliente(idCliente);
                 return Ok("Cliente deletado com sucesso!");
             }
@@ -116,7 +130,8 @@ namespace SelectaAPI.Controllers.Users
         {
             try
             {
-                await _clientService.TornarEntregador(addEntregador);
+                int idEntregador = GetClientIdFromToken();
+                await _clientService.TornarEntregador(idEntregador, addEntregador);
                 return Ok("Você está apto a realizar entregas, parabéns!");
             }
             catch (ArgumentException ex)
@@ -158,10 +173,11 @@ namespace SelectaAPI.Controllers.Users
 
         [Authorize]
         [HttpPost("cadastrar-endereco")]
-        public async Task<IActionResult> CadastrarEndereco([FromQuery] string cep, [FromQuery] int idCliente)
+        public async Task<IActionResult> CadastrarEndereco(string cep)
         {
             try
             {
+                int idCliente = GetClientIdFromToken();
                 var resultado = await _clientService.CadastrarEndereco(cep, idCliente);
                 return Ok(resultado);
             }
@@ -185,7 +201,8 @@ namespace SelectaAPI.Controllers.Users
         {
             try
             {
-                var resultado = await _clientService.AdicionarProdutoNoCarrinho(adicionarDTO);
+                int idCliente = GetClientIdFromToken();
+                var resultado = await _clientService.AdicionarProdutoNoCarrinho(idCliente, adicionarDTO);
                 return Ok("Produto adicionado  no seu carrinho!");
             }
             catch (ArgumentException ex)

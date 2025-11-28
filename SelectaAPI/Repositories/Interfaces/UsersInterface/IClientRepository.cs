@@ -11,9 +11,9 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
         Task<bool> VerificarSeEmailExiste(string email);
         Task RemoverCliente(tbClienteModel clienteModel);
         Task<tbClienteModel> ObterClientePorId(int idCliente);
-        Task<tbEntregadorModel> TornarSeEntregador(AddEntregadorDTO dadosEntregador);
+        Task<tbEntregadorModel> TornarSeEntregador(int idEntregador, AddEntregadorDTO addEntregador);
         Task<bool> VerificarSeEnderecoExiste(int idEndereco);
         Task<tbEnderecoModel> CadastrarEndereco(tbEnderecoModel enderecoModel);
-        Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(AdicionarProdutoNoCarrinhoDTO adicionarDTO);
+        Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(int idCliente, AdicionarProdutoNoCarrinhoDTO adicionarDTO);
     }
 }

@@ -9,9 +9,9 @@ namespace SelectaAPI.Services.Interfaces.UsersInterface
         Task<AddCategory_ClientDTO> CadastrarCategoriaDoCliente(AddCategory_ClientDTO dadosCategoria);
         Task<EditClientDTO> EditarCliente(int idCliente, EditClientDTO dadosEditadosCliente);
         Task RemoverCliente(int idCliente);
-        Task<tbEntregadorModel> TornarEntregador(AddEntregadorDTO dadosEntregador);
+        Task<tbEntregadorModel> TornarEntregador(int idEntregador, AddEntregadorDTO addEntregador);
         Task<object> CadastrarEndereco(string cep, int idCliente);
-        Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(AdicionarProdutoNoCarrinhoDTO adicionarDTO);
+        Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(int idCliente, AdicionarProdutoNoCarrinhoDTO adicionarDTO);
         Task<tbClienteModel> ObterClientePorId(int idCliente);
     }
 }
