@@ -17,7 +17,7 @@ namespace SelectaAPI.Services
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(new Claim[]
                 {
-                    new Claim("clientId", cliente.IdCliente.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, cliente.IdCliente.ToString()),
                     new Claim("clientEmail", cliente.Email.ToString()),
                     new Claim ("clientNome", cliente.Nome.ToString())
                 }),
