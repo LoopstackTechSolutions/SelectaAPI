@@ -44,7 +44,7 @@ namespace SelectaAPI.Services
                     new Claim("employeeId", funcionario.IdFuncionario.ToString()),
                     new Claim("employeeEmail", funcionario.Email.ToString()),
                     new Claim ("funcionarioNome", funcionario.Nome.ToString()),
-                    new Claim ("funcionarioNome", funcionario.Nome.ToString())
+                    new Claim (ClaimTypes.Role, funcionario.NivelAcesso.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(180),
                 SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256Signature)

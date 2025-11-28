@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.Services.Interfaces.UsersInterface;
@@ -7,6 +8,7 @@ namespace SelectaAPI.Controllers.Users
 {
     [Route("selectaAPI/[controller]")]
     [ApiController]
+    [Authorize]
     public class SalesPersonController : ControllerBase
     {
         private readonly ISalesPersonService _salesPersonService;

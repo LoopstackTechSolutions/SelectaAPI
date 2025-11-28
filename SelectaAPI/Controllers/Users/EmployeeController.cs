@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
@@ -8,6 +9,7 @@ namespace SelectaAPI.Controllers.Users
 {
     [Route("selectaAPI/[controller]")]
     [ApiController]
+    [Authorize]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
@@ -17,7 +19,8 @@ namespace SelectaAPI.Controllers.Users
             _employeeService = employeeService;
         }
 
-       
+
+        [Authorize(Roles = "admin, gerente")]
         [HttpPost("cadastrar-funcionario")]
         public async Task<IActionResult> CadastrarFuncionario(AddEmployeeDTO addEmployeeDTO)
         {
@@ -40,6 +43,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
+        [Authorize(Roles ="admin, comum, gerente")]        
         [HttpGet("funcionario/listar")]
         public async Task<IActionResult> ListarFuncionarios()
         {
@@ -58,7 +62,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
-      
+        [Authorize(Roles = "admin, gerente")]      
         [HttpDelete("funcionario/remover/{idFuncionario}")]
         public async Task<IActionResult> RemoverFuncionario(int idFuncionario)
         {
@@ -81,7 +85,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
-      
+        [Authorize(Roles = "gerente, admin, comum")]      
         [HttpPut("editar-funcionario/{idFuncionario}")]
         public async Task<IActionResult> EditarFuncionario(int idFuncionario, EditEmployeeDTO editEmployee)
         {

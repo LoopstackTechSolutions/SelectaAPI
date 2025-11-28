@@ -8,7 +8,6 @@ namespace SelectaAPI.Controllers
 {
     [Route("selectaAPI/[controller]")]
     [ApiController]
-    [Authorize]
     public class HomeController : ControllerBase
     {
         private readonly IHomeService _homeService;
@@ -63,6 +62,7 @@ namespace SelectaAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("lista-de-desejos/{idCliente}")]
         public async Task<IActionResult> ListarProdutosDaListaDeDesejos(int idCliente)
         {
@@ -99,7 +99,7 @@ namespace SelectaAPI.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpGet("notificacoes/listar-notificacoes/{idCliente}")]
         public async Task<IActionResult> ListarNotificacoes(int idCliente)
         {
@@ -118,7 +118,7 @@ namespace SelectaAPI.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpGet("notificacoes/notificacoes-nao-lidas/{idCliente}")]
         public async Task<IActionResult> ListarNotificacoesNaoLidas(int idCliente)
         {
@@ -178,6 +178,7 @@ namespace SelectaAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("lista-de-desejos/adicionar/{idProduto}")]
         public async Task<IActionResult> AdicionarProdutoNaListaDeDesejos(int idCliente,int idProduto)
         {
@@ -200,6 +201,7 @@ namespace SelectaAPI.Controllers
         }
 
 
+        [Authorize]
         [HttpGet("carrinho/listar-produtos/{idCliente}")]
         public async Task<IActionResult> ListarProdutosNoCarrinhoDoCliente(int idCliente)
         {
@@ -218,7 +220,7 @@ namespace SelectaAPI.Controllers
             }
         }
 
-      
+        [Authorize]
         [HttpGet("buscar-tipo-conta/{idCliente}")]
         public async Task<IActionResult> BuscarTipoDeContaDoCliente(int idCliente)
         {
@@ -237,6 +239,7 @@ namespace SelectaAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("carrinho/remover{idProduto}")]
         public async Task<IActionResult> RemoverProdutoDoCarrinho(int idCliente,int idProduto)
         {
@@ -255,7 +258,7 @@ namespace SelectaAPI.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpDelete("lista-de-desejos/remover/{idProduto}")]
         public async Task<IActionResult> RemoverProdutoDaListaDeDesejos(int idCliente, int idProduto)
         {
@@ -274,7 +277,7 @@ namespace SelectaAPI.Controllers
             }
         }
 
-    
+        [Authorize]
         [HttpPost("marcar-notificacao-lida/{idNotificacao}")]
         public async Task<IActionResult> MarcarNotificacaoComoLida(int idCliente, int idNotificacao)
         {

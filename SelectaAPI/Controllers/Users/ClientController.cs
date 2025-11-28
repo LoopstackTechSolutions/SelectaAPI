@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
 using SelectaAPI.Models;
@@ -20,12 +21,6 @@ namespace SelectaAPI.Controllers.Users
         [HttpPost("registrar-cliente")]
         public async Task<IActionResult> RegistrarCliente(AddClientDTO addClientDTO)
         {
-            /// <summary>
-            /// Retorna todos os funcionários ativos.
-            /// </summary>
-            /// <returns>Lista de funcionários</returns>
-            /// <response code="200">Sucesso ao listar funcionários</response>
-            /// <response code="404">Nenhum funcionário encontrado</response>
             if (!ModelState.IsValid)
                 return BadRequest("Os dados do cliente não foram enviados.");
 
@@ -73,6 +68,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
+        [Authorize]
         [HttpPut("editar-cliente/{idCliente}")]
         public async Task<IActionResult> EditarCliente(int idCliente, EditClientDTO editClientDTO)
         {
@@ -91,6 +87,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
+        [Authorize]
         [HttpDelete("remover-cliente/{idCliente}")]
         public async Task<IActionResult> RemoverCliente(int idCliente)
         {
@@ -113,6 +110,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
+        [Authorize]
         [HttpPost("tornar-entregador")]
         public async Task<IActionResult> TornarEntregador(AddEntregadorDTO addEntregador)
         {
@@ -135,6 +133,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
+        [Authorize]
         [HttpPost("buscar-cliente-id/{idCliente}")]
         public async Task<IActionResult> ObterClientePorId(int idCliente)
         {
@@ -157,7 +156,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
-
+        [Authorize]
         [HttpPost("cadastrar-endereco")]
         public async Task<IActionResult> CadastrarEndereco([FromQuery] string cep, [FromQuery] int idCliente)
         {
@@ -179,6 +178,8 @@ namespace SelectaAPI.Controllers.Users
                 return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
+
+        [Authorize]
         [HttpPost("carrinho/adicionar-produto")]
         public async Task<IActionResult> AdicionarProdutoNoCarrinho(AdicionarProdutoNoCarrinhoDTO adicionarDTO)
         {

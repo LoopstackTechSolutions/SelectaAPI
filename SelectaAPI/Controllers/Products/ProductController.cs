@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
@@ -10,6 +11,7 @@ namespace SelectaAPI.Controllers.Products
 {
     [Route("selectaAPI/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -56,6 +58,7 @@ namespace SelectaAPI.Controllers.Products
             {
                 return StatusCode(500, ex.Message);
             }
+
         }
         [HttpPost("produto/adicionar-imagem")]
         public async Task<IActionResult> AdicionarImagemNoProduto([FromForm] AddImageOfProductDTO addImageDTO)
@@ -75,6 +78,8 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [AllowAnonymous]
         [HttpGet("produto/imagem-principal/{idProduto}")]
         public async Task<IActionResult> BuscarImagemPrincipal(int idProduto)
         {
@@ -94,6 +99,8 @@ namespace SelectaAPI.Controllers.Products
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [AllowAnonymous]
         [HttpGet("produto/imagens/{idProduto}")]
         public async Task<IActionResult> BuscarTodasAsImagensDoProduto(int idProduto)
         {
@@ -206,6 +213,7 @@ namespace SelectaAPI.Controllers.Products
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("pesquisar-produtos")]
         public async Task<IActionResult> PesquisarProdutos(string?query)
         {
