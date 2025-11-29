@@ -148,7 +148,7 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
-        [Authorize]
+       
         [HttpPost("buscar-cliente-id/{idCliente}")]
         public async Task<IActionResult> ObterClientePorId(int idCliente)
         {
