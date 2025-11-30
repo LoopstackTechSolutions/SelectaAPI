@@ -34,13 +34,17 @@ namespace SelectaAPI.Controllers.Users
 
                 return Ok(loginDoCliente);
             }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor: {ex.Message}");
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -59,13 +63,17 @@ namespace SelectaAPI.Controllers.Users
 
                 return Ok(loginDoFuncionario);
             }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"erro no servidor: {ex.Message}");
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
     }

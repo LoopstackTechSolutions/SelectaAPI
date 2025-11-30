@@ -52,13 +52,17 @@ namespace SelectaAPI.Controllers.Users
                 var listEmployees = await _employeeService.ListarFuncionarios();
                 return Ok(listEmployees);
             }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (DbUpdateException ex)
             {
                 return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro no servidor: {ex.Message}");
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 

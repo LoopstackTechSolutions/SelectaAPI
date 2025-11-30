@@ -91,13 +91,17 @@ namespace SelectaAPI.Controllers
                 var resultado = await _homeService.ListarProdutosRecomendados(idCliente);
                 return Ok(resultado);
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -111,13 +115,17 @@ namespace SelectaAPI.Controllers
                 var resultado = await _homeService.ListarNotificacoesDoCliente(idCliente);
                 return Ok(resultado);
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -134,13 +142,17 @@ namespace SelectaAPI.Controllers
 
                 return Ok(resultado);
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -152,13 +164,17 @@ namespace SelectaAPI.Controllers
                 var resultado = await _homeService.ListarProdutosMaisVendidos();
                 return Ok(resultado);
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -172,13 +188,17 @@ namespace SelectaAPI.Controllers
                 if (resultado == null) return BadRequest("ID do produto nulo");
                 return Ok(resultado);
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -195,13 +215,17 @@ namespace SelectaAPI.Controllers
 
                 return Ok("Produto adicionado em sua lista!");
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -216,13 +240,17 @@ namespace SelectaAPI.Controllers
                 var resultado = await _homeService.ListarProdutosDoCarrinho(idCliente);
                 return Ok(resultado);
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -235,13 +263,17 @@ namespace SelectaAPI.Controllers
                 var resultado = await _homeService.TipoDeConta(idCliente);
                 return Ok($"tipo de conta: {resultado}");
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -255,13 +287,17 @@ namespace SelectaAPI.Controllers
                 await _homeService.RemoverProdutoDoCarrinho(idCliente, idProduto);
                 return Ok($"Produto removido com sucesso!");
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -275,13 +311,17 @@ namespace SelectaAPI.Controllers
                 await _homeService.RemoverProdutoDaListaDeDesejos(idCliente, idProduto);
                 return Ok($"Produto removido: {idProduto}");
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
 
@@ -295,13 +335,17 @@ namespace SelectaAPI.Controllers
                 var resultado = await _homeService.MarcarNotificacaoComoLida(idCliente, idNotificacao);
                 return Ok(resultado);
             }
-            catch (DbUpdateException)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, "Erro de banco.");
+                return NotFound(ex.Message);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return StatusCode(500, "Erro no servidor.");
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
             }
         }
     }
