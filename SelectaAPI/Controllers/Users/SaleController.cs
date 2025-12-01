@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SelectaAPI.DTOs;
 using SelectaAPI.Repositories.Interfaces.UsersInterface;
 using SelectaAPI.Services.Interfaces.UsersInterface;
+using System.Security.Claims;
 
 namespace SelectaAPI.Controllers.Users
 {
@@ -18,12 +19,23 @@ namespace SelectaAPI.Controllers.Users
         {
            _saleService = saleService;
         }
+        private int GetClientIdFromToken()
+        {
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (idClaim == null)
+                throw new UnauthorizedAccessException("ID do cliente não encontrado no token.");
+
+            return int.Parse(idClaim);
+        }
+
+
         [HttpPost("comprar-produto")]
         public async Task<IActionResult> ComprarProduto(PedidoDTO pedidoDTO)
         {
             try
             {
-                var chamarMetodoDeCompra = await _saleService.ComprarProduto(pedidoDTO);
+                var idCliente = GetClientIdFromToken();
+                var chamarMetodoDeCompra = await _saleService.ComprarProduto(pedidoDTO, idCliente);
                 return Ok(chamarMetodoDeCompra);
             }
             catch (ArgumentException ex)

@@ -15,7 +15,7 @@ namespace SelectaAPI.Repositories.Users
             _context = context;
         }
 
-        public async Task<PedidoResponseDTO> ComprarProduto(PedidoDTO pedidoDTO)
+        public async Task<PedidoResponseDTO> ComprarProduto(PedidoDTO pedidoDTO, int idCliente)
         {
             var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -31,7 +31,7 @@ namespace SelectaAPI.Repositories.Users
 
                 var pedido = new tbPedidoModel
                 {
-                    IdComprador = pedidoDTO.IdCliente,
+                    IdComprador = idCliente,
                     IdEnderecoEntrega = pedidoDTO.IdEnderecoEntrega,
                     DataPedido = DateTime.Now,
                     Total = total,

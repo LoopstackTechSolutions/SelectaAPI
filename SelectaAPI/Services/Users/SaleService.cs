@@ -21,13 +21,13 @@ namespace SelectaAPI.Services.Users
             _clientRepository = clientRepository;
             _productRepository = productRepository;
         }
-        public async Task<PedidoResponseDTO> ComprarProduto(PedidoDTO pedidoDTO)
+        public async Task<PedidoResponseDTO> ComprarProduto(PedidoDTO pedidoDTO, int idCliente)
         {
-            var verificarCliente = await _clientRepository.ObterClientePorId(pedidoDTO.IdCliente);
+            var verificarCliente = await _clientRepository.ObterClientePorId(idCliente);
             if (verificarCliente == null) throw new ArgumentException("Cliente inexistente!");
 
             var verificarVendedor = await _salesPersonRepository.ObterProdutoDoVendedor(pedidoDTO.IdProduto);
-            if (verificarVendedor == pedidoDTO.IdCliente) throw new ArgumentException("Você não pode comprar o seu próprio produto");
+            if (verificarVendedor == idCliente) throw new ArgumentException("Você não pode comprar o seu próprio produto");
 
             var verificarQuantidadeDoProduto = await _productRepository.VerificarEstoque(pedidoDTO.IdProduto);
             if (!verificarQuantidadeDoProduto) throw new ArgumentException("Produto sem estoque!");
@@ -38,7 +38,7 @@ namespace SelectaAPI.Services.Users
             var QuantidadeSelecionada = await _productRepository.QuantidadeSelecionada(pedidoDTO.IdProduto, pedidoDTO.Quantidade);
             if (!QuantidadeSelecionada) throw new ArgumentException("A quantidade selecionada é maior que o estoque do produto");
 
-            var chamarMetodoDoPedido = await _saleRepository.ComprarProduto(pedidoDTO);
+            var chamarMetodoDoPedido = await _saleRepository.ComprarProduto(pedidoDTO, idCliente);
             if (chamarMetodoDoPedido == null) throw new Exception("Falha ao gerar pedido");
     
 

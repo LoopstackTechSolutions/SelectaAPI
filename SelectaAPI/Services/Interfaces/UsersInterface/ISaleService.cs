@@ -5,7 +5,7 @@ namespace SelectaAPI.Services.Interfaces.UsersInterface
 {
     public interface ISaleService
     {
-        Task<PedidoResponseDTO> ComprarProduto(PedidoDTO pedidoDTO);
+        Task<PedidoResponseDTO> ComprarProduto(PedidoDTO pedidoDTO, int idCliente);
 
     }
 }
