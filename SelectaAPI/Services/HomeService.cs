@@ -22,12 +22,12 @@ namespace SelectaAPI.Services
         public async Task<IEnumerable<ProductInWishListDTO>> ListarProdutosDaListaDeDesejos([FromQuery] int idCliente)
         {
             if (idCliente == 0)
-                throw new Exception("Id inválido");
+                throw new ArgumentException("Id inválido");
 
             var listaDesejos = await _homeRepository.ObterListaDeDesejos(idCliente);
 
             if (listaDesejos == null)
-                throw new Exception("Lista de desejos não encontrada");
+                throw new ArgumentException("Lista de desejos não encontrada");
 
             return listaDesejos;
         }
@@ -35,7 +35,7 @@ namespace SelectaAPI.Services
         public async Task<IEnumerable<tbProdutoModel>> ListarProdutosRecomendados([FromQuery] int idCliente)
         {
             if (idCliente == 0)
-                throw new Exception("Id inválido");
+                throw new ArgumentException("Id inválido");
 
             var produtosRecomendados = await _homeRepository.ObterProdutosRecomendados(idCliente);
 
@@ -57,7 +57,7 @@ namespace SelectaAPI.Services
         public async Task<IEnumerable<NotificationForClientDTO>> ListarNotificacoesDoCliente([FromQuery] int idCliente)
         {
             if (idCliente == 0)
-                throw new Exception("Id inválido");
+                throw new ArgumentException("Id inválido");
 
             var notificacoes = await _homeRepository.ObterNotificacoesDoCliente(idCliente);
 
@@ -75,7 +75,7 @@ namespace SelectaAPI.Services
             var clienteExiste = await _homeRepository.VerificarSeClienteExiste(idCliente);
 
             if (!clienteExiste)
-                throw new Exception("Cliente não existente");
+                throw new ArgumentException("Cliente não existente");
 
             var notificacoesNaoLidas = await _homeRepository.ObterNotificacoesNaoLidasDoCliente(idCliente);
 
@@ -90,7 +90,7 @@ namespace SelectaAPI.Services
             var produtoExiste = await _homeRepository.VerificarSeProdutoExiste(idProduto);
 
             if (!produtoExiste)
-                throw new Exception("Produto inexistente");
+                throw new ArgumentException("Produto inexistente");
 
             var produto = await _homeRepository.ObterProdutoPorId(idProduto);
 
@@ -103,15 +103,15 @@ namespace SelectaAPI.Services
         public async Task<ProductInWishListDTO> AdicionarProdutoNaListaDeDesejos(int idProduto, int idCliente)
         {
             if (idProduto == 0 || idCliente == 0)
-                throw new Exception("Preencha todos os campos");
+                throw new ArgumentException("Preencha todos os campos");
 
             var produtoExiste = await _homeRepository.VerificarSeProdutoExiste(idProduto);
             if (!produtoExiste)
-                throw new Exception("Produto inexistente");
+                throw new ArgumentException("Produto inexistente");
 
             var clienteExiste = await _homeRepository.VerificarSeClienteExiste(idCliente);
             if (!clienteExiste)
-                throw new Exception("Cliente inexistente");
+                throw new ArgumentException("Cliente inexistente");
 
             var produtoAdicionado = await _homeRepository.AdicionarProdutoNaListaDeDesejos(idProduto, idCliente);
             return produtoAdicionado;
@@ -122,7 +122,7 @@ namespace SelectaAPI.Services
             var produtosCarrinho = await _homeRepository.ObterProdutosDoCarrinho(idCliente);
 
             if (!produtosCarrinho.Any())
-                throw new Exception("Carrinho vazio");
+                throw new ArgumentException("Carrinho vazio");
 
             return produtosCarrinho;
         }
@@ -150,7 +150,7 @@ namespace SelectaAPI.Services
             var clienteExiste = await _homeRepository.VerificarSeClienteExiste(idCliente);
 
             if (!clienteExiste)
-                throw new Exception("Cliente inexistente");
+                throw new ArgumentException("Cliente inexistente");
 
             var cliente = await _homeRepository.ObterClientePorId(idCliente);
 
