@@ -21,7 +21,7 @@ namespace SelectaAPI.Repositories.Users
             return await _context.clientes
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.Email == email);
-        }
+            }
 
         public async Task<tbFuncionarioModel> BuscarCredenciaisDoFuncionario(string email)
         {

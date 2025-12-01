@@ -20,7 +20,7 @@ namespace SelectaAPI.Controllers.Users
         }
         [HttpPost("login-cliente")]
         [AllowAnonymous] 
-        public async Task<IActionResult> ClientLogin([FromBody] LoginRequestDTO request)
+        public async Task<IActionResult> ClientLogin(LoginRequestDTO request)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace SelectaAPI.Controllers.Users
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro interno: {ex.Message}");
-            }
+            }   
         }
     }
 }
