@@ -29,6 +29,7 @@ namespace SelectaAPI.Controllers.Users
         }
 
 
+        [Authorize]
         [HttpPost("comprar-produto")]
         public async Task<IActionResult> ComprarProduto(PedidoDTO pedidoDTO)
         {
@@ -36,6 +37,30 @@ namespace SelectaAPI.Controllers.Users
             {
                 var idCliente = GetClientIdFromToken();
                 var chamarMetodoDeCompra = await _saleService.ComprarProduto(pedidoDTO, idCliente);
+                return Ok(chamarMetodoDeCompra);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
+        [Authorize]
+        [HttpPost("carrinho/comprar-produtos")]
+        public async Task<IActionResult> ComprarProdutosDoCarrinho(ComprarCarrinhoRequestDTO comprarCarrinho)
+        {
+            try
+            {
+                var idCliente = GetClientIdFromToken();
+                var chamarMetodoDeCompra = await _saleService.ComprarProdutosDoCarrinho(idCliente, comprarCarrinho);
                 return Ok(chamarMetodoDeCompra);
             }
             catch (ArgumentException ex)

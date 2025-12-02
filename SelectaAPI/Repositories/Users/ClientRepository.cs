@@ -158,11 +158,28 @@ namespace SelectaAPI.Repositories.Users
            return await _context.pedidos.AnyAsync(c => c.IdComprador == idCliente);
         }
 
+        /*
         public async Task<tbProduto_PedidoModel> DetalhesDoPedido(int idPedido)
         {
-            var buscarProdutosDoPedido = await _context.produtosPedidos.FirstOrDefaultAsync(pp => pp.IdPedido == idPedido);
+            var buscarProdutosDoPedido = await _context.produtosPedidos.Where(pp => pp.IdPedido == idPedido)
+                .Include(pp => pp.Produto)
+                .Select(pp => new DetalhesDoPedidoDTO
+                {
+                    IdPedido = pp.IdPedido,
+                    Produtos = pp.Produto.Select(pp => new ProdutoDoPedidoDTO
+                    {
+                        Produto = pp.Produto.Nome,
+                        IdProduto = pp.IdProduto,
+                        Quantidade = pp.Quantidade,
+                        Status = pp.Status,
+                        Valor = pp.Valor,
+                        Frete = pp.Frete,
+                        TipoEntrega = pp.TipoEntrega
+                    }).ToList()
+                }).FirstOrDefault
             return buscarProdutosDoPedido;
         }
+        */
 
         public async Task<IEnumerable<tbClienteModel>> ListarCliente()
         {

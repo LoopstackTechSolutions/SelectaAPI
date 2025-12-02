@@ -53,5 +53,14 @@ namespace SelectaAPI.Services.Users
             };
 
         }
+
+        public async Task<PedidoResponseDTO> ComprarProdutosDoCarrinho(int idCliente, ComprarCarrinhoRequestDTO comprarCarrinho)
+        {
+            var verificarCliente = await _clientRepository.ObterClientePorId(idCliente);
+            if (verificarCliente == null) throw new ArgumentException("Cliente inexistente!");
+
+            var comprarProdutosDoCarrinho = await _saleRepository.ComprarProdutosDoCarrinho(idCliente, comprarCarrinho);
+            return comprarProdutosDoCarrinho;
+        }
     }
 }

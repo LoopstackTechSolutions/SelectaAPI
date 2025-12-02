@@ -6,5 +6,6 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
     public interface ISaleRepository
     {
         Task<PedidoResponseDTO> ComprarProduto(PedidoDTO pedidoDTO, int idCliente);
+        Task<PedidoResponseDTO> ComprarProdutosDoCarrinho(int idCliente, ComprarCarrinhoRequestDTO comprarCarrinho);
     }
 }
