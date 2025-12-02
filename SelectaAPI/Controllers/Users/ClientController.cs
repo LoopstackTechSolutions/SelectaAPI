@@ -172,7 +172,29 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
-       
+        [HttpGet("listar-clientes")]
+        public async Task<IActionResult> ListarClientes()
+        {
+            try
+            {
+                var clientes = await _clientService.ListarCliente();
+                return Ok(clientes);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
+
         [HttpPost("buscar-cliente-id/{idCliente}")]
         public async Task<IActionResult> ObterClientePorId(int idCliente)
         {

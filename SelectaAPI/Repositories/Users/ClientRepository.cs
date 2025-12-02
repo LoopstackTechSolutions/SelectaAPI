@@ -157,5 +157,16 @@ namespace SelectaAPI.Repositories.Users
         {
            return await _context.pedidos.AnyAsync(c => c.IdComprador == idCliente);
         }
+
+        public async Task<tbProduto_PedidoModel> DetalhesDoPedido(int idPedido)
+        {
+            var buscarProdutosDoPedido = await _context.produtosPedidos.FirstOrDefaultAsync(pp => pp.IdPedido == idPedido);
+            return buscarProdutosDoPedido;
+        }
+
+        public async Task<IEnumerable<tbClienteModel>> ListarCliente()
+        {
+            return await _context.clientes.ToListAsync();
+        }
     }
 }

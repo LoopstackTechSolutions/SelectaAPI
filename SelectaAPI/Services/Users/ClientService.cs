@@ -139,5 +139,10 @@ namespace SelectaAPI.Services.Users
             var historicoDePedidos = await _clientRepository.HistoricoDePedidos(idCliente);
             return historicoDePedidos;
         }
+
+        public async Task<IEnumerable<tbClienteModel>> ListarCliente()
+        {
+            return await _clientRepository.ListarCliente();
+        }
     }
 }

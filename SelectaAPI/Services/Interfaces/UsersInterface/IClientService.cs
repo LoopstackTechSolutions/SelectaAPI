@@ -13,6 +13,7 @@ namespace SelectaAPI.Services.Interfaces.UsersInterface
         Task<object> CadastrarEndereco(string cep, int idCliente);
         Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(int idCliente, AdicionarProdutoNoCarrinhoDTO adicionarDTO);
         Task<IEnumerable<tbPedidoModel>> HistoricoDePedidos(int idCliente);
+        Task<IEnumerable<tbClienteModel>> ListarCliente();
         Task<tbClienteModel> ObterClientePorId(int idCliente);
     }
 }
