@@ -14,6 +14,7 @@ namespace SelectaAPI.DTOs
         public int? Nota { get; set; }
         public string? Descricao { get; set; }
         public int? IdVendedor { get; set; }
+        public int IdProduto { get; set; }
 
     }
 }

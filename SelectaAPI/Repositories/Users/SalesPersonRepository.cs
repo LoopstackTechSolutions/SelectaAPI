@@ -18,6 +18,7 @@ namespace SelectaAPI.Repositories.Users
             var lista = await _context.produtos.Where(p => p.IdVendedor == idVendedor)
                 .Select(p => new ResponseMyProductsDTO
                 {
+                    IdProduto = p.IdProduto,
                     IdVendedor = p.IdVendedor,
                     Condicao = p.Condicao,
                     Nome = p.Nome,
