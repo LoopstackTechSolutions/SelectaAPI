@@ -130,5 +130,14 @@ namespace SelectaAPI.Services.Users
             var buscarCliente = await _clientRepository.ObterClientePorId(idCliente);
             return buscarCliente;
         }
+
+        public async Task<IEnumerable<tbPedidoModel>> HistoricoDePedidos(int idCliente)
+        {
+            var verificarSeTemPedidos = await _clientRepository.SemPedidos(idCliente);
+            if (!verificarSeTemPedidos) throw new ArgumentException("Você não possui pedidos");
+
+            var historicoDePedidos = await _clientRepository.HistoricoDePedidos(idCliente);
+            return historicoDePedidos;
+        }
     }
 }

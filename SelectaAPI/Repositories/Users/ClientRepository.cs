@@ -138,5 +138,24 @@ namespace SelectaAPI.Repositories.Users
 
             return adicionarProduto;
         }
+
+        public async Task<IEnumerable<tbPedidoModel>> HistoricoDePedidos(int idCliente)
+        {
+            var buscarPedidos = await _context.pedidos.Where(c => c.IdComprador == idCliente)
+                .Select(c => new tbPedidoModel
+                {
+                    IdPedido = c.IdPedido,
+                    Frete = c.Frete,
+                    DataPedido = c.DataPedido,
+                    StatusPagamento = c.StatusPagamento,
+                    Total = c.Total
+                }).ToListAsync();
+            return buscarPedidos;
+        }
+
+        public async Task<bool> SemPedidos(int idCliente)
+        {
+           return await _context.pedidos.AnyAsync(c => c.IdComprador == idCliente);
+        }
     }
 }

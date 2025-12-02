@@ -148,6 +148,30 @@ namespace SelectaAPI.Controllers.Users
             }
         }
 
+        [Authorize]
+        [HttpGet("pedidos/historico")]
+        public async Task<IActionResult> HistoricoDePedidos()
+        {
+            try
+            {
+                int idCliente = GetClientIdFromToken();
+                var historico = await _clientService.HistoricoDePedidos(idCliente);
+                return Ok(historico);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Erro de banco: {ex.InnerException?.Message ?? ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
        
         [HttpPost("buscar-cliente-id/{idCliente}")]
         public async Task<IActionResult> ObterClientePorId(int idCliente)

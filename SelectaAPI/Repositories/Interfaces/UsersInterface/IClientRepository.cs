@@ -15,5 +15,7 @@ namespace SelectaAPI.Repositories.Interfaces.UsersInterface
         Task<bool> VerificarSeEnderecoExiste(int idEndereco);
         Task<tbEnderecoModel> CadastrarEndereco(tbEnderecoModel enderecoModel);
         Task<tbCarrinhoModel> AdicionarProdutoNoCarrinho(int idCliente, AdicionarProdutoNoCarrinhoDTO adicionarDTO);
+        Task<IEnumerable<tbPedidoModel>> HistoricoDePedidos(int idCliente);
+        Task<bool> SemPedidos(int idCliente);
     }
 }
